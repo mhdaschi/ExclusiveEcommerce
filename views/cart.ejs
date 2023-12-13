@@ -1,0 +1,97 @@
+<%- include('header')%>
+<main>
+
+    <div class="container p-5" >
+       
+        <ul class="responsive-table" style="list-style: none; padding: 0; margin: 0;">
+            <li class="table-header" style="background-color: #ffffff; box-shadow: 0px 0px 9px 0px rgba(0, 0, 0, 0.1); border-radius: 3px; padding: 25px 30px; display: flex; justify-content: space-between; margin-bottom: 25px;">
+                <div class="col col-1" style="flex-basis: 10%;">Product</div>
+                <div class="col col-2" style="flex-basis: 40%;">Price</div>
+                <div class="col col-3" style="flex-basis: 25%;">Quantity</div>
+                <div class="col col-4" style="flex-basis: 25%;">Subtotal</div>
+            </li>
+            <li class="table-row" style="background-color: #ffffff; box-shadow: 0px 0px 9px 0px rgba(0, 0, 0, 0.1); border-radius: 3px; padding: 25px 30px; display: flex; justify-content: space-between; margin-bottom: 25px;">
+              <div class="col col-1" data-label="Job Id" style="flex-basis: 10%;">42442</div>
+              <div class="col col-2" data-label="Customer Name" style="flex-basis: 40%;">Jennifer Smith</div>
+              <div class="col col-2" style="flex-basis: 25%;">
+                <input type="number" step="1" max="10" value="1" name="quantity" class="quantity-field border-0 text-center w-25">
+             </div>
+              <div class="col col-4" data-label="Payment Status" style="flex-basis: 25%;">Pending</div>
+          </li>
+            <li class="table-row" style="background-color: #ffffff; box-shadow: 0px 0px 9px 0px rgba(0, 0, 0, 0.1); border-radius: 3px; padding: 25px 30px; display: flex; justify-content: space-between; margin-bottom: 25px;">
+                <div class="col col-1" data-label="Job Id" style="flex-basis: 10%;">42442</div>
+                <div class="col col-2" data-label="Customer Name" style="flex-basis: 40%;">Jennifer Smith</div>
+                <div class="col col-2" style="flex-basis: 25%;">
+                  <input type="number" step="1" max="10" value="1" name="quantity" class="quantity-field border-0 text-center w-25">
+               </div>
+                <div class="col col-4" data-label="Payment Status" style="flex-basis: 25%;">Pending</div>
+            </li>
+          
+        </ul>
+        <div class=" d-flex justify-content-between">
+          <div class="align-self-center">
+              <button class="btn  mt-3 btn-block border-black">Return To shop</button>
+          </div>
+          <div class="align-self-center">
+              <button class="btn  mt-3 btn-block border-black">Update Card</button>
+          </div>
+        </div>
+
+        
+        <div class="container mt-5 box-shadow">
+          <div class="row">
+            <div class="col-lg-7 col-md-7 col-sm-12 d-flex flex-column flex-md-row ">
+              <div class="me-md-2 mb-2">
+                  <input type="string" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Coupon Code ">
+              </div>
+              <div class="mb-2">
+                  <button type="submit" class="btn btn-danger btn-block gradient-custom-4 text-white">Apply Coupon</button>
+              </div>
+            </div>
+
+            <div class="col-lg-5 col-md-5 col-sm-12 border p-3" >
+              <h5>Cart Total</h5>
+              <div class="d-flex justify-content-between border-bottom">
+                <div>
+                  <p>Sub total:</p>
+                </div>
+                <div>
+                  <p>$</p>
+                </div>
+              </div>
+              <div class="d-flex justify-content-between border-bottom">
+                <div>
+                  <p>Shipping:</p>
+                </div>
+                <div>
+                  <p>$</p>
+                </div>
+              </div>
+
+              <div class="d-flex justify-content-between">
+                <div>
+                  <p>Total:</p>
+                </div>
+                <div>
+                  <p>$</p>
+                </div>
+              </div>
+
+
+              <div class="d-flex justify-content-center mx-5">
+                <form action="/admin/add/product" method="post">
+                  <button type="submit" class="btn btn-danger mt-3 btn-block gradient-custom-4 text-white">Process to Checkout</button>
+                </form>
+              </div>
+              
+            </div>
+
+            
+          </div>
+        </div>
+
+    </div>
+</main>
+
+
+<%- include('footer')%>

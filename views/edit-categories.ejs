@@ -1,0 +1,99 @@
+<%- include('header-admin') %>
+  <main>
+
+    
+
+
+    
+        <div class="container" style="display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;">
+            
+            <div class="" style="    width: 30em;
+            box-shadow: 0 1px 15px 1px rgb(52 40 104 / 30%);
+            padding: 20px;
+            border-radius: 6px; margin: 0px 16px;">
+                <h2 class="mb-4 text-center" style="font-family: 'Poppins', sans-serif; font-weight: 700;">EDIT CATEGORY</h2>
+                <div class="">
+                    <!-- Category Form -->
+                    <% editeBrand.forEach(element => { %>
+                     
+                   
+                    <form action="/admin/edit/category/<%= element._id %> " enctype="multipart/form-data" 
+                         method="post" onsubmit="return validateForm();">
+                        <div class="mb-3">
+                            <label for="categoryName" class="form-label">Category Name:</label>
+                            <input type="text" name="name" value="<%= element.brand %>" class="form-control" id="categoryName"  required  onchange="validateForm()">
+                          </div>
+
+                          <p class="d-flex justify-content-center" id="msg" style="
+                          font-family: Poppins;
+                          font-size: 16px;
+                          font-weight: 400;
+                          line-height: 24px;
+                          letter-spacing: 0em;
+                          
+                          color: #db4444;
+                          "><%= locals.err %></p>
+                  
+                        <div class="mb-3">
+                            <label for="categoryImage" class="form-label">Category Image:</label>
+                            <input type="file" class="form-control" id="categoryImage" name="image"  accept="image/*" >
+                            <div class="mt-4">
+                            <img src= "/<%=element.image %>" alt="" style="width: 50px; height: 50px"
+                                    class="rounded-circle">
+                                    </div>
+                        </div>
+                        <% }) %>
+
+                        
+                        <button id="login-button"  type="submit" class="btn btn-warning text-white">Save</button>
+                        
+                        <!-- Back to Category Button -->
+        
+                        <a href="/admin/Categories" class="btn btn-danger">Back to Category</a>
+                    </form>
+                </div>
+            </div>
+        </div>
+         
+           </main>
+           <%- include('admin_footer')%>
+
+
+  
+    <script>
+      function validateForm() {
+          var categoryName = document.getElementById('categoryName').value;
+  
+          // Check if the input contains only spaces
+          if (categoryName.trim() === '') {
+              alert('Category Name Cant be empty.');
+              return false; // Prevent form submission
+          }
+  
+          return true; // Allow form submission
+      }
+</script>
+
+<script>
+  // Function to get URL parameter by name
+  function getParameterByName(name, url) {
+    if (!url) url = window.location.href;
+    name = name.replace(/[\[\]]/g, '\\$&');
+    var regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)'),
+        results = regex.exec(url);
+    if (!results) return null;
+    if (!results[2]) return '';
+    return decodeURIComponent(results[2].replace(/\+/g, ' '));
+  }
+
+  // Get the 'message' parameter from the URL
+  var message = getParameterByName('message');
+
+
+  if (message) {
+    $('#msg').text(message);
+  }
+</script>

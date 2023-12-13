@@ -1,0 +1,143 @@
+<%- include('header')%>
+
+<body>
+    <main>
+        <!-- <form enctype="multipart/form-data"> -->
+        <div class="container">
+
+            <div class="row d-flex justify-content-center">
+
+                <div class="col-md-6  py-5 my-5">
+                    <div class="row">
+                        <% item.forEach(element => { %>
+
+                         
+                 
+
+                            <div class="col-2">
+                                <% element.product_image.forEach((image, index) => { %>
+                                    <div class="col-12 my-1 thumbnail-image-container" data-index="<%= index + 1 %>">
+                                        <img class="thumbnail-image" src="/<%= image %>"
+                                            style="width: 100px; height: 100px;" alt="">
+                                    </div>
+                                <% }) %>
+                            </div>
+                            <div class="col-10">
+                                <div class="col-12 d-flex justify-content-center image " id="image">
+                                    <img class="selected-image img-fluid" src="/<%= element.product_image[0] %>"
+                                        style="width: auto; height: 450px; -o-object-fit: cover; object-fit: cover; transform: scale(var(--zoom, 1)); transform-origin: var(--x) var(--y); transition: transform 0.3s ease;" alt="">
+                                </div>
+                            </div>
+                          
+
+                    </div>
+                </div>
+
+
+                <div class="col-md-6 py-5 my-5">
+                    <!-- <table class="table table-borderless"> -->
+                    <p class="fw-bold fs-3"><%= element.product_name%></p>
+
+                    <p class="text-secondary small"><%= element.description%></p>
+
+                    <p class="text-secondary ">Model: <%= element.product_name%></p>
+
+                    <p class="text-secondary ">Brand: <%= element.brand%></p>
+
+                    <p class="text-secondary">Actual Price: <span class="fw-bold text-dark"><del>₹<%= element.price%></del></span></p>
+
+                    <p class="text-secondary">Offer Price: <span class="fw-bold text-success">₹<%= element.price%></span></p>
+
+                    <p class="text-secondary "> Stock: <%= element.stock%></p>
+
+                    <p class="text-secondary "> Status: 
+                        <% if (element.stock > 0 ) { %>
+                            <span class="text-success fw-bold">
+                                Product available
+                            </span>
+
+                        <% } else { %>
+                            <span class="text-danger fw-bold">
+                           
+                                Currently Unavailable
+                            </span>
+                        <% } %>
+                    </p> 
+
+                    <% }) %>
+                    <br><br>
+                    <div>
+                        <a href="#" class="btn btn-outline-dark me-3">Add to Cart</a>
+                        <a href="#" class="btn btn-outline-dark mx-4">Buy Now</a>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </main>
+    <%- include('footer')%>
+
+
+   
+    
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            // Select all elements with the class "thumbnail-image-container"
+            $(".thumbnail-image-container").click(function () {
+                // Get the source (URL) of the clicked thumbnail image
+                var newImageSrc = $(this).find("img").attr("src");
+
+                // Set the main image source to the clicked thumbnail image
+                $(".selected-image").attr("src", newImageSrc);
+            });
+        });
+    </script>
+
+
+<script>
+    document.querySelectorAll('.image').forEach(element =>{
+        let x,y, width, height;
+        element.onmouseenter = () =>{
+            const size = element.getBoundingClientRect();
+
+            x = size.x;
+            y = size.y;
+            width = size.width;
+            height = size.height;
+        };
+        element.onmousemove = e =>{
+            const horizontal = (e.clientX - x)/width*100;
+            const vertical = (e.clientY - y)/height*100
+
+            element.style.setProperty('--x', horizontal + '%');
+            element.style.setProperty('--y', vertical + '%');
+        }
+    })
+</script>
+
+<script>
+    function addToCart(productId) {
+        $.ajax({
+            url: "/addCart/" + productId, // Corrected URL with quotes
+            method: 'get',
+            success: function (Response) {
+                if (Response.success) {
+                    alert('Item added to cart...!!!');
+                } else {
+                    alert('Stock not available at the moment.');
+                }
+            },
+            error: function (xhr, status, error) {
+                // Handle error cases if needed
+                console.error(xhr, status, error);
+            }
+        });
+    }
+</script>
+
+
+    
+    
+            

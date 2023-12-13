@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Required meta tags -->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+  <!-- Bootstrap CSS v5.2.1 -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-iYQeCzEYFbKjA/T2uDLTpkwGzCiq6soy8tYaI1GyVh/UjpbCx/TYkiZhlZB6+fzT" crossorigin="anonymous">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+</head>
+
+<style>
+      :root {
+  --red: #ef233c;
+  --darkred: #c00424;
+  --platinum: #e5e5e5;
+  --black: #2b2d42;
+  --white: #fff;
+  --thumb: #edf2f4;
+}
+
+* {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+}
+
+  
+  .img-fluid{
+    background-size:cover;
+    width: 100%;
+  }
+
+  
+  .custom-card{
+    width:100%;
+    height:20.75rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    border-radius: 20px;
+    object-fit: cover;
+  }
+  .custom-image{
+    width: 100%;
+    height: 100%;
+    object-fit:cover;
+    object-position: center;
+  }
+  .custom-button {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    background-color: #000000; 
+    border-radius: 0 0 20px 20px; 
+    text-align: center;  
+  }
+  
+
+
+   @media (min-width: 997px) {
+    .custom-card{
+      width: 300px;
+      height: 300px;
+    }
+}
+@media (max-width: 650px) {
+  .nav-drop{
+    position: absolute;
+    top: 20px;
+    right: 100px;
+  }
+}
+
+body {
+  font: 16px / 24px "Rubik", sans-serif;
+  color: var(--black);
+  background-color: #fff;
+  margin: 50px 0;
+  overflow-x: hidden;
+}
+
+.container {
+  max-width: 1400px;
+  padding: 0 15px;
+  margin: 0 auto;
+}
+
+h2 {
+  font-size: 32px;
+  margin-bottom: 1em;
+}
+
+.cards {
+  display: flex;
+  padding: 25px 0px;
+  list-style: none;
+  overflow-x: scroll;
+  scroll-snap-type: x mandatory;
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  flex: 0 0 100%;
+  padding: 20px;
+  background: var(--white);
+  border-radius: 12px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 15%);
+  scroll-snap-align: start;
+  transition: all 0.2s;
+}
+
+.card:not(:last-child) {
+  margin-right: 10px;
+}
+
+.card:hover {
+  color: var(--white);
+  background: var(--red);
+}
+
+.card .card-title {
+  font-size: 20px;
+}
+
+.card .card-content {
+  margin: 20px 0;
+  max-width: 85%;
+}
+
+.card .card-link-wrapper {
+  margin-top: auto;
+}
+
+.card .card-link {
+  display: inline-block;
+  text-decoration: none;
+  color: white;
+  background: var(--red);
+  padding: 6px 12px;
+  border-radius: 8px;
+  transition: background 0.2s;
+}
+
+.card:hover .card-link {
+  background: var(--darkred);
+}
+
+.cards::-webkit-scrollbar {
+  height: 12px;
+}
+
+.cards::-webkit-scrollbar-thumb,
+.cards::-webkit-scrollbar-track {
+  border-radius: 92px;
+}
+
+.cards::-webkit-scrollbar-thumb {
+  background: var(--darkred);
+}
+
+.cards::-webkit-scrollbar-track {
+  background: var(--thumb);
+}
+
+@media (min-width: 500px) {
+  .card {
+    flex-basis: calc(50% - 10px);
+  }
+
+  .card:not(:last-child) {
+    margin-right: 20px;
+  }
+}
+
+@media (min-width: 700px) {
+  .card {
+    flex-basis: calc(calc(100% / 3) - 20px);
+  }
+
+  .card:not(:last-child) {
+    margin-right: 30px;
+  }
+}
+
+@media (min-width: 1100px) {
+  .card {
+    flex-basis: calc(25% - 30px);
+  }
+
+  .card:not(:last-child) {
+    margin-right: 40px;
+  }
+}
+/* You can keep the existing CSS, but add the following styles for the product cards */
+.product-card {
+  display: flex;
+  flex-direction: column;
+  background: var(--white);
+  border-radius: 12px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 15%);
+  transition: all 0.2s;
+}
+
+.product-card .card-image {
+  overflow: hidden;
+  border-radius: 12px 12px 0 0;
+}
+
+.product-card .card-img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+.product-card:hover {
+  color: var(--white);
+  background: var(--red);
+}
+
+.product-card .card-title {
+  font-size: 20px;
+  padding: 20px;
+}
+
+.product-card .card-content {
+  padding: 0 20px;
+}
+
+.product-card .card-link-wrapper {
+  margin-top: auto;
+}
+
+.product-card .card-link {
+  display: inline-block;
+  text-decoration: none;
+  color: white;
+  background: var(--red);
+  padding: 6px 12px;
+  border-radius: 8px;
+  transition: background 0.2s;
+}
+
+.product-card:hover .card-link {
+  background: var(--darkred);
+}
+.btnscroll {
+  display: flex;
+  padding: 25px 0px;
+  list-style: none;
+  overflow-x: hidden; /* Hide the horizontal scroll bar */
+  scroll-snap-type: x mandatory;
+}
+
+.image:hover{
+  --zoom: 1.5;
+
+}
+
+
+
+    </style>
+
+
+    <title>Document</title>
+
+ 
+
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/magnify/2.5.0/js/jquery.magnify.min.js"></script>
+
+
+</head>
+
+<body >
+  <header>
+    
+        <div class="fixed-top  p-3 text-center bg-white border-bottom  ">
+            <div class="container">
+              <div class="row">
+                <div class="col-md-4 d-flex justify-content-center justify-content-md-start mb-3 mb-md-0">
+                  
+                    <a href="#" class="ms-md-2" style="font-family: 'Inter', sans-serif; font-weight:bold; font-size: 24px; text-decoration: none; color: #000000;">Exclusive</a>
+                  
+                </div>
+          
+                <div class="col-md-4">
+                  <form class="d-flex input-group w-auto my-auto mb-3 mb-md-0">
+                    <input autocomplete="off" type="search" class="form-control rounded" placeholder="Search" />
+                    <span class="input-group-text border-0 d-none d-lg-flex"><i class="fas fa-search"></i></span>
+                  </form>
+                </div>
+          
+                <div class="col-md-4 d-flex justify-content-center justify-content-md-end align-items-center">
+                  <div class="d-flex">
+                   
+
+                  
+
+                      <span class="nav-item me-2 me-lg-0 d-none d-md-inline-block">
+                        <a class="nav-link" href="/sign-up">Sign Up</a>
+                      </span>
+          
+                    
+                      
+                    
+                    <!-- User Dropdown -->
+                 
+                  </div>
+                </div>
+                <nav class=" navbar navbar-expand-lg navbar-light bg-white ">
+                <div class="container justify-content-md-between ">
+                  <ul class="navbar-nav flex-row">
+                    <li class="nav-item me-2 me-lg-0">
+                      <a href="#" class="nav-link" role="button" data-bs-toggle="offcanvas" data-bs-target="#sidenav-1" aria-controls="sidenav-1" aria-haspopup="true">
+                        <i class="fas fa-bars me-1"></i>
+                        <span></span>
+                      </a>
+                    </li>
+                    <li class="nav-item me-2 me-lg-0 d-none d-md-inline-block">
+                      <a class="nav-link" href="#">Home</a>
+                    </li>
+                    <li class="nav-item me-2 me-lg-0 d-none d-md-inline-block">
+                      <a class="nav-link" href="#">Contact</a>
+                    </li>
+                    <li class="nav-item me-2 me-lg-0 d-none d-md-inline-block">
+                      <a class="nav-link" href="#">About</a>
+                    </li>
+                    
+                  </ul>
+        
+                </div>
+              </nav>
+
+
+              </div>
+            </div>
+          </div>
+
+
+
+
+          
+            
+          
+          
+      <!-- Navbar -->
+    <nav class=" navbar navbar-expand-lg navbar-light bg-white ">
+        <!-- Container wrapper -->
+        <div class="container justify-content-center justify-content-md-between">
+          <!-- Left links -->
+                  </div>
+      </nav>
+    
+  
+    
+    
+      
+      
+</header>
+
+                  
