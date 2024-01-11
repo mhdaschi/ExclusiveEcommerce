@@ -1,165 +1,205 @@
 <%-include('header-admin')%>
-  <main>
-    <div class="shadow container p-3 mt-5 mb-5 bg-white rounded d-flex flex-wrap justify-content-around">
-
-        <div class="col-lg-4 col-md-6 col-sm-12">
-            <div class="container d-flex">
-                <div>
-                    <i class="fa-solid fa-users-line fa-2xl" style="color: #249c6c;"></i>
-                </div>
-                <div>
-                    <p class="font-weight-normal font-size-14 text-muted">Total Customers</p>
-                    <span class="font-weight-bold font-size-32 text-dark">number</span>
-                    <div class="d-flex">
-                        <i class="fa-solid fa-arrow-up" style="color: #00AC4F;"></i>
-                        <p class="font-weight-bold font-size-12 text-success">16%</p>
-                        <p class="font-weight-bold font-size-12"> this month</p>
-                    </div>
-                </div>
-            </div>
+<main>
+  <div class="shadow container p-3 mt-5 mb-5 bg-white rounded d-flex flex-wrap justify-content-around">
+    <!-- Cards Section -->
+    <div class="col-lg-4 col-md-6 col-sm-12">
+      <div class="container d-flex">
+        <div>
+          <i class="fa-solid fa-users-line fa-2xl" style="color: #249c6c;"></i>
         </div>
-    
-        <div class="col-lg-4 col-md-6 col-sm-12">
-            <div class="container d-flex">
-                <div>
-                    <i class="fa-solid fa-user-check fa-2xl" style="color: #249c6c;"></i>               
-                </div>
-                <div>
-                    <p class="font-weight-normal font-size-14 text-muted">Members</p>
-                    <span class="font-weight-bold font-size-32 text-dark">number</span>
-                    <div class="d-flex">
-                        <i class="fa-solid fa-arrow-up " style="color: #00AC4F;"></i>
-                        <p class="font-weight-bold font-size-12 text-success">16%</p>
-                        <p class="font-weight-bold font-size-12"> this month</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    
-        <div class="col-lg-4 col-md-12">
-            <div class="container d-flex">
-                <div>
-                    <i class="fa-solid fa-chart-line fa-2xl" style="color: #249c6c;"></i>                
-                </div>
-                <div>
-                    <p class="font-weight-normal font-size-14 text-muted">Active Now</p>
-                    <span class="font-weight-bold font-size-32 text-dark">number</span>
-                </div>
-            </div>
-        </div>
-    </div>
-
-
-        <div class="container-fluid p-0 mt-3">
-          <div class="row mx-5">
-            <div class="col-sm-12 col-md-12 col-lg-12 overflow-auto">
-              
-      
-              <!-- unmatched search start -->
-              <% if(useData.length > 0){ %>
-              <% } else { %>
-              <div>
-                <h6 class="text-warning fw-bolder" colspan="5"><em>Sorry! no match found</em></h6>
-              </div>
-              <% } %>
-              <!-- unmatched search end -->
-      
-              <div class="option d-flex align-items-center justify-content-around mt-3 mb-2 ">
-                <form action="/admin/search" method="post" name="name">
-                  <div class="input-group">
-                    <div class="form-outline d-flex p-3">
-                      <input type="search" class="form-control " name="search" placeholder="Search">
-                      <button id="search-button" type="submit" class="btn btn-danger mx-2">search</button>
-                    </div>
-                  </div>
-                </form>
-              </div>
-
-              <p class="d-flex justify-content-center" id="msg" style="
-              font-family: Poppins;
-              font-size: 16px;
-              font-weight: 400;
-              line-height: 24px;
-              letter-spacing: 0em;
-              
-              color: #44db74;
-              "><%= msg %></p>
-      
-              <table class="table table-white table-striped border-0">
-                <thead>
-                  <tr>
-                    <th class="table-white text-dark text-center" scope="col">No.</th>
-                    <th class="table-white text-dark text-center" scope="col">Name</th>
-                    <th class="table-white text-dark text-center" scope="col">Email</th>
-                    <th class="table-white text-dark text-center" scope="col">status</th>
-                    <th class="table-white text-dark text-center" scope="col">Action</th>
-                    <th class="table-white text-dark text-center" scope="col">Delete</th>
-
-                  </tr>
-                </thead>
-                <tbody>
-                  <% useData.forEach((data) => { %>
-                  <tr>
-                    <td class="text-black table-white text-center"><%=++i%></td>
-                    <td class="text-black table-white text-center"><%=data.username%></td>
-                    <td class="text-black table-white text-center"><%=data.email%></td>
-                            <% let value; %>
-                              <td class="<%= data.status ? 'text-success fw-bold' : 'text-danger fw-bold' %> table-white text-center">
-                                <% if (data.status) { %>
-                                <% value = 'active'; %>
-                                <% } else { %>
-                                <% value = 'inactive'; %>
-                                <% } %>
-                             <%= value %>
-                              </td>
-                              <td class="text-center">
-                                <% if (data.status) { %>
-                                  <form action="/admin/block/<%- data._id %>" method="POST">
-                                    <button type="submit" class="text-white font-size btn btn-danger px-3 py-0"
-                                      onclick="return confirm('Are you sure you want to disable <%= data.name %>?')">Disable</button>
-                                  </form>
-                                <% } else { %>
-                                  <form action="/admin/unblock/<%- data._id %>" method="post">
-                                    <button type="submit" class="text-white font-size btn btn-success px-3 py-0"
-                                      onclick="return confirm('Are you sure you want to enable <%= data.name %>?')">Enable</button>
-                                  </form>
-                                <% } %>
-                              </td>
-                
-      </td>
-                    
-                    <td class="text-black table-white text-center">
-                      <form action="/admin/delete/<%-data._id%>" method="post">
-                        <button type="submit" class="text-white font-size btn btn-danger px-3 py-0"
-                      onclick="return confirm('Are you sure you want to Delete?')">Delete
-                    </button>
-                              
-                         
-                      
-                      </form>
-                    </td>
-                  </tr>
-                  <% }) %>
-                </tbody>
-              </table>
-            </div>
+        <div>
+          <p class="font-weight-normal font-size-14 text-muted">Total Customers</p>
+          <span class="font-weight-bold font-size-32 text-dark">number</span>
+          <div class="d-flex">
+            <i class="fa-solid fa-arrow-up" style="color: #00AC4F;"></i>
+            <p class="font-weight-bold font-size-12 text-success">16%</p>
+            <p class="font-weight-bold font-size-12"> this month</p>
           </div>
         </div>
-      
-        
+      </div>
+    </div>
 
-      
-    
-    
-    
+    <div class="col-lg-4 col-md-6 col-sm-12">
+      <div class="container d-flex">
+        <div>
+          <i class="fa-solid fa-user-check fa-2xl" style="color: #249c6c;"></i>
+        </div>
+        <div>
+          <p class="font-weight-normal font-size-14 text-muted">Members</p>
+          <span class="font-weight-bold font-size-32 text-dark">number</span>
+          <div class="d-flex">
+            <i class="fa-solid fa-arrow-up " style="color: #00AC4F;"></i>
+            <p class="font-weight-bold font-size-12 text-success">16%</p>
+            <p class="font-weight-bold font-size-12"> this month</p>
+          </div>
+        </div>
+      </div>
+    </div>
 
+    <div class="col-lg-4 col-md-12">
+      <div class="container d-flex">
+        <div>
+          <i class="fa-solid fa-chart-line fa-2xl" style="color: #249c6c;"></i>
+        </div>
+        <div>
+          <p class="font-weight-normal font-size-14 text-muted">Active Now</p>
+          <span class="font-weight-bold font-size-32 text-dark">number</span>
+        </div>
+      </div>
+    </div>
+  </div>
 
-  </main>
-  <%- include('admin_footer')%>
+  <div class="container-fluid p-0 mt-3">
+    <div class="row mx-5">
+      <div class="col-sm-12 col-md-12 col-lg-12 overflow-auto">
+        <!-- unmatched search start -->
+        <% if(useData.length > 0){ %>
+        <% } else { %>
+        <div>
+          <h6 class="text-warning fw-bolder" colspan="5"><em>Sorry! no match found</em></h6>
+        </div>
+        <% } %>
+        <!-- unmatched search end -->
 
-  <script>
-    setTimeout(() => {
-      var errmsg = document.querySelector('#msg')
-      errmsg.innerHTML=""
-    },4000);
-  </script>
+        <div class="option d-flex align-items-center justify-content-around mt-3 mb-2 ">
+          <form action="/admin/search" method="post" name="name">
+            <div class="input-group">
+              <div class="form-outline d-flex p-3">
+                <input type="search" class="form-control " name="search" placeholder="Search">
+                <button id="search-button" type="submit" class="btn btn-danger mx-2">search</button>
+              </div>
+            </div>
+          </form>
+        </div>
+
+        <p class="d-flex justify-content-center" id="msg" style="
+        font-family: Poppins;
+        font-size: 16px;
+        font-weight: 400;
+        line-height: 24px;
+        letter-spacing: 0em;
+        color: #44db74;
+        "><%= msg %></p>
+
+        <table class="table table-white table-striped border-0">
+          <thead>
+            <tr>
+              <th class="table-white text-dark text-center" scope="col">No.</th>
+              <th class="table-white text-dark text-center" scope="col">Name</th>
+              <th class="table-white text-dark text-center" scope="col">Email</th>
+              <th class="table-white text-dark text-center" scope="col">status</th>
+              <th class="table-white text-dark text-center" scope="col">Action</th>
+              <th class="table-white text-dark text-center" scope="col">Delete</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% useData.forEach((data) => { %>
+            <tr>
+              <td class="text-black table-white text-center"><%=++i%></td>
+              <td class="text-black table-white text-center"><%=data.username%></td>
+              <td class="text-black table-white text-center"><%=data.email%></td>
+              <% let value; %>
+              <td class="<%= data.status ? 'text-success fw-bold' : 'text-danger fw-bold' %> table-white text-center">
+                <% if (data.status) { %>
+                <% value = 'active'; %>
+                <% } else { %>
+                <% value = 'inactive'; %>
+                <% } %>
+                <%= value %>
+              </td>
+
+              <td class="text-center">
+                <% if (data.status) { %>
+                <form action="/admin/block/<%- data._id %>" method="POST">
+                  <button type="button" class="text-white font-size btn btn-danger px-3 py-0"
+                    onclick="confirmDisable('<%= data.name %>', '/admin/block/<%- data._id %>')">Disable</button>
+                </form>
+                <% } else { %>
+                <form action="/admin/unblock/<%- data._id %>" method="POST">
+                  <button type="button" class="text-white font-size btn btn-success px-3 py-0"
+                    onclick="confirmEnable('<%= data.name %>', '/admin/unblock/<%- data._id %>')">Enable</button>
+                </form>
+                <% } %>
+              </td>
+
+              <td class="text-center">
+                <form id="deleteForm" action="/admin/delete/<%-data._id%>" method="POST">
+                  <button type="button" class="text-white font-size btn btn-danger px-3 py-0"
+                    onclick="confirmDelete('<%= data.name %>','deleteForm')">Delete</button>
+                </form>
+              </td>
+            </tr>
+            <% }) %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</main>
+<%- include('admin_footer')%>
+
+<!-- SweetAlert CSS -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.20/dist/sweetalert2.min.css">
+
+<!-- SweetAlert JS -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.20/dist/sweetalert2.all.min.js"></script>
+
+<script>
+  setTimeout(() => {
+    var errmsg = document.querySelector('#msg')
+    errmsg.innerHTML=""
+  },4000);
+</script>
+
+<script>
+  function confirmDisable(category, action) {
+    Swal.fire({
+      title: 'Are you sure?',
+      text: `You want to disable ${category}?`,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#3085d6',
+      confirmButtonText: 'Yes, disable it!'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        // Get the form element and submit it
+        document.querySelector('form[action="' + action + '"]').submit();
+      }
+    });
+  }
+
+  function confirmEnable(category, action) {
+    Swal.fire({
+      title: 'Are you sure?',
+      text: `You want to enable ${category}?`,
+      icon: 'info',
+      showCancelButton: true,
+      confirmButtonColor: '#44db74',
+      cancelButtonColor: '#3085d6',
+      confirmButtonText: 'Yes, enable it!'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        // Get the form element and submit it
+        document.querySelector('form[action="' + action + '"]').submit();
+      }
+    });
+  }
+
+  function confirmDelete(category, formId) {
+    Swal.fire({
+      title: 'Are you sure?',
+      text: `You want to Delete ${category}?`,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#44db74',
+      cancelButtonColor: '#3085d6',
+      confirmButtonText: 'Yes, Delete it!'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        // Trigger form submission manually
+        document.getElementById(formId).submit();
+      }
+    });
+  }
+</script>

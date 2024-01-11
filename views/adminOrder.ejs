@@ -1,0 +1,105 @@
+<%- include('header-admin')%>
+
+<main>
+
+    <!-- Search form -->
+    <div class="option d-flex align-items-center justify-content-around mt-3">
+      <form action="/admin/product/search" method="post" name="name">
+        <div class="input-group">
+          <input type="search" class="form-control" name="search" placeholder="Search">
+          <button id="search-button" type="submit" class="btn btn-danger mx-2">Search</button>
+        </div>
+      </form>
+    </div>
+  <% if (orderData.length > 0) { %>
+    <!-- Matched search results -->
+    <div class="container-fluid mt-3">
+      <div class="row">
+        <div class="col-12 overflow-auto">
+          <table class="table table-bordered table-hover">
+            <thead class="table-dark">
+              <tr>
+                <th class="text-center">No</th>
+                <th class="text-center">Customer Name</th>
+                <th class="text-center">Order Date</th>
+                <th class="text-center">Order Status</th>
+                <th class="text-center">Payment Method</th>
+                <th class="text-center">Product</th>
+                <th class="text-center">Total Order Value</th>
+                <th class="text-center">Address</th>
+                <th class="text-center">Change Order Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% orderData.forEach((data, i) => { %>
+                <tr>
+                  <td class="text-center"><%= i + 1 %></td>
+                  <td class="text-center"><%= data.nameuser %></td>
+                  <td class="text-center"><%= data.orderAdded %></td>
+                  <td class="text-center">
+                    <span class="badge <%= data.orderStatus === 'Pending' ? 'bg-warning' : (data.orderStatus === 'Shipped' ? 'bg-info' : 'bg-success') %>">
+                      <%= data.orderStatus %>
+                    </span>
+                  </td>
+                  <td class="text-center"><%= data.PaymenMethod %></td>
+                  <td class="text-center">
+                    <% data.orderedproducts.forEach((element, i) => { %>
+                      <p class="mb-1"><strong>Product <%= i + 1 %>:</strong> <%= element.orderedItem %></p>
+                      <p class="mb-1"><strong>Colour:</strong> <%= element.colour %></p>
+                      <p class="mb-1"><strong>Quantity:</strong> <%= element.quantity %></p>
+                    <% }) %>
+                  </td>
+                  <td class="text-center"><%= data.orderTotalPrice %>.Rs</td>
+                  <td class="text-center">
+                    <p class="mb-1"><strong>State:</strong> <%= data.state %></p>
+                    <p class="mb-1"><strong>City:</strong> <%= data.city %></p>
+                    <p class="mb-1"><strong>Pincode:</strong> <%= data.pincode %></p>
+                    <p class="mb-1"><strong>Address:</strong> <%= data.orderaddress %></p>
+                  </td>
+                  <td class="text-center">
+                    <form action="/admin/order/status/<%- data._id %>" method="POST">
+                      <select class="form-select" name="orderStatus">
+                        <option value="Pending" <%= data.orderStatus === 'Pending' ? 'selected' : '' %>>Pending</option>
+                        <option value="Processing" <%= data.orderStatus === 'Processing' ? 'selected' : '' %>>Processing</option>
+
+                        <option value="Shipped" <%= data.orderStatus === 'Shipped' ? 'selected' : '' %>>Shipped</option>Processing
+                        <option value="Delivered" <%= data.orderStatus === 'Delivered' ? 'selected' : '' %>>Delivered</option>
+                      </select>
+                      <button type="submit" class="btn btn-danger mt-2">Change</button>
+                    </form>
+                  </td>
+                </tr>
+              <% }) %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  <% } else { %>
+    <!-- Unmatched search results -->
+    <div class="text-center">
+      <h6 class="text-warning fw-bolder"><em>Sorry! No matches found</em></h6>
+    </div>
+  <% } %>
+
+
+
+  <!-- Add new product button -->
+  <!-- <div class="d-flex justify-content-end mb-2 mx-5">
+    <form action="/admin/add/product" method="post">
+      <button type="submit" class="btn btn-danger btn-block gradient-custom-4 text-white">ADD NEW PRODUCT</button>
+    </form>
+  </div> -->
+
+  <!-- Display messages -->
+  <p class="text-center" id="msg" style="
+    font-family: Poppins;
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 24px;
+    letter-spacing: 0em;
+    color: #44db74;
+    "><%=  %></p>
+</main>
+
+<%- include('admin_footer')%>

@@ -112,109 +112,104 @@
         </div>
     </header>
   
+    <div class="container p-5 mt-5" style="display: flex; justify-content: center; align-items: center; height: 80vh;">
+      <div class="otp-container ">
+          <div class="" style="font-family: 'Inter', sans-serif; font-weight:bold; font-size: 24px; color: #000000;">Verify</div>
+          <form id="otp-form" action="/user/otp" method="POST">
+              <p for="otp" style="font-family: Poppins;">Your code was sent to you via email</p>
+              <input type="text" id="otp" name="otp" maxlength="4" oninput="validateInput()" required>
 
-    <!-- ... Previous HTML Code ... -->
+              <a id="resendButton" href="/user/resendotp" onclick="resetTimer(event)" class="mt-2 text-white btn btn-danger" style="font-family: Poppins; font-size: 16px; text-decoration: none; font-weight: 400; line-height: 24px; letter-spacing: 0em; text-align: left;">
+                  Resend Otp
+              </a>
 
-    <div class="container p-5 mt-5" style="display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 80vh;">
-    <div class="otp-container ">
-      <div class="" style="font-family: 'Inter', sans-serif; font-weight:bold; font-size: 24px; color: #000000;">Verify</div>
-      <form id="otp-form" action="/user/otp"  method="POST">
-        <p for="otp" style="font-family: Poppins;">Your code was sent to you via email</p>
-        <input type="text" id="otp" name="otp" maxlength="4" oninput="validateInput()" required>
-    
-    
-        
-        <a href="/user/resendotp" onclick="resetTimer()" class="mt-2 text-white btn btn-danger" style="font-family: Poppins; font-size: 16px;   text-decoration: none; font-weight: 400; line-height: 24px; letter-spacing: 0em; text-align: left;  ">
-          Resend Otp</a>
-    
-      <!-- Add this div for error message -->
-      <div id="error-message"></div>
-      
-      <div class="container ">
-        <div class="row">
-          <div class="col-md-12">
-            <div class="text-center">
-              <div class="otp-countdown "  id="timer"></div>
+              <!-- Add this div for error message -->
+              <div id="error-message"></div>
+
+              <div class="container ">
+                  <div class="row">
+                      <div class="col-md-12">
+                          <div class="text-center">
+                              <div class="otp-countdown " id="timer"></div>
+                          </div>
+                      </div>
+                  </div>
               </div>
-          </div>
-        </div>
+
+              <button type="submit" id="verifyButton" style="margin-top:75px; margin-bottom: 10px" disabled>Verify OTP</button>
+
+              <p style="font-size: 10px; margin-bottom: 10px;">By clicking Verify OTP, I agree to the <a href="#" style="font-family: Poppins; text-decoration: none; font-weight: 400; letter-spacing: 0em; text-align: left; color: #db4444;">Terms and Conditions</a>, <br> <a href="#" style="font-family: Poppins; font-weight: 400; line-height: 24px; letter-spacing: 0em; text-align: left; text-decoration: none; color: #db4444;">Privacy Policy</a>, and <a href="#" style="font-family: Poppins; text-decoration: none; font-weight: 400; line-height: 24px; letter-spacing: 0em; text-align: left; color: #db4444;">Service Management</a>.</p>
+          </form>
       </div>
-      
-      <button type="submit" id="verifyButton" style="margin-top:75px; margin-bottom: 10px" disabled>Verify OTP</button>
-
-
-      <p style="  font-size: 10px;
-      margin-bottom: 10px;
-     ">By clicking Verify OTP, I agree to the <a href="#"style="font-family: Poppins;  text-decoration: none; font-weight: 400;  letter-spacing: 0em; text-align: left; color: #db4444;">Terms and Conditions</a>, <br> <a href="#" style="font-family: Poppins;  font-weight: 400; line-height: 24px; letter-spacing: 0em; text-align: left;  text-decoration: none; color: #db4444;">Privacy Policy</a>, and <a href="#" style="font-family: Poppins;  text-decoration: none; font-weight: 400; line-height: 24px; letter-spacing: 0em; text-align: left; color: #db4444;">Service Management</a>.</p>
-    
-  
-    </form>
   </div>
 
-</div>
-<%- include('footer')%>
+  <script>
+      var timer;
+      var timeLeft = 30; 
+      var resendButtonDisabled = false;
 
+      document.addEventListener("DOMContentLoaded", function () {
+          startTimer();
+          disableResendButton(); 
+      });
 
+      function startTimer() {
+          timer = setInterval(function () {
+              var minutes = Math.floor(timeLeft / 60);
+              var seconds = timeLeft % 60;
 
+              document.getElementById("timer").textContent = "Expired in " + minutes + "m " + seconds + "s";
 
-
-<script>
-  var timer;
-  var timeLeft = 300; // 5 minutes in seconds
-
-  // Call this function when the page loads to start the timer
-  document.addEventListener("DOMContentLoaded", function () {
-    startTimer();
-  });
-
-  function startTimer() {
-    timer = setInterval(function () {
-      var minutes = Math.floor(timeLeft / 60);
-      var seconds = timeLeft % 60;
-
-      document.getElementById("timer").textContent = "Expired in " + minutes + "m " + seconds + "s";
-
-      if (timeLeft <= 0) {
-        clearInterval(timer);
-        document.getElementById("timer").textContent = ""; // Clear the timer message
+              if (timeLeft <= 0) {
+                  clearInterval(timer);
+                  document.getElementById("timer").textContent = ""; 
+                  enableResendButton(); 
+              } else {
+                  timeLeft--;
+              }
+          }, 1000);
       }
 
-      timeLeft--;
-    }, 1000);
-  }
+      function resetTimer(event) {
+          if (!resendButtonDisabled) {
+              disableResendButton(); 
+              clearInterval(timer);
+              timeLeft = 30; 
+              startTimer(); 
+              document.getElementById("error-message").textContent = ''; 
+          } else {
+              document.getElementById("error-message").textContent = "Please wait for 30 seconds before resending.";
+              if (event) {
+                  event.preventDefault();
+              }
+          }
+      }
 
-  function resetTimer() {
-    clearInterval(timer);
-    timeLeft = 300; // Reset the timer to 5 minutes
-    startTimer(); // Start the timer again
-  }
+      function validateInput() {
+          var otpInput = document.getElementById("otp");
+          var verifyButton = document.getElementById("verifyButton");
+          var errorMessage = document.getElementById("error-message");
 
-  function validateInput() {
-    var otpInput = document.getElementById("otp");
-    var verifyButton = document.getElementById("verifyButton");
-    var errorMessage = document.getElementById("error-message");
+          otpInput.value = otpInput.value.replace(/\D/g, '');
 
-    // Remove non-numeric characters
-    otpInput.value = otpInput.value.replace(/\D/g, '');
+          if (otpInput.value.length === 4) {
+              verifyButton.disabled = false;
+              errorMessage.textContent = ''; 
+          } else {
+              verifyButton.disabled = true;
+              errorMessage.textContent = 'Please enter a valid 4-digit OTP';
+          }
+      }
 
-    // Check if the input contains exactly 4 digits
-    if (otpInput.value.length === 4) {
-      verifyButton.disabled = false;
-      errorMessage.textContent = ''; // Clear error message
-    } else {
-      verifyButton.disabled = true;
-      errorMessage.textContent = 'Please enter a valid 4-digit OTP';
-    }
-  }
+      function disableResendButton() {
+          resendButtonDisabled = true;
+          document.getElementById("resendButton").disabled = true;
+      }
 
-  // Function to confirm OTP before form submission
-  function confirmOTP() {
-    var enteredOTP = document.getElementById("otp").value;
-    return confirm("Do you want to submit OTP: " + enteredOTP + "?");
-  }
-</script>
-
-
+      function enableResendButton() {
+          resendButtonDisabled = false;
+          document.getElementById("resendButton").disabled = false;
+      }
+  </script>
+</body>
+</html>

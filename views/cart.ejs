@@ -1,97 +1,162 @@
-<%- include('header')%>
-<main>
+<%- include('header') %>
 
-    <div class="container p-5" >
-       
+<main>
+    <div class="container p-5">
         <ul class="responsive-table" style="list-style: none; padding: 0; margin: 0;">
             <li class="table-header" style="background-color: #ffffff; box-shadow: 0px 0px 9px 0px rgba(0, 0, 0, 0.1); border-radius: 3px; padding: 25px 30px; display: flex; justify-content: space-between; margin-bottom: 25px;">
                 <div class="col col-1" style="flex-basis: 10%;">Product</div>
-                <div class="col col-2" style="flex-basis: 40%;">Price</div>
+                <div class="col col-2" style="flex-basis: 30%;">Product Name</div>
                 <div class="col col-3" style="flex-basis: 25%;">Quantity</div>
-                <div class="col col-4" style="flex-basis: 25%;">Subtotal</div>
+                <div class="col col-4" style="flex-basis: 33%;">Price</div>
+                <div class="col col-5" style="flex-basis: 2%;"></div>
             </li>
-            <li class="table-row" style="background-color: #ffffff; box-shadow: 0px 0px 9px 0px rgba(0, 0, 0, 0.1); border-radius: 3px; padding: 25px 30px; display: flex; justify-content: space-between; margin-bottom: 25px;">
-              <div class="col col-1" data-label="Job Id" style="flex-basis: 10%;">42442</div>
-              <div class="col col-2" data-label="Customer Name" style="flex-basis: 40%;">Jennifer Smith</div>
-              <div class="col col-2" style="flex-basis: 25%;">
-                <input type="number" step="1" max="10" value="1" name="quantity" class="quantity-field border-0 text-center w-25">
-             </div>
-              <div class="col col-4" data-label="Payment Status" style="flex-basis: 25%;">Pending</div>
-          </li>
-            <li class="table-row" style="background-color: #ffffff; box-shadow: 0px 0px 9px 0px rgba(0, 0, 0, 0.1); border-radius: 3px; padding: 25px 30px; display: flex; justify-content: space-between; margin-bottom: 25px;">
-                <div class="col col-1" data-label="Job Id" style="flex-basis: 10%;">42442</div>
-                <div class="col col-2" data-label="Customer Name" style="flex-basis: 40%;">Jennifer Smith</div>
-                <div class="col col-2" style="flex-basis: 25%;">
-                  <input type="number" step="1" max="10" value="1" name="quantity" class="quantity-field border-0 text-center w-25">
-               </div>
-                <div class="col col-4" data-label="Payment Status" style="flex-basis: 25%;">Pending</div>
-            </li>
-          
-        </ul>
-        <div class=" d-flex justify-content-between">
-          <div class="align-self-center">
-              <button class="btn  mt-3 btn-block border-black">Return To shop</button>
-          </div>
-          <div class="align-self-center">
-              <button class="btn  mt-3 btn-block border-black">Update Card</button>
-          </div>
-        </div>
-
-        
-        <div class="container mt-5 box-shadow">
-          <div class="row">
-            <div class="col-lg-7 col-md-7 col-sm-12 d-flex flex-column flex-md-row ">
-              <div class="me-md-2 mb-2">
-                  <input type="string" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Coupon Code ">
-              </div>
-              <div class="mb-2">
-                  <button type="submit" class="btn btn-danger btn-block gradient-custom-4 text-white">Apply Coupon</button>
-              </div>
-            </div>
-
-            <div class="col-lg-5 col-md-5 col-sm-12 border p-3" >
-              <h5>Cart Total</h5>
-              <div class="d-flex justify-content-between border-bottom">
-                <div>
-                  <p>Sub total:</p>
-                </div>
-                <div>
-                  <p>$</p>
-                </div>
-              </div>
-              <div class="d-flex justify-content-between border-bottom">
-                <div>
-                  <p>Shipping:</p>
-                </div>
-                <div>
-                  <p>$</p>
-                </div>
-              </div>
-
-              <div class="d-flex justify-content-between">
-                <div>
-                  <p>Total:</p>
-                </div>
-                <div>
-                  <p>$</p>
-                </div>
-              </div>
-
-
-              <div class="d-flex justify-content-center mx-5">
-                <form action="/admin/add/product" method="post">
-                  <button type="submit" class="btn btn-danger mt-3 btn-block gradient-custom-4 text-white">Process to Checkout</button>
-                </form>
-              </div>
-              
-            </div>
-
+    
             
-          </div>
+                <% cartItems.forEach((data, i) => { %>
+                    <% if (data.productDetails) { %>
+                        <li class="table-row" style="background-color: #ffffff; box-shadow: 0px 0px 9px 0px rgba(0, 0, 0, 0.1); border-radius: 3px; padding: 25px 30px; display: flex; justify-content: space-between; margin-bottom: 25px;">
+                            <div class="col col-1" data-label="Job Id" style="flex-basis: 10%;">
+                                <a href="/user/product/details/<%- data.productDetails._id %>">
+                                    <img src="/<%- data.productDetails.product_image[0] %>" class="border rounded me-3" height="100px" width="100px" />
+                                </a>
+                            </div>
+                            <div class="col col-2" data-label="Customer Name" style="flex-basis: 30%;">
+                                <a href="/user/product/details/<%- data.productDetails._id %>" class="text-decoration-none fw-bold align-self-center">
+                                    <%= data.productDetails.product_name %> <br>
+                                    <br>
+                                    <i class="text-danger"><%= data.productDetails.stock %> Item left </i>
+                                </a> 
+                            </div>
+
+                            <div class="col col-3" style="flex-basis: 25%;">
+                                <input type="number" step="1" max="<%= data.productDetails.stock %>" value="<%= data.quantity %>" name="quantity" class="quantity-field border-0 text-center w-25" data-stock="<%= data.productDetails.stock %>" data-initial-quantity="<%= data.quantity %>">
+                            </div>
+                            
+                            <div class="col col-4" data-label="Price" style="flex-basis: 25%;">
+                                <p class="text-muted">Price:<strong><%= data.productDetails.totalPrice %></strong></p>
+                            </div>
+                            <div class="col col-5" style="flex-basis: 10%">
+                                <form id="deleteFormCategories" action="/user/cartItems/remove/<%- data.productDetails._id %>" method="POST">
+                                    <button type="submit" class="text-white font-size btn btn-danger">Remove</button>
+                                </form>
+                            </div>
+                        </li>
+                     
+                    <% } %>
+                <% }) %>
+            </ul>
+            
         </div>
 
-    </div>
-</main>
+      
+
+        <div class="d-flex justify-content-between">
+            <div class="align-self-center">
+                <button class="btn mt-3 btn-block border-black">Return To shop</button>
+            </div>
+            <div class="align-self-center">
+                <button class="btn mt-3 btn-block border-black">Update Card</button>
+            </div>
+        </div>
+
+        <div class="container mt-5 box-shadow p-4">
+            <div class="row">
+                <div class="col-lg-7 col-md-7 col-sm-12 d-flex flex-column flex-md-row ">
+                    <div class="me-md-2 mb-2">
+                        <input type="string" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Coupon Code ">
+                    </div>
+                    <div class="mb-2">
+                        <button type="submit" class="btn btn-danger btn-block gradient-custom-4 text-white">Apply Coupon</button>
+                    </div>
+                </div>
+
+                <input type="hidden" name="totalAmount" id="totalAmount" value="0.00">
+
+                <div class="col-lg-5 col-md-5 col-sm-12 border p-3 shadow">
+                    <h5>Cart Total</h5>
+                    <% totalPrice.forEach(element => { %>
+                     
+                        <div class="d-flex justify-content-between border-bottom">
+                            <div>
+                                <p>Sub total:</p>
+                            </div>
+                            <div>
+                                <p class="total-price">₹<%= element.total %>.00</p>
+                            </div>
+                        </div>
+                        <div class="d-flex justify-content-between border-bottom">
+                            <div>
+                                <p>Shipping:</p>
+                            </div>
+                            <div>
+                                <p>Free</p>
+                            </div>
+                        </div>
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <p>Total:</p>
+                            </div>
+                            <div>
+                                <p class="total-price" id="displayedTotalPrice">₹<%= element.total %>.00</p>
+                            </div>
+                        </div>
 
 
-<%- include('footer')%>
+                        <% }) %>
+                        <div class="d-flex justify-content-center mx-5">
+                            <!-- Update your HTML form -->
+<form action="/user/checkout" method="get" id="checkoutForm">
+    <!-- Hidden input field to store the original total amount -->
+    <input type="hidden" name="totalAmount" id="totalAmount" value="0.00">
+    
+    <!-- Button triggers the form submission -->
+    <button type="submit" class="btn btn-danger mt-3 btn-block gradient-custom-4 text-white">Process to Checkout</button>
+</form>
+
+
+
+
+
+  </main>
+
+<%- include('footer') %>
+
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var quantityInputs = document.querySelectorAll('.quantity-field');
+
+        quantityInputs.forEach(function (input) {
+            input.addEventListener('change', function () {
+                checkQuantity(input.getAttribute('data-stock'), input.getAttribute('data-initial-quantity'), input.value);
+            });
+        });
+    });
+
+    function checkQuantity(stock, initialQuantity, currentQuantity) {
+        stock = parseInt(stock);
+        currentQuantity = parseInt(currentQuantity);
+
+        if (currentQuantity > stock) {
+            // Display a Tostify notification when the user increases the quantity
+            Tostify.success("Quantity increased successfully");
+        } else if (currentQuantity < stock) {
+            // Display a Tostify notification when the user decreases the quantity
+            Tostify.success("Quantity decreased successfully");
+        } else if (currentQuantity === stock) {
+            // Display a Tostify notification when stock is equal to the input field value
+            Tostify.error("Stock is currently " + stock + ". Quantity not increased.");
+        } else if (currentQuantity < 0) {
+            // Display a Tostify notification when the user enters a negative quantity
+            Tostify.error("Quantity cannot be negative");
+        } else {
+            // Handle other cases or operations as needed
+        }
+    }
+</script>
+
+
+
+
+
+

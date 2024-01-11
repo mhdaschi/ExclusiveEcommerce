@@ -107,7 +107,7 @@
                     </button>
                     
                     <a
-                    href="#"
+                    href="/user/forgot"
                     style="
                         font-family: Poppins;
                         font-size: 16px;
@@ -133,15 +133,16 @@
                   "><%= locals.err %></p>
 
 
-                  <p class="d-flex justify-content-center"  id="log" style="
-                  font-family: Poppins;
-                  font-size: 16px;
-                  font-weight: 400;
-                  line-height: 24px;
-                  letter-spacing: 0em;
                   
-                  color: #db4444;
-                  "><%= locals.logout%></p>
+<p class="d-flex justify-content-center" id="erorr" style="font-family: Poppins;
+font-size: 16px;
+font-weight: 400;
+line-height: 24px;
+letter-spacing: 0em;
+
+color: #db4444;">
+  <%= locals.erorr %>
+</p>
                   
 
                 <div class="col-md-12 mt-5">
@@ -191,6 +192,11 @@
     errmsg.innerHTML=""
   },2000);
 
+
+  setTimeout(() => {
+    var errmsg = document.querySelector('#erorr');
+    errmsg.innerHTML = "";
+}, 2000);
 
 </script>
 

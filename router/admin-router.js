@@ -7,7 +7,6 @@ const path = require('path');
 const fs = require('fs');
 const uploadDirectory = 'uploads';
 const {adminverify,existingadmin} = require('../middlewares/admincheck');
-const cacheControlMiddleware = require('../middlewares/cacheControlMiddleware')
 
 
 
@@ -45,34 +44,36 @@ const fileFilter = function (req, file, cb) {
 const upload = multer({ storage: storage, fileFilter: fileFilter });
 
 // Dashboard route
-router.get('/admin/Dashboard', existingadmin,cacheControlMiddleware, adminController.AdminDashboard);
+router.get('/admin/Dashboard', adminverify, adminController.AdminDashboard);
 
 // User-related routes
 router.get('/admin/users',adminverify, adminController.Dashusers);
-router.post('/admin/search', adminController.Serchuser);
-router.post('/admin/block/:id', adminController.Blockuser);
-router.post('/admin/unblock/:id', adminController.Activeuser);
-router.post('/admin/delete/:id', adminController.Deleteuser);
-
+router.post('/admin/search',adminverify, adminController.Serchuser);
+router.post('/admin/block/:id',adminverify, adminController.Blockuser);
+router.post('/admin/unblock/:id',adminverify, adminController.Activeuser);
+router.post('/admin/delete/:id',adminverify, adminController.Deleteuser);
 // Categories-related routes
 router.get('/admin/Categories',adminverify, adminController.AdminCategories);
-router.post('/admin/addbrand', upload.single('productImage'), adminController.Addbrand);
-router.post('/admin/category/search', adminController.Serchbrand)
-router.post('/admin/brand/delete/:id', adminController.Deletebrand);
+router.post('/admin/addbrand',adminverify, upload.single('productImage'), adminController.Addbrand);
+router.post('/admin/category/search',adminverify, adminController.Serchbrand)
+router.post('/admin/brand/delete/:id',adminverify, adminController.Deletebrand);
 router.get('/admin/brand/edit/:id',adminverify ,adminController.Editebrand);
-router.post('/admin/edit/category/:id', upload.single('image'), adminController.Posteditebrand);
-router.post('/admin/brand/disable/:id',adminController.Blockbrand)
-router.post('/admin/brand/enable/:id',adminController.Activebrand)
+router.post('/admin/edit/category/:id',adminverify, upload.single('image'), adminController.Posteditebrand);
+router.post('/admin/brand/disable/:id',adminverify,adminController.Blockbrand)
+router.post('/admin/brand/enable/:id',adminverify,adminController.Activebrand)
 // Product-related routes
 router.get('/product-home',adminverify, adminController.Getproduct);
 router.get('/admin/Products',adminverify, adminController.AdminProducts);
-router.post('/admin/product/search',adminController.Serchproduct)
-router.post('/admin/add/product', adminController.AddProduct);
-router.post('/admin/addproduct', upload.array('productImage', 4), adminController.AddproductDb);
-router.post('/admin/category/disable/:id', adminController.Blockproduct);
-router.post('/admin/category/enable/:id', adminController.Activeproduct);
-router.post('/admin/category/delete/:id', adminController.Deleteproduct);
+router.post('/admin/product/search',adminverify,adminController.Serchproduct)
+router.post('/admin/add/product',adminverify, adminController.AddProduct);
+router.post('/admin/addproduct',adminverify, upload.array('productImage', 4), adminController.AddproductDb);
+router.post('/admin/category/disable/:id',adminverify, adminController.Blockproduct);
+router.post('/admin/category/enable/:id',adminverify, adminController.Activeproduct);
+router.post('/admin/category/delete/:id',adminverify, adminController.Deleteproduct);
 router.get('/admin/category/edit/:id',adminverify, adminController.Editeproduct);
-router.post('/admin/editproduct/:id',upload.array('productImage',4), adminController.PostEditeproduct);
+router.post('/admin/editproduct/:id',adminverify,upload.array('productImage',4), adminController.PostEditeproduct);
+// Order-related routes 
+router.get('/admin/Orders',adminverify,adminController.GetOrder)
+router.post('/admin/order/status/:id',adminverify,adminController.OrderStatus)
 
 module.exports = router;

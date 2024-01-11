@@ -1,0 +1,292 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Page Title</title>
+    <!-- Add your CSS links and styles here -->
+
+    <!-- Bootstrap CSS link -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-iYQeCzEYFbKjA/T2uDLTpkwGzCiq6soy8tYaI1GyVh/UjpbCx/TYkiZhlZB6+fzT" crossorigin="anonymous">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+    <!-- Add any additional stylesheets or fonts here -->
+
+    <style>
+        /* Add your custom styles here */
+    </style>
+</head>
+
+<body>
+
+    <header style="margin-bottom: 240px;">
+        <div class="fixed-top p-3 text-center bg-white border-bottom ">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-4 d-flex justify-content-center justify-content-md-start mb-3 mb-md-0">
+                        <a href="#" class="ms-md-2" style="font-family: 'Inter', sans-serif; font-weight:bold; font-size: 24px; text-decoration: none; color: #000000;">Exclusive</a>
+                    </div>
+
+                    <div class="col-md-4">
+                        <form class="d-flex input-group w-auto my-auto mb-3 mb-md-0">
+                            <input autocomplete="off" type="search" class="form-control rounded" placeholder="Search" />
+                            <span class="input-group-text border-0 d-none d-lg-flex"><i class="fas fa-search"></i></span>
+                        </form>
+                    </div>
+
+                    <div class="col-md-4 d-flex justify-content-center justify-content-md-end align-items-center">
+                        <div class="d-flex">
+                            <a class="text-reset me-3" href="/user/cart">
+                                <span><i class="fas fa-shopping-cart"></i></span>
+                                <span class="badge rounded-pill bg-danger">1</span>
+                            </a>
+
+                            <a class="text-reset me-3" href="#">
+                                <span><i class="fa-regular fa-heart" style="color: #00060f;"></i></span>
+                            </a>
+                        </div>
+
+                        <!-- User Dropdown -->
+                        <div class="dropdown">
+                            <a class="text-reset me-3 dropdown-toggle d-flex align-items-center" href="#" id="userDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <img src="https://mdbootstrap.com/img/Photos/Avatars/img (31).jpg" class="rounded-circle" height="22" alt="" loading="lazy" />
+                            </a>
+                            <!-- Dropdown menu for user profile -->
+                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdownMenuLink">
+                                <li><a class="dropdown-item" href="/user/profile">My profile</a></li>
+                                <li><a class="dropdown-item" href="#">Settings</a></li>
+                                <li><a class="dropdown-item" href="/logout">Logout</a></li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Navbar -->
+                    <nav class="navbar navbar-expand-lg navbar-light bg-white">
+                        <div class="container justify-content-md-between">
+                            <ul class="navbar-nav flex-row">
+                                <li class="nav-item me-2 me-lg-0">
+                                    <a href="#" class="nav-link" role="button" data-bs-toggle="offcanvas" data-bs-target="#sidenav-1" aria-controls="sidenav-1" aria-haspopup="true">
+                                        <i class="fas fa-bars me-1"></i>
+                                        <span></span>
+                                    </a>
+                                </li>
+                                <li class="nav-item me-2 me-lg-0 d-none d-md-inline-block">
+                                    <a class="nav-link" href="/user-home">Home</a>
+                                </li>
+                                <li class="nav-item me-2 me-lg-0 d-none d-md-inline-block">
+                                    <a class="nav-link" href="#">Contact</a>
+                                </li>
+                                <li class="nav-item me-2 me-lg-0 d-none d-md-inline-block">
+                                    <a class="nav-link" href="#">About</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <section class="bg-white my-5" >
+        <div class="container mt-5" style="margin-bottom: 100px;">
+            <div class="row">
+                <!-- cart -->
+                <div class="col-lg-9">
+                  <div class="card border rounded shadow">
+                    <div class="m-4 rounded shadow-5">
+                      <h4 class="card-title mb-4">Select Address</h4>
+                      <% if (userData.address && userData.address.length > 0) { %>
+                      <% userData.address.forEach((x)=> { %>
+                      <div class="form-check">
+                        <hr>
+                        <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault2" checked>
+                        <label class="form-check-label" for="flexRadioDefault2">
+                          <h6>Select Address</h6>
+                        </label>
+                        <hr>
+                        <P><%= x.name %></P>
+                        <P><%= x.addressLine %></P>
+                        <P><%= x.pincode %></P>
+                        <P><%= x.city %></P>
+                        <P><%= x.state %></P>
+                        <P><%= x.phone %></P>
+                        <button class="btn btn-light w-100 border mt-2" onclick="openEditAddressModal('<%= x._id %>')">Edit Address</button>
+                        <button class="btn btn-danger w-100 border mt-2" onclick="deleteAddress('<%= x._id %>')">Delete Address</button>
+                      </div>
+          
+                      <!-- Edit Address Modal -->
+                      <div class="modal fade" id="editAddressModal<%= x._id %>" tabindex="-1" role="dialog"
+                        aria-labelledby="editAddressModalLabel" aria-hidden="true">
+                        <div class="modal-dialog" role="document">
+                          <div class="modal-content">
+                            <div class="modal-header">
+                              <h5 class="modal-title" id="editAddressModalLabel">Edit Address</h5>
+                              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                              </button>
+                            </div>
+                            <div class="modal-body">
+                              <!-- Edit Address Form -->
+                              <form action="/user/editAddress/<%= x._id %>" method="post">
+                                <div class="form-group">
+                                  <label for="editName<%= x._id %>" class="col-form-label">Name:</label>
+                                  <input type="text" name="name" class="form-control" id="editName<%= x._id %>" value="<%= x.name %>"
+                                    required>
+                                </div>
+                                <div class="form-group">
+                                  <label for="editAddress<%= x._id %>" class="col-form-label">Address:</label>
+                                  <input type="text" name="address" class="form-control" id="editAddress<%= x._id %>"
+                                    value="<%= x.address %>" required>
+                                </div>
+                                <div class="form-group">
+                                  <label for="editCity<%= x._id %>" class="col-form-label">City:</label>
+                                  <input type="text" name="city" class="form-control" id="editCity<%= x._id %>" value="<%= x.city %>"
+                                    required>
+                                </div>
+                                <div class="form-group">
+                                  <label for="editPincode<%= x._id %>" class="col-form-label">Pincode:</label>
+                                  <input type="text" name="pincode" class="form-control" id="editPincode<%= x._id %>"
+                                    oninput="this.value = this.value.replace(/[^0-9]/g, '');" pattern="[0-9]*" maxlength="6"
+                                    value="<%= x.pincode %>" required>
+                                  <div id="pincode-validation-message" class="text-danger"></div>
+                                </div>
+                                <div class="form-group">
+                                  <label for="editState<%= x._id %>" class="col-form-label">State:</label>
+                                  <input type="text" name="state" class="form-control" id="editState<%= x._id %>" value="<%= x.state %>"
+                                    required>
+                                </div>
+                                <div class="form-group">
+                                  <label for="editNumber<%= x._id %>" class="col-form-label">Mobile Number:</label>
+                                  <input type="number" name="number" class="form-control" id="editNumber<%= x._id %>"
+                                    value="<%= x.phone %>" required>
+                                </div>
+                                <!-- End of Edit Address Form -->
+                            </div>
+                            <div class="modal-footer">
+                              <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                              <button type="submit" class="btn btn-primary">Save Changes</button>
+                              </form>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <!-- End of Edit Address Modal -->
+                      <% }) %>
+          
+                      <% } else { %>
+                      <p>No addresses available.</p>
+                      <% } %>
+          
+                    </div>
+                  </div>
+                </div>
+                <!-- cart -->
+                <!-- summary -->
+                <div class="col-lg-3">
+                  <div class="card shadow border">
+                    <div class="card-body">
+                      <div class="d-flex justify-content-between">
+                      </div>
+                      <div class="mt-3">
+                        <a href="#" class="btn btn-danger w-100 shadow-0 mb-2" data-toggle="modal" data-target="#exampleModal"
+                          data-whatever="@fat">Add Address</a>
+                        <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+                          aria-hidden="true">
+                          <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                              <div class="modal-header">
+                                <h5 class="modal-title" id="exampleModalLabel">New message</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                  <span aria-hidden="true">&times;</span>
+                                </button>
+                              </div>
+                              <div class="modal-body">
+                                <form action="/user/addAddress" method="post">
+                                  <div class="form-group">
+                                    <label for="recipient-name" class="col-form-label">Name:</label>
+                                    <input type="text" name="name" class="form-control" id="recipient-name" required>
+                                  </div>
+                                  <div class="form-group">
+                                    <label for="recipient-address" class="col-form-label">Address:</label>
+                                    <input type="text" name="address" class="form-control" id="recipient-address" required>
+                                  </div>
+                                  <div class="form-group">
+                                    <label for="recipient-city" class="col-form-label">City:</label>
+                                    <input type="text" name="city" class="form-control" id="recipient-city" required>
+                                  </div>
+                                  <div class="form-group">
+                                    <label for="recipient-pincode" class="col-form-label">Pincode:</label>
+                                    <input type="text" name="pincode" class="form-control" id="recipient-pincode"
+                                      oninput="this.value = this.value.replace(/[^0-9]/g, '');" pattern="[0-9]*" maxlength="6"
+                                      required>
+                                    <div id="pincode-validation-message" class="text-danger"></div>
+                                  </div>
+                                  <div class="form-group">
+                                    <label for="recipient-state" class="col-form-label">State:</label>
+                                    <input type="text" name="state" class="form-control" id="recipient-state" required>
+                                  </div>
+                                  <div class="form-group">
+                                    <label for="recipient-number" class="col-form-label">Mobile Number:</label>
+                                    <input type="number" name="number" class="form-control" id="recipient-number" required>
+                                  </div>
+                              </div>
+                              <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                <button type="submit" id="submit-button" class="btn btn-danger">Add</button>
+                              </div>
+                              </form>
+                            </div>
+                          </div>
+                        </div>
+                        <a href="/user/profile" class="btn btn-light w-100 border mt-2">Back To Home</a>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <!-- summary -->
+              </div>
+        </div>
+    </section>
+
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    <script>
+        function deleteAddress(addressId) {
+            if (confirm('Are you sure you want to delete this address?')) {
+                fetch(`/user/deleteAddress/${addressId}`, {
+                    method: 'POST',
+                })
+                .then((response) => response.json())
+                .then((data) => {
+                    console.log(data);
+                    if (data.message === 'Address deleted successfully') {
+                        console.log('Reloading page...');
+                        location.reload();
+                    } else {
+                        console.error('Error deleting address:', data.message);
+                    }
+                })
+                .catch((error) => {
+                    console.error('Error deleting address:', error);
+                });
+            }
+        }
+    
+        function openEditAddressModal(addressId) {
+            $('#editAddressModal' + addressId).modal('show');
+        }
+    </script>
+    
+    
+
+    <!-- Include your footer partial -->
+    <%- include('footer') %>
+
+</body>
+
+</html>

@@ -1,13 +1,11 @@
 const express = require('express');
+const flash = require('express-flash');
 const path = require('path');
 const bodyParser = require('body-parser');
 const session = require('express-session');
 const multer = require('multer')
 const { v4: uuidv4 } = require('uuid');
-
-const cacheControlMiddleware = require('./middlewares/cacheControlMiddleware');
-const userMiddleware = require('./middlewares/userCheck')
-const adminMiddleware = require('./middlewares/admincheck')
+const nocache=require('nocache')
 
 
 const adminRouter = require('./router/admin-router'); 
@@ -26,7 +24,7 @@ app.use(express.static('uploads'))
 app.set('view engine', 'ejs');
 
 const sessionSecret = uuidv4();
-
+app.use(nocache())
 app.use(
   session({
     secret: sessionSecret,
@@ -35,10 +33,9 @@ app.use(
   })
 );
 
-// Cache headers
-app.use(cacheControlMiddleware);
-// app.use(userMiddleware)
-// app.use(adminMiddleware)
+// Initialize express-flash
+app.use(flash());
+
 
 // Use the routers
 app.use('/', adminRouter);

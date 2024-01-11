@@ -120,32 +120,37 @@ color: #44db74;
             <% } %>
             <%= value %>
         </td>
+      
+
+
         <td class="text-center">
           <% if (data.status) { %>
-            <form action="/admin/brand/disable/<%- data._id %>" method="POST">
-              <button type="submit" class="text-white font-size btn btn-danger px-3 py-0"
-                onclick="return confirm('Are you sure you want to disable <%= data.brand %>?')">Disable</button>
-            </form>
+          <form action="/admin/brand/disable/<%- data._id %>" method="POST">
+            <button type="button" class="text-white font-size btn btn-danger px-3 py-0"
+              onclick="confirmDisable('<%= data.brand %>', '/admin/brand/disable/<%- data._id %>')">Disable</button>
+          </form>
           <% } else { %>
-            <form action="/admin/brand/enable/<%- data._id %>" method="post">
-              <button type="submit" class="text-white font-size btn btn-success px-3 py-0"
-                onclick="return confirm('Are you sure you want to enable <%= data.brand %>?')">Enable</button>
-            </form>
+          <form action="/admin/brand/enable/<%- data._id %>" method="POST">
+            <button type="button" class="text-white font-size btn btn-success px-3 py-0"
+              onclick="confirmEnable('<%= data.brand %>', '/admin/brand/enable/<%- data._id %>')">Enable</button>
+          </form>
           <% } %>
         </td>
 
 
             <td class="text-center">
               <form action="/admin/brand/edit/<%-data._id%>" method="get">
-                <button type="submit" class="text-white font-size btn btn-warning px-3 py-0"
-                onclick="return confirm('Are you sure you want to Edit <%= data.brand %>?')">Edit</button>
+                <button type="submit" class="text-white font-size btn btn-warning px-3 py-0">Edit</button>
               </form>
             </td>
+
+            
+
             <td class="text-center">
-              <form action="/admin/brand/delete/<%-data._id%>" method="post">
+              <form id="deleteFormCategories" action="/admin/brand/delete/<%-data._id%>" method="POST">
                 <button type="submit" class="text-white font-size btn btn-danger px-3 py-0"
-                onclick="return confirm('Are you sure you want to Delete <%= data.brand %>?')">Delete</button>             
-               </form>
+                  >Delete</button>
+              </form>
             </td>
           </tr>
         <% }) %>
@@ -157,7 +162,12 @@ color: #44db74;
 
   </main>
   <%- include('admin_footer')%>
-  <!-- Bootstrap JavaScript Libraries -->
+
+   <!-- SweetAlert CSS -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.20/dist/sweetalert2.min.css">
+
+<!-- SweetAlert JS -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.20/dist/sweetalert2.all.min.js"></script>
 
   <script>
 
@@ -176,45 +186,16 @@ setTimeout(() => {
 
 
 
-<script>
-    window.onload = function() {
-        
-    function validateForm() {
-        var categoryName = document.getElementById('categoryName').value;
-
-        // Check if the input contains only spaces
-        if (categoryName.trim() === '') {
-            alert('Please enter a valid category name.');
-            return false; // Prevent form submission
-        }
-
-        return true; // Allow form submission
-    }
-    };
-</script>
 
 
 
 
-<script>
-                function validateForm() {
-                    var categoryName = document.getElementById('categoryName').value;
-            
-                    // Check if the input contains only spaces
-                    if (categoryName.trim() === '') {
-                        alert('Category Name Cant be empty.');
-                        return false; // Prevent form submission
-                    }
-            
-                    return true; // Allow form submission
-                }
-  </script>
-<!-- Include jQuery -->
+
+  
 <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 
 
 <script>
-  // Function to get URL parameter by name
   function getParameterByName(name, url) {
     if (!url) url = window.location.href;
     name = name.replace(/[\[\]]/g, '\\$&');
@@ -225,11 +206,62 @@ setTimeout(() => {
     return decodeURIComponent(results[2].replace(/\+/g, ' '));
   }
 
-  // Get the 'message' parameter from the URL
   var message = getParameterByName('message');
 
-  // Display the message in the HTML element with the ID 'msg'
   if (message) {
     $('#msg').text(message);
   }
+</script>
+<script>
+
+  function validateForm() {
+      var categoryName = document.getElementById('categoryName').value.trim();
+  
+      if (categoryName === '') {
+          Swal.fire({
+              icon: 'error',
+              title: 'Oops...',
+              text: 'Category Name cannot be empty!',
+          });
+          return false; 
+      }
+  
+      return true; 
+  }
+
+  function confirmDisable(category, action) {
+    Swal.fire({
+      title: 'Are you sure?',
+      text: `You want to disable ${category}?`,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#3085d6',
+      confirmButtonText: 'Yes, disable it!'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        // Get the form element and submit it
+        document.querySelector('form[action="' + action + '"]').submit();
+      }
+    });
+  }
+
+  function confirmEnable(category, action) {
+    Swal.fire({
+      title: 'Are you sure?',
+      text: `You want to enable ${category}?`,
+      icon: 'info',
+      showCancelButton: true,
+      confirmButtonColor: '#44db74',
+      cancelButtonColor: '#3085d6',
+      confirmButtonText: 'Yes, enable it!'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        // Get the form element and submit it
+        document.querySelector('form[action="' + action + '"]').submit();
+      }
+    });
+  }
+
+
 </script>

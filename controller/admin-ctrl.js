@@ -1,11 +1,11 @@
 const user = require("../model/usermodel");
 const Categorie = require("../model/brandmodel");
 const Products = require("../model/productmodel");
-const uploadDirectory = require("../config");
+const Order = require("../model/ordermodel")
 
 const adminController = {
   AdminDashboard: async (req, res) => {
-    req.session.adminLoggedin = true;
+    
       res.render("admin-dash");
    
   },
@@ -46,19 +46,22 @@ Deleteuser: async (req, res) => {
 },
 
 // Serchuser route
-  Serchuser: async (req, res) => {
-    var i = 0;
-    const data = req.body;
-    try {
-      const useData = await user
-        .find({ username: { $regex: data.search, $options: "i" } })
-        .exec();
-      res.render("user-list", { useData, i });
-    } catch (error) {
-      console.error(error);
-      res.status(500).send("Internal Server Error");
-    }
-  },
+
+Serchuser: async (req, res) => {
+  var i = 0;
+  const data = req.body;
+  try {
+    const useData = await user
+      .find({ username: { $regex: data.search, $options: "i" } })
+      .exec();
+    const msg = ""; 
+    res.render("user-list", { useData, i, msg });
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("Internal Server Error");
+  }
+},
+
 
   
 
@@ -403,7 +406,33 @@ console.log("Update Fields:", updateFields);
       res.status(500).send('Internal Server Error');
     }
   },
+
+  GetOrder : async (req,res)=>{
+    try {
+      var i = 0
+      const orderData = await Order.find()
+      res.render('adminOrder',{orderData,i})
+      
+    } catch (error) {
+      console.error(error);
+      res.status(500).send('Internal Server Error');
+    }
+  },
+  OrderStatus : async (req,res)=>{
+    try {
+      const Id  = req.params.id;
+      const status =req.body.orderStatus;
+      await Order.updateOne({_id:Id},{$set:{orderStatus:status}})
+      res.redirect('/admin/Orders')
+      
+    } catch (error) {
+      console.error(error);
+      res.status(500).send('Internal Server Error');
+      
+    }
+  },
   
 };
+
 
 module.exports = adminController;

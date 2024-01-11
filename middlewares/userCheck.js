@@ -1,13 +1,11 @@
 const userMiddleware=(req,res,next)=>{
     console.log(req.session)
-    if (!req.session.userLoggedin) {
-        res.redirect('/login-home');
-      } else {
-        next();
+    if (req.session && req.session.userLoggedin) {
+      next();
+    } else {
+      res.redirect('/login-home');
       }
 }
-
-
 
 
 module.exports = {userMiddleware}

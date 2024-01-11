@@ -1,18 +1,19 @@
 const adminverify = (req, res, next) => {
     if (req.session.adminLoggedin) {
-      console.log("Admin checked");
       next();
     } else {
       res.redirect('/login-home');
-      console.log('else worked');
     }
   };
 
   const existingadmin=(req,res,next)=>{
     if(req.session.adminLoggedin){
-        console.log("Admin auth checking");
         res.redirect("/admin/Dashboard")
-    }else{
+    }else if (req.session.userLoggedin) {
+        res.redirect("/user-home")
+
+    } else  {
+      
         next()
     }
 }
