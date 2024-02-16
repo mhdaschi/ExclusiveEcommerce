@@ -53,30 +53,36 @@
                           <i class="fa-solid fa-pen-to-square fa-xl" style="color: #000000;"></i>
                                       </a>
     <!---------------------------------Modal for changingg username------------------------------------------->
-                        <div class="modal fade " id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false"
-                          tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-                          <div class="modal-dialog modal-dialog-centered ">
-                            <div class="modal-content ">
-                              <div class="modal-header border-0">
-                                <h5 class="modal-title " id="staticBackdropLabel">Edit Profile</h5>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                              </div>
-                              <form id="nameForm" method="post" action="/user/editProfile/name/<%=userData.id %>">
-                                <div class="modal-body">
-                                  <div class="mb-3">
-                                    <label for="name" class="form-label">Name</label>
-                                    <input type="text" class="form-control" name="name" value="<%=userData.username %>"
-                                      placeholder="Enter your name">
-                                  </div>
-                                </div>
-                                <div class="modal-footer border-0">
-                                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                  <button type="submit" class="btn btn-danger">Save Changes</button>
-                                </div>
-                              </form>
-                            </div>
-                          </div>
-                        </div>
+    <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false"
+    tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+   <div class="modal-dialog modal-dialog-centered">
+       <div class="modal-content">
+           <div class="modal-header border-0">
+               <h5 class="modal-title" id="staticBackdropLabel">Edit Profile</h5>
+               <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+           </div>
+           <form id="nameForm" onsubmit="return usernameValidation();">
+               <div class="modal-body">
+                   <div class="mb-3">
+                       <label for="name" class="form-label">Name</label>
+                       <input type="text" class="form-control" name="name" id="username" value="<%=userData.username %>"
+                              placeholder="Enter your name">
+                   </div>
+                   <div class="mb-3">
+                    <label for="Phone" class="form-label">Phone Number</label>
+                    <input type="number" class="form-control" name="Phone" id="Phone" value="+91<%=userData.Phone %>"
+                           placeholder="Enter your Phone Number">
+                </div>
+                   <div id="usernameWarning" style="color: red;"></div>
+               </div>
+               <div class="modal-footer border-0">
+                   <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                   <button type="submit" class="btn btn-danger">Save Changes</button>
+               </div>
+           </form>
+       </div>
+   </div>
+</div>
     
                     </div>
                   </div>
@@ -96,7 +102,7 @@
                       <h6 class="mb-0">Mobile</h6>
                     </div>
                     <div class="col-sm-9 text-secondary">
-                     +91<%=userData.address[0].phone %>
+                     +91<%=userData.Phone %>
                     </div>
                   
                   <hr>
@@ -122,6 +128,7 @@
                   <div class="row">
      <!------------------------------------------change password modal --------------------------------------------------------------------->
                     <button type="button" class="btn btn-danger mb-2 w-25" data-bs-toggle="modal" data-bs-target="#exampleModal" data-bs-whatever="@getbootstrap">Change Password</button>
+
                   
                   </div>
                   <div class="modal fade" id="exampleModal" style="color: rgb(47, 46, 46)" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -188,10 +195,15 @@
                   <i class="fa-solid fa-cart-shopping"></i>
                 </li>
                 <li class="list-group-item d-flex justify-content-between align-items-center p-3"
-                  onclick="window.location.href='/user-wish'">
-                  <h6 class="mb-0">Wishlist</h6>
+                  onclick="window.location.href='/user/wallet'">
+                  <h6 class="mb-0">Wallet</h6>
                   <i class="fa-solid fa-heart text-danger"></i>
                 </li>
+                <li class="list-group-item d-flex justify-content-between align-items-center p-3"
+                onclick="window.location.href='/user/coupon'">
+                <h6 class="mb-0">Coupon</h6>
+                <i class='fa-solid fa-ticket nav_icon'></i>
+              </li>
                 <li class="list-group-item d-flex justify-content-between align-items-center p-3"
                   onclick="window.location.href='/user-manageAddress'">
                   <h6 class="mb-0">Manage Address</h6>
@@ -224,6 +236,8 @@
 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+<script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
 <script>
 
 function uploadprofiepic(event) {
@@ -248,39 +262,98 @@ function uploadprofiepic(event) {
   }
 }
 
+async function usernameValidation() {
+        const nameInput = document.getElementById('username').value.trim();
+        const PhoneNumber = document.getElementById('Phone').value.trim();
+        const usernameWarning = document.getElementById('usernameWarning');
+
+
+        let errorMessages = [];
+
+if (nameInput === "") {
+    errorMessages.push("Username must be filled out");
+}
+
+if (errorMessages.length > 0) {
+    // Show toast notification for the error message
+    Toastify({
+        text: errorMessages.join(", "),
+        duration: 12000, // Duration in milliseconds
+        gravity: "top", // Display position: 'top', 'bottom', 'center'
+        position: "right", // Toast position: 'left', 'right', 'center'
+        close: true, // Whether to show a close button
+        backgroundColor: "linear-gradient(to right, #ff416c, #ff4b2b)", // Custom background color
+    }).showToast();
+
+    return false;
+}
+
+        try {
+            const data = {
+                username: nameInput,
+                Phone:PhoneNumber,
+            };
+            const response = await fetch('/user/editProfile/name/<%=userData.id %>', {
+                method: "POST",
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data),
+            });
+
+            // Handle the response as needed
+            // ...
+
+        } catch (error) {
+            console.error(error);
+        }
+
+        return true;
+    }
+
+
 
 
 
     async function changePassword() {
-        const oldPassword = document.getElementById('oldPassword').value;
-        const newPassword = document.getElementById('newPassword').value;
-        const confirmPassword = document.getElementById('confirmPassword').value;
-        const passwordWarning = document.getElementById('passwordWarning');
+      const oldPasswordInput = document.getElementById('oldPassword');
+    const newPasswordInput = document.getElementById('newPassword');
+    const confirmPasswordInput = document.getElementById('confirmPassword');
+    const passwordWarning = document.getElementById('passwordWarning');
+    let errorMessages = [];
 
-        let errorMessages = [];
+    if (!oldPasswordInput.value.trim()) {
+        errorMessages.push("Old password is required");
+    }
 
-        if (!oldPassword.trim()) {
-            errorMessages.push("Old password is required");
-        }
+    if (!newPasswordInput.value.trim()) {
+        errorMessages.push("New password is required");
+    }
 
-        if (!newPassword.trim()) {
-            errorMessages.push("New password is required");
-        }
+    if (!confirmPasswordInput.value.trim()) {
+        errorMessages.push("Confirm password is required");
+    }
 
-        if (!confirmPassword.trim()) {
-            errorMessages.push("Confirm password is required");
-        }
+    if (newPasswordInput.value !== confirmPasswordInput.value) {
+        errorMessages.push("Passwords do not match");
+    }
 
-        if (newPassword !== confirmPassword) {
-            errorMessages.push("Passwords do not match");
-        }
+    if (newPasswordInput.value === "") {
+        errorMessages.push('Please fill the password');
+    }
 
-        // Add your additional validation logic here
+    if (newPasswordInput.value.length < 8 || !/\d/.test(newPasswordInput.value)) {
+        errorMessages.push('Password must be at least 8 characters long and contain at least one numeric digit');
+    }
 
-        if (errorMessages.length > 0) {
-            passwordWarning.textContent = errorMessages.join(", ");
-            return;
-        }
+
+    if (errorMessages.length > 0) {
+        passwordWarning.textContent = errorMessages.join(", ");
+        return false; 
+    }
+
+    passwordWarning.textContent = "";
+
 
         try {
             const data = {

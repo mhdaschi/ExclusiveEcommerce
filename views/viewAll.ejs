@@ -1,0 +1,222 @@
+<%- include('header') %>
+
+<style>
+    .custom-card-container {
+    width: 12rem;
+    height: 16.25rem;
+    background-color: #ffffff;
+    position: relative;
+    border: 1px solid #eee;
+    border-radius: 10px;
+    overflow: hidden;
+    filter: blur(10px 30px) blur(42px);
+    transition: transform 0.3s;
+}
+
+.custom-card-container:hover {
+    transform: scale(1.05);
+    box-shadow: 10px 30px 42px rgba(0, 0, 0, 0.2);
+}
+.filter-div {
+    height: auto;
+    width: 250px;
+    background-color: #ffffff;
+    transform: translateX(-100%);
+    transition: transform 0.3s ease-in-out;
+    position: absolute;
+    z-index: 10;
+    margin-top: 15px;
+    padding: 25px;
+    padding-top: 33px;
+    font-size: larger;
+    border-radius: 5px;
+    box-shadow: rgba(0, 0, 0, 0.1) 0px 0px 28px 5px, rgba(0, 0, 0, 0.05) 0px 4px 6px -2px;
+
+}
+
+
+.filter-div.show-filter {
+    transform: translateX(0);
+}
+</style>
+    <div class="container-fluid mb-4 mt-4">
+        <button id="filterButton" class="mt-5" style="width: 101px; border: 0; border-radius: 5px;">Filter</button>
+        <div class="filter-div">
+            <h6 style="font-weight: 600;" class="mb-3">Select Brand</h6>
+                <% categoryData.forEach(data => { %>
+                    <form action="/user/productsfilter" method="post">
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" value="<%=data._id%>" name="category">
+                    <label class="form-check-label" for="flexCheckDefault">
+                        <%=data.brand%>
+                    </label>
+                </div>
+                <% }) %>
+                <h6 class="mb-3 mt-3">Sort by Price:</h6>
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" name="priceSort" id="priceHighToLow" value="highToLow">
+                    <label class="form-check-label" for="flexCheckDefault">
+                        Price High to Low
+                    </label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" name="priceSort" id="priceLowToHigh" value="lowToHigh">
+                    <label class="form-check-label" for="flexCheckDefault">
+                        Price Low to High
+                    </label>
+                </div>
+                <button type="submit" class="btn btn-primary">apply </button>
+            </div>
+        </form>
+        </div>
+       <% if (productData.length>0) { %>
+        <div class="text-center mt-3">
+            <h4>All <%- phoneType %> Phones</h4>
+        </div>
+        <div class="row custom-a mb-5">
+            <% productData.forEach((data)=> { %>
+
+              <div class="col d-flex justify-content-around flex-wrap col-lg-3">
+                <div class="custom-card-container ms-5 mt-5 position-relative">
+                  <form action="/user/wishlist/add/<%-data._id%>" method="post" class="position-relative">
+                    <button aria-hidden="false" type="submit"
+                      class="border-0 custom-icon-heart position-absolute top-0 end-0 py-2 px-2"
+                      aria-label="Add to Wishlist">
+                      <i class="fa-regular fa-heart"></i>
+                    </button>
+                  </form>
+                  <a href="/user/product/Details/<%- data._id %>">
+                    <img class="img-fluid card-img-top" src="/<%=data.product_image[0]%>" alt="Card image cap"
+                      style="height: 190px; width: 210px;">
+                  </a>
+                  <div class="custom-additional-info ">
+                    <a href="/user/product/Details/<%- data._id %>" >
+                      <p class="fw-bold"> 
+                        <%=data.product_name%>
+                      </p>
+                    </a>
+                    <p class="custom-p">
+                      <% if (data.price==data.price) { %>
+                        <strong class="fw-bold">₹<%=data.price%></strong>
+                        <% } %>
+                          <% if (data.price<data.price) { %>
+                            <strong><strike class="text-danger"><%-data.price%></strike> <strong
+                                class="text-success"><%-data.price%></strong></strong>
+                            <% } %>
+                              <% if (data.price < data.price) { %>
+                                | <span class="text-success fw-bold">Offer</span>
+                                <% } %>
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+
+              <% }) %>
+        </div>
+
+       <% } %>
+       <% if (productData.length<=0) { %>
+        <h1 class="text-center mb-4 mt-3"><%-phoneType%> not found</h1>
+                            <div class="text-center">
+                                <img src="/images/not-found.png" class="img-fluid"><br>
+                                <a href="/user/home"
+                                    class="btn rounded-pill border-success text-center my-3 text-success w-25">Back
+                                    To Shopping</a>
+                            </div>
+       <% } %>
+    </div>
+ 
+    <SCript>
+            document.addEventListener('DOMContentLoaded', function () {
+              
+              const filterButton = document.getElementById('filterButton');
+              const filterDiv = document.querySelector('.filter-div');
+
+              filterButton.addEventListener('click', function () {
+                  filterDiv.classList.toggle('show-filter');
+              });
+             }); 
+    </SCript>
+
+    <script>
+
+
+
+
+
+
+let category = []
+    const categoriescheckbox = document.querySelectorAll("input[name=category]")
+
+
+    categoriescheckbox.forEach((input) => {
+        { input.addEventListener('change', updateProductList) }
+    })
+
+
+
+    
+        
+        console.log('adil, UWWWWWQIRHIQWO8ana ');
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('adil');
+            const cartIcons = Array.from(document.getElementsByClassName('custom-icon-heart'));
+            console.log('FFFFFFFFFFWJDFQBzaaaaaaaaaaaaaaa');
+            console.log(cartIcons);
+            
+            function showToast(message) {
+                Toastify({
+                    text: message,
+                    className: "success",
+                    position: 'center',
+                    gravity: "top",
+                    duration: 3000,
+                    style: {
+                        background: "white",
+                        color: "#000",
+                        marginTop: "80px",
+                    }
+                }).showToast();
+            }
+    
+            cartIcons.forEach(data => {
+    
+                data.addEventListener('click', async (event) => {
+                    console.log('Click event triggered');
+                    event.preventDefault();
+    
+                    const productId = data.getAttribute('data-product-id');
+                    console.log('zaaaaaaaaaaaaaaa');
+                    console.log('Product ID:', productId);
+    
+                    try {
+                        const response = await fetch(`/user/addto-wishlist/${productId}`, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify({ productId }),
+                        });
+    
+                        if (response.ok) {
+                            const heartIcon = data.parentElement.querySelector('.custom-icon-heart');
+                            heartIcon.style.color = 'red';
+                            showToast('Item Added to wishlist successfully ');
+                            console.log('Product added to wishlist successfully');
+                        } else {
+                            console.error('Failed to add product to wishlist');
+                        }
+                    } catch (error) {
+                        console.error('Error:', error);
+                    }
+                });
+            });
+        });
+    
+    </script>
+<%- include('footer') %>
+
+    
+
+

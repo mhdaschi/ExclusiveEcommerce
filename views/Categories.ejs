@@ -1,5 +1,14 @@
 <%- include('header-admin') %>
 
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.min.css">
+<link rel="stylesheet" href="https://cdn.datatables.net/searchbuilder/1.6.0/css/searchBuilder.dataTables.min.css">
+<link rel="stylesheet" href="https://cdn.datatables.net/datetime/1.5.1/css/dataTables.dateTime.min.css">
+<script src="https://code.jquery.com/jquery-3.7.0.js"></script>
+
+<script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/searchbuilder/1.6.0/js/dataTables.searchBuilder.min.js"></script>
+<script src="https://cdn.datatables.net/datetime/1.5.1/js/dataTables.dateTime.min.js"></script>
+
 <main>
   <div class="shadow container p-3 mt-5 mb-5 bg-white rounded " style="width: 55%;">
   <!-- Centered form for adding a new brand -->
@@ -86,7 +95,7 @@ color: #44db74;
   
 
   <div class="table-responsive">
-    <table class="table table-white table-striped border-0">
+    <table class="table table-white table-striped border-0" id="category">
       <thead>
         <tr>
           <th class="text-center">No</th>
@@ -169,6 +178,18 @@ color: #44db74;
 <!-- SweetAlert JS -->
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.20/dist/sweetalert2.all.min.js"></script>
 
+
+<script>
+  $(document).ready(function () {
+    $('#category').DataTable();
+  });
+</script>
+
+
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/searchbuilder/1.6.0/css/searchBuilder.dataTables.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/datetime/1.5.1/css/dataTables.dateTime.min.css">
+
   <script>
 
 setTimeout(() => {
@@ -192,7 +213,7 @@ setTimeout(() => {
 
 
   
-<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<!-- <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script> -->
 
 
 <script>

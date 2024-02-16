@@ -121,10 +121,7 @@ h2 {
   margin-right: 10px;
 }
 
-.card:hover {
-  color: var(--white);
-  background: var(--red);
-}
+
 
 .card .card-title {
   font-size: 20px;
@@ -149,9 +146,7 @@ h2 {
   transition: background 0.2s;
 }
 
-.card:hover .card-link {
-  background: var(--darkred);
-}
+
 
 .cards::-webkit-scrollbar {
   height: 12px;
@@ -220,10 +215,7 @@ h2 {
   display: block;
 }
 
-.product-card:hover {
-  color: var(--white);
-  background: var(--red);
-}
+
 
 .product-card .card-title {
   font-size: 20px;
@@ -248,9 +240,7 @@ h2 {
   transition: background 0.2s;
 }
 
-.product-card:hover .card-link {
-  background: var(--darkred);
-}
+
 .btnscroll {
   display: flex;
   padding: 25px 0px;
@@ -273,8 +263,13 @@ h2 {
 
  
 
+
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/magnify/2.5.0/js/jquery.magnify.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/magnify/2.5.0/js/jquery.magnify.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+
+
 
     <!-- <link
     href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
@@ -297,8 +292,8 @@ h2 {
                 </div>
           
                 <div class="col-md-4">
-                  <form class="d-flex input-group w-auto my-auto mb-3 mb-md-0">
-                    <input autocomplete="off" type="search" class="form-control rounded" placeholder="Search" />
+                  <form class="d-flex input-group w-auto my-auto mb-3 mb-md-0" action="/user/product/serch" method="post">
+                    <input autocomplete="off" name="serchuser" id="serchuser" type="search" class="form-control rounded" placeholder="Search" />
                     <span class="input-group-text border-0 d-none d-lg-flex"><i class="fas fa-search"></i></span>
                   </form>
                 </div>

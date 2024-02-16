@@ -26,15 +26,7 @@ const brandmodel = new mongoose.Schema({
   
 })
 
-mongoose.connect(process.env.MONGOURL,{
-    useNewUrlParser: true,
-    useUnifiedTopology: false
 
-}).then(() => {
-    console.log("brand Database Connected")
-}).catch((err) =>{
-    console.log(err);
-});
 
 const brandcollection = mongoose.model('brand', brandmodel);
 module.exports = brandcollection

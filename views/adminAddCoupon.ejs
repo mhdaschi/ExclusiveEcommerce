@@ -1,0 +1,126 @@
+<%- include('header-admin')%>
+
+<section style="max-width: 600px; margin: 20px auto; padding: 20px; background-color: #fff; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); border-radius: 8px;">
+
+  <form action="/admin/save/coupon" method="post" onsubmit="return validateForm()" style="text-align: center;">
+    <label for="couponCode" style="display: block; font-weight: bold; margin-top: 15px;">Coupon Code:</label>
+    <input type="text" id="couponCode" name="couponCode" style="padding: 10px; margin-bottom: 20px; width: 100%; box-sizing: border-box;" >
+    <div id="couponCodeError" style="color: red; margin-bottom: 10px;"></div>
+
+    <label for="discount" style="display: block; font-weight: bold; margin-top: 15px;">Discount:</label>
+    <input type="text" id="discount" name="discount" style="padding: 10px; margin-bottom: 20px; width: 100%; box-sizing: border-box;" required>
+    <div id="discountError" style="color: red; margin-bottom: 10px;"></div>
+
+    <label for="discount_price" style="display: block; font-weight: bold; margin-top: 15px;">Discount Available Price:</label>
+    <input type="text" id="discount_price" name="discount_price" style="padding: 10px; margin-bottom: 20px; width: 100%; box-sizing: border-box;" required>
+    <div id="discountPriceError" style="color: red; margin-bottom: 10px;"></div>
+
+    <label for="expirationDate" style="display: block; font-weight: bold; margin-top: 15px;">Expiration Date:</label>
+    <input type="text" id="expirationDate" name="expirationDate" placeholder="MM/DD/YYYY" style="padding: 10px; margin-bottom: 20px; width: 100%; box-sizing: border-box;" required>
+    <div id="expirationDateError" style="color: red; margin-bottom: 10px;"></div>
+
+    <label for="description" style="display: block; font-weight: bold; margin-top: 15px;">Description:</label>
+    <textarea id="description" name="description" style="padding: 10px; margin-bottom: 20px; width: 100%; box-sizing: border-box;" required></textarea>
+    <div id="descriptionError" style="color: red; margin-bottom: 10px;"></div>
+
+    <button type="submit" style="padding: 12px 24px; background-color: #4caf50; color: #fff; border: none; border-radius: 4px; cursor: pointer; font-size: 16px; transition: background-color 0.3s ease;" onmouseover="this.style.backgroundColor='#45a049'" onmouseout="this.style.backgroundColor='#4caf50'">Add Coupon</button>
+  </form>
+
+  <div class="back-btn" style="text-align: center; margin-top: 20px;">
+    <a href="/admin/Coupons" style="text-decoration: none; background-color: #333; color: #fff; padding: 12px 24px; border-radius: 4px; display: inline-block; transition: background-color 0.3s ease;" onmouseover="this.style.backgroundColor='#292929'" onmouseout="this.style.backgroundColor='#333'">Back to Coupons</a>
+  </div>
+
+</section>
+
+<%- include('admin_footer')%>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+<script>
+  function validateForm() {
+    let isValid = true;
+
+    const couponCode = document.getElementById('couponCode').value;
+    const discount = document.getElementById('discount').value;
+    const discountPrice = document.getElementById('discount_price').value;
+    const expirationDate = document.getElementById('expirationDate').value;
+    const description = document.getElementById('description').value;
+
+    // Clear previous errors
+    document.getElementById('couponCodeError').innerText = '';
+    document.getElementById('discountError').innerText = '';
+    document.getElementById('discountPriceError').innerText = '';
+    document.getElementById('expirationDateError').innerText = '';
+    document.getElementById('descriptionError').innerText = '';
+
+    // Perform your custom validation here
+    // You can use regular expressions or any other validation logic
+
+    // Example: Check if couponCode contains only letters and numbers
+    const couponCodeRegex = /^[a-zA-Z0-9]+$/;
+    if (!couponCodeRegex.test(couponCode)) {
+      document.getElementById('couponCodeError').innerText = 'Invalid Coupon Code. Use only letters and numbers.';
+      isValid = false;
+    }
+
+    // Example: Check if discount is a valid number
+    if (isNaN(parseFloat(discount)) || !isFinite(discount) || parseFloat(discount) < 0) {
+      document.getElementById('discountError').innerText = 'Discount must be a valid non-negative number.';
+      isValid = false;
+    }
+
+    // Example: Check if discountPrice is a valid number
+    if (isNaN(parseFloat(discountPrice)) || !isFinite(discountPrice)) {
+      document.getElementById('discountPriceError').innerText = 'Invalid Discount Available Price. Please enter a valid number.';
+      isValid = false;
+    }
+
+    // Example: Check if expirationDate follows MM/DD/YYYY format
+    const dateRegex = /^(0[1-9]|1[0-2])\/(0[1-9]|[12][0-9]|3[01])\/\d{4}$/;
+    if (!dateRegex.test(expirationDate)) {
+      document.getElementById('expirationDateError').innerText = 'Invalid Expiration Date. Use MM/DD/YYYY format.';
+      isValid = false;
+    }
+
+    // Example: Check if description is not empty
+    if (description.trim() === '') {
+      document.getElementById('descriptionError').innerText = 'Description cannot be empty.';
+      isValid = false;
+    }
+
+    if(couponCode.trim()=== ''){
+      document.getElementById('couponCodeError').innerText = 'Coupon Code cannot be empty.';
+      isValid = false;
+    }
+
+    if(discount.trim()=== ''){
+      document.getElementById('discountError').innerText = 'Discount cannot be empty.';
+      isValid = false;
+    }
+
+    if(discountPrice.trim()=== ''){
+      document.getElementById('discountPriceError').innerText = 'Discount Price cannot be empty.';
+      isValid = false;
+    }
+
+    if(expirationDate.trim()=== ''){
+      document.getElementById('expirationDateError').innerText = 'expiration Date Price cannot be empty.';
+      isValid = false;
+    }
+
+    
+
+    return isValid;
+  }
+
+  const queryString = window.location.search;
+  const urlParams = new URLSearchParams(queryString);
+  const message = urlParams.get('msg');
+
+  if (message) {
+    Swal.fire({
+      icon: 'success',
+      title: 'Coupon Created Successfully!',
+      text: message,
+    });
+  }
+</script>

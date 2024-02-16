@@ -51,7 +51,6 @@ router.get('/admin/users',adminverify, adminController.Dashusers);
 router.post('/admin/search',adminverify, adminController.Serchuser);
 router.post('/admin/block/:id',adminverify, adminController.Blockuser);
 router.post('/admin/unblock/:id',adminverify, adminController.Activeuser);
-router.post('/admin/delete/:id',adminverify, adminController.Deleteuser);
 // Categories-related routes
 router.get('/admin/Categories',adminverify, adminController.AdminCategories);
 router.post('/admin/addbrand',adminverify, upload.single('productImage'), adminController.Addbrand);
@@ -75,5 +74,11 @@ router.post('/admin/editproduct/:id',adminverify,upload.array('productImage',4),
 // Order-related routes 
 router.get('/admin/Orders',adminverify,adminController.GetOrder)
 router.post('/admin/order/status/:id',adminverify,adminController.OrderStatus)
-
+// Coupon related routes
+router.get("/admin/Coupons",adminverify,adminController.Coupon)
+router.get('/admin/Delete-coupon/:id',adminverify,adminController.DeleteCoupen)
+router.get('/admin/add-coupon',adminverify,adminController.GetAddcoupon)
+router.post('/admin/save/coupon',adminverify,adminController.SaveCouon)
+router.get('/admin/edit-coupon/:id',adminverify,adminController.EditCoupon)
+router.post('/admin/edit/coupon/:id',adminverify,adminController.SaveEditCoupon)
 module.exports = router;

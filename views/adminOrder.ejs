@@ -1,4 +1,12 @@
 <%- include('header-admin')%>
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.min.css">
+<link rel="stylesheet" href="https://cdn.datatables.net/searchbuilder/1.6.0/css/searchBuilder.dataTables.min.css">
+<link rel="stylesheet" href="https://cdn.datatables.net/datetime/1.5.1/css/dataTables.dateTime.min.css">
+<script src="https://code.jquery.com/jquery-3.7.0.js"></script>
+
+<script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/searchbuilder/1.6.0/js/dataTables.searchBuilder.min.js"></script>
+<script src="https://cdn.datatables.net/datetime/1.5.1/js/dataTables.dateTime.min.js"></script>
 
 <main>
 
@@ -16,7 +24,7 @@
     <div class="container-fluid mt-3">
       <div class="row">
         <div class="col-12 overflow-auto">
-          <table class="table table-bordered table-hover">
+          <table class="table table-bordered table-hover" id="order">
             <thead class="table-dark">
               <tr>
                 <th class="text-center">No</th>
@@ -101,5 +109,18 @@
     color: #44db74;
     "><%=  %></p>
 </main>
+
+<script>
+  $(document).ready(function () {
+    $('#order').DataTable();
+  });
+</script>
+
+
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/searchbuilder/1.6.0/css/searchBuilder.dataTables.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/datetime/1.5.1/css/dataTables.dateTime.min.css">
+
+  
 
 <%- include('admin_footer')%>

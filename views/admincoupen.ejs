@@ -1,0 +1,62 @@
+<%- include('header-admin') %>
+
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.min.css">
+<link rel="stylesheet" href="https://cdn.datatables.net/searchbuilder/1.6.0/css/searchBuilder.dataTables.min.css">
+<link rel="stylesheet" href="https://cdn.datatables.net/datetime/1.5.1/css/dataTables.dateTime.min.css">
+<script src="https://code.jquery.com/jquery-3.7.0.js"></script>
+
+<script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/searchbuilder/1.6.0/js/dataTables.searchBuilder.min.js"></script>
+<script src="https://cdn.datatables.net/datetime/1.5.1/js/dataTables.dateTime.min.js"></script>
+
+<table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;" id="coupen">
+  <thead>
+    <tr>
+      <th style="padding: 10px; background-color: #333; color: #fff; text-align: left;">Coupon Code</th>
+      <th style="padding: 10px; background-color: #333; color: #fff; text-align: center;">Discount</th>
+      <th style="padding: 10px; background-color: #333; color: #fff; text-align: center;">Discount Available Price</th>
+      <th style="padding: 10px; background-color: #333; color: #fff; text-align: center;">Expiration Date</th>
+      <th style="padding: 10px; background-color: #333; color: #fff; text-align: center;">Description</th>
+      <th style="padding: 10px; background-color: #333; color: #fff; text-align: center;">Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% couponData.forEach(element => { %>
+      <tr>
+        <td style="padding: 10px; border-bottom: 1px solid #ddd;"><%- element.couponCode %></td>
+
+        <td style="padding: 10px; border-bottom: 1px solid #ddd; text-align: center;"><%- element.discount %></td>
+        <td style="padding: 10px; border-bottom: 1px solid #ddd; text-align: center;"><%- element.Discount_price %></td>
+        <td style="padding: 10px; border-bottom: 1px solid #ddd; text-align: center;"><%- element.expireAt.toISOString().split('T')[0] %></td>
+        <td style="padding: 10px; border-bottom: 1px solid #ddd; text-align: center;"><%- element.description %></td>
+        <td style="padding: 10px; border-bottom: 1px solid #ddd; text-align: center;">
+          <form action="/admin/edit-coupon/<%- element._id %>" method="get" style="display: inline;">
+            <button style="padding: 8px 12px; background-color: #333; color: #fff; border: none; border-radius: 4px; cursor: pointer;">Edit</button>
+          </form>
+          <form action="/admin/Delete-coupon/<%- element._id %>" method="get" style="display: inline;">
+            <button style="padding: 8px 12px; background-color: #ff0000; color: #fff; border: none; border-radius: 4px; cursor: pointer; margin-left: 5px;">Delete</button>
+          </form>
+        </td>
+      </tr>
+    <% }) %>
+  </tbody>
+</table>
+
+<div class="add-coupon" style="text-align: center;">
+  <form action="/admin/add-coupon" method="get">
+    <button style="padding: 10px 20px; background-color: #333; color: #fff; border: none; border-radius: 4px; cursor: pointer;">Add Coupon</button>
+  </form>
+</div>
+
+<script>
+  $(document).ready(function () {
+    $('#coupen').DataTable();
+  });
+</script>
+
+
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/searchbuilder/1.6.0/css/searchBuilder.dataTables.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/datetime/1.5.1/css/dataTables.dateTime.min.css">
+
+<%- include('admin_footer')%>

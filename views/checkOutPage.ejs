@@ -1,6 +1,5 @@
 <%- include('header') %>
-<form action="" id="checkout-form">
-    <section class="bg-white py-5">
+<section class="bg-white py-5">
         <div class="container ">
             <h4 class="card-title mb-4 mt-4">Checkout
                 <i class="fa-solid fa-cart-shopping text-dark ms-2 fs-4"></i>
@@ -11,6 +10,7 @@
                     <!-- Checkout -->
                     <div class="card shadow-0 border">
                         <a href="/user-manageAddress"><button class="btn btn-danger d-flex align-items-center ml-5">Add Address</button></a>
+                        <form action="" id="checkout-form">
                         <div class="p-4">                       
                             <h5 class="card-title mb-3">Select Address</h5>
                             <div class="row mb-3">
@@ -47,19 +47,46 @@
                             <div class="container">
                                 <h5 class="card-title mb-3">Choose Payment Method</h5>
                                 <div class="row">
-                                    <div class="col-lg-6 mb-3">
-                                        <div class="form-check h-100 border rounded-3">
-                                            <div class="p-3">
-                                                <input required class="form-check-input" type="radio" name="payment"
+                                    <% totalPrice.forEach(element => { %>
+                                    <% if (element.total<1000) { %>
+                                     
+                                        <div class="col-lg-6 mb-3">
+                                            <div class="form-check h-100 border rounded-3">
+                                                <div class="p-3">
+                                                    <input required class="form-check-input" type="radio" name="payment"
                                                     id="flexRadioDefaultPaymentCOD" value="COD" />
-                                                <label class="form-check-label" for="flexRadioDefaultPaymentCOD">
-                                                    <strong>COD</strong> <br />
-                                                    <small class="text-muted">Payment: By Cash</small><br>
-                                                    <small class="text-muted">Type: Offline</small>
-                                                </label>
+                                                    <label class="form-check-label" for="flexRadioDefaultPaymentCOD">
+                                                        <strong>COD</strong> <br />
+                                                        <small class="text-muted">Payment: By Cash</small><br>
+                                                        <small class="text-muted">Type: Offline</small>
+                                                    </label>
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
+                                        <% } else { %>
+
+                                            <div class="col-lg-6 mb-3">
+                                                <div class="form-check h-100 border rounded-3" >
+                                                    <div class="p-3">
+                                                        <input required class="form-check-input" type="radio" name="payment"
+                                                            id="flexRadioDefaultPaymentCOD" value="COD" disabled />
+                                                        <label class="form-check-label" for="flexRadioDefaultPaymentCOD">
+                                                            <strong style="opacity: 0.5; pointer-events: none;">COD</strong> <br />
+                                                            <small class="text-muted" style="opacity: 0.5; pointer-events: none;">Payment: By Cash</small><br>
+                                                            <small class="text-muted" style="opacity: 0.5; pointer-events: none;">Type: Offline</small>
+                                                            <div class="text-">
+                                                                COD available for less than ₹10,000 purchases 
+                                                            </div>
+                                                        </label>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                            
+                                            <% } %>
+
+                                            <% }) %>
+
                                     <div class="col-lg-6 mb-3">
                                         <div class="form-check h-100 border rounded-3">
                                             <div class="p-3">
@@ -69,6 +96,19 @@
                                                     <strong>Online Payment</strong> <br />
                                                     <small class="text-muted">Payment: By Digital money</small><br>
                                                     <small class="text-muted">Type: Online</small>
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-6 mb-3">
+                                        <div class="form-check h-100 border rounded-3">
+                                            <div class="p-3">
+                                                <input required class="form-check-input" type="radio" name="payment"
+                                                    id="flexRadioDefaultPaymentOnline" value="Wallet" />
+                                                <label class="form-check-label" for="flexRadioDefaultPaymentOnline">
+                                                    <strong>Wallet Payment</strong> <br />
+                                                    <small class="text-muted">Payment: By Wallet money</small><br>
+                                                    <small class="text-muted">Type: Wallet</small>
                                                 </label>
                                             </div>
                                         </div>
@@ -108,33 +148,35 @@
                 <div class="col-xl-4 col-lg-4 d-flex justify-content-center justify-content-lg-end border card shadow-0 mb-5">
                     <div class="container py-5">
                         <div class="row">
+                         
                             <h5 class="mb-5 ms-lg-4 mt-4 mt-lg-0 text-decoration-underline">Checkout Overview</h5>
                             <div class="ms-lg-4 mt-4 mt-lg-0 " style="max-width: 320px;">
+                                
+                                <% totalPrice.forEach(element => { %>
                                 <h6 class="mb-5">Summary</h6>
                                 <div class="d-flex justify-content-between">
                                     <p class="mb-2">Total price:</p>
                                     <p class="mb-2">₹<span id="summary">
-                                        <% TotalPrice.forEach(element => { %>
-                                        <%= element.total %></span></p>
-                                </div>
-                                <div class="d-flex justify-content-between">
-                                    <p class="mb-2">Discount:</p>
-                                    <p class="mb-2 text-danger">- ₹00.00</p>
-                                </div>
-                                <!-- Inside the checkout overview section -->
-                                <div class="d-flex justify-content-between">
-                                    <p class="mb-2">Shipping cost:</p>
-                                    <p class="mb-2"><span>Free</span></p>
-                                </div>
-                                <hr />
-                                <div class="d-flex justify-content-between">
-                                    <p class="mb-2">Overall price:</p>
-                                    <p class="mb-2 fw-bold"><span id="overallPrice">₹<%= element.total %>.00</span></p>
-                                    <% }) %>
-                                </div>
-                                <hr />
+                                        <%= element.subTotal %></span></p>
+                                    </div>
+                                    <div class="d-flex justify-content-between">
+                                        <p class="mb-2">Discount:</p>
+                                        <p class="mb-2 text-danger">- ₹<%= element.CouponDiscount %>.00</p>
+                                    </div>
+                                    <!-- Inside the checkout overview section -->
+                                    <div class="d-flex justify-content-between">
+                                        <p class="mb-2">Shipping cost:</p>
+                                        <p class="mb-2"><span>Free</span></p>
+                                    </div>
+                                    <hr />
+                                        <div class="d-flex justify-content-between">
+                                            <p class="mb-2">Overall price:</p>
+                                            <p class="mb-2 fw-bold"><span id="overallPrice">₹<%= element.total %>.00</span></p>
+                                            <% }) %>
+                                        </div>
+                                        <hr />
+                                        <% userCartData.forEach((cart, i) => { %>
                                 <h6 class="text-dark my-4">Items in cart</h6>
-                                <% userCartData.forEach((cart, i) => { %>
                                     <input type="text" name="productList" hidden required
                                         value="<%= cart.productDetails._id %>">
                                     <div class="d-flex align-items-center mb-4">
@@ -166,7 +208,21 @@
         </div>
     </section>
 </form>
+<% if (typeof redirectMsg !== 'undefined' && redirectMsg) { %>
+    <script>
+      // Use tostify or any other notification library to show the message
+      Toastify({
+        text: '<%= redirectMsg %>',
+        duration: 3000,  // Adjust the duration as needed
+        gravity: 'top', // Position of the notification
+        position: 'right',
+        backgroundColor: '#ff6347', // Set the background color
+        stopOnFocus: true, // Stop the notification when the user focuses on the window
+      }).showToast();
+    </script>
+  <% } %>
 <%- include('footer') %>
+
 
 <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 <!-- Other scripts -->
@@ -174,6 +230,11 @@
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="https://cdn.jsdelivr.net/npm/@clientIO/rave-js@3"></script>
 <!-- Other scripts -->
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<!-- Your existing code -->
 
 <script>
     document.getElementById('checkout-form').addEventListener('submit', async (e) => {
@@ -200,23 +261,27 @@
 
                 const result = await response.json();
 
-                var options = {
-                    key: result.razorpayKey,
-                    amount: result.orderAmount,
-                    currency: result.currency,
-                    order_id: result.orderId,
-                    name: 'Exclusive',
-                    description: 'Payment for your order',
-                    handler: function (response) {
-                        console.log(response);
+var options = {
+    key: result.razorpayKey,
+    amount: result.orderAmount,
+    currency: result.currency,
+    order_id: result.orderId,
+    name: 'Exclusive',
+    description: 'Payment for your order',
+    handler: function (response) {
+        console.log(response);
 
-                        if (response.razorpay_payment_id) {
-                            window.location = '/user-Orderconfirmation';
-                        } else {
-                            alert('Payment failed!');
-                        }
-                    },
-                };
+        if (response.razorpay_payment_id) {
+            var orderId = "razorpay";
+            var url = '/user-Orderconfirmation?orderId=' + encodeURIComponent(orderId);
+            window.location.href = url;
+        } else {
+            const orderId = result.orderId;
+            const redirectUrl = `/user-Orderfail?orderId=${encodeURIComponent(orderId)}`;
+            window.location.href = redirectUrl;
+        }
+    },
+};
 
                 var rzp = new Razorpay(options);
                 rzp.open();
@@ -237,6 +302,13 @@
 
                 if (result.codSuccess) {
                     window.location = '/user-Orderconfirmation';
+                } else {
+                    // Show SweetAlert2 pop-up for the error message
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Ooops!',
+                        text: result.message,
+                    });
                 }
             }
         } catch (error) {

@@ -1,63 +1,226 @@
-<%- include('header-admin')%>
-<main>
-  <div class="mb-4 mt-5 d-flex justify-content-around" style="font-family: Inter;">
-    <h3>Orders</h3>
-  </div>
-  <div class="container-fluid">
-    <div class="row">
-      <div class="col-lg-4 col-md-6 col-sm-12">
-        <div class="mb-4 p-5" style="background: #A9F1736B;">
-          <div class="d-flex justify-content-center mt-5">Today</div>
-          <div><br></div>
-          <div class="d-flex justify-content-around mt-5">Orders Today</div>
-        </div>
-      </div>
-      <div class="col-lg-4 col-md-6 col-sm-12">
-        <div class="mb-4 p-5" style="background: #A9F1736B;">
-          <div class="d-flex justify-content-center mt-5">Week</div>
-          <div><br></div>
-          <div class="d-flex justify-content-around mt-5">Orders this Week</div>
-        </div>
-      </div>
-      <div class="col-lg-4 col-md-6 col-sm-12">
-        <div class="mb-4 p-5" style="background: #A9F1736B;">
-          <div class="d-flex justify-content-center mt-5">Month</div>
-          <div><br></div>
-          <div class="d-flex justify-content-around mt-5">Orders this Month</div>
-        </div>
-      </div>
-    </div>
-  </div>
+<%- include('header-admin') %> <!-- Include the admin header -->
 
-  <div class="mb-4 mt-5 d-flex justify-content-around" style="font-family: Inter;">
-    <h3>Revenue</h3>
-  </div>
-  <div class="container-fluid">
-    <div class="row">
-      <div class="col-lg-4 col-md-6 col-sm-12">
-        <div class="mb-4 p-5" style="background: #A9F1736B;">
-          <div class="d-flex justify-content-center mt-5">Today</div>
-          <div><br></div>
-          <div class="d-flex justify-content-around mt-5">Revenue Today</div>
+<main>
+    <div class="container mt-5 mb-5">
+        <div class="row w-100 mt-5">
+            <!-- Total Customers Card -->
+            <div class="col-md-3">
+                <div class="shadow container bg-white card border-secondary  mx-sm-1 p-3">
+                    <div class="shadow container card border-secondary rounded-pill bg-white rounded text-dark p-3 my-card">
+                        <i class="fa-solid fa-cart-plus d-flex justify-content-center"></i>
+                    </div>
+                    <div class="text-dark text-center mt-3">
+                        <h4>Total Orders</h4>
+                    </div>
+                    <div class="text-dark text-center mt-2">
+                        <h1><%= TotalOrder %></h1>
+                    </div>
+                </div>
+            </div>
+            <!-- Total Revenue Card -->
+            <div class="col-md-3">
+                <div class="shadow container border-secondary bg-white card  mx-sm-1 p-3">
+                    <div class="card border-secondary rounded-pill shadow text-dark p-3 my-card">
+                        <i class="fa-solid fa-sack-dollar d-flex justify-content-center"></i>
+                    </div>
+                    <div class="text-dark text-center mt-3">
+                        <h4>Total Revenue</h4>
+                    </div>
+                    <div class="text-dark text-center mt-2">
+                        <h1>₹<%= totalRevenue %></h1>
+                    </div>
+                </div>
+            </div>
+            <!-- Total Users Card -->
+            <div class="col-md-3">
+                <div class="shadow container border-secondary bg-white card  mx-sm-1 p-3">
+                    <div class="card border-secondary rounded-pill shadow text-dark p-3 my-card">
+                        <i class="fa-solid fa-users d-flex justify-content-center"></i>
+                    </div>
+                    <div class="text-dark text-center mt-3">
+                        <h4>Total Users</h4>
+                    </div>
+                    <div class="text-dark text-center mt-2">
+                        <h1><%= TotalUser %></h1>
+                    </div>
+                </div>
+            </div>
+            <!-- Total Products Card -->
+            <div class="col-md-3">
+                <div class="shadow container border-secondary bg-white card  mx-sm-1 p-3">
+                    <div class="card border-secondary rounded-pill shadow text-dark p-3 my-card">
+                        <i class="fa-solid fa-shoe-prints d-flex justify-content-center"></i>
+                    </div>
+                    <div class="text-dark text-center mt-3">
+                        <h4>Total Products</h4>
+                    </div>
+                    <div class="text-dark text-center mt-2">
+                        <h1><%= TotalProduct %> </h1>
+                    </div>
+                </div>
+            </div>
         </div>
-      </div>
-      <div class="col-lg-4 col-md-6 col-sm-12">
-        <div class="mb-4 p-5" style="background: #A9F1736B;">
-          <div class="d-flex justify-content-center mt-5">Week</div>
-          <div><br></div>
-          <div class="d-flex justify-content-around mt-5">Revenue this Week</div>
-        </div>
-      </div>
-      <div class="col-lg-4 col-md-6 col-sm-12">
-        <div class="mb-4 p-5" style="background: #A9F1736B;">
-          <div class="d-flex justify-content-center mt-5">Month</div>
-          <div><br></div>
-          <div class="d-flex justify-content-around mt-5">Revenue this Month</div>
-        </div>
-      </div>
     </div>
+
+    <div class="d-flex justify-content-around">
+      <div style="width: 45%; background-color: #f8f9fa; padding: 20px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); border-radius: 8px;">
+          <h2 style="margin-bottom: 20px; font-size: 24px; color: #333;">Sales Chart</h2>
+          <!-- Dropdown for selecting period -->
+          <div>
+              <label for="period">Select Period:</label>
+              <select id="period" onchange="updateChart(this.value)">
+                  <option value="monthly">Monthly</option>
+                  <option value="weekly">Weekly</option>
+                  <option value="yearly">Yearly</option>
+              </select>
+          </div>
+          <canvas id="salesChartCanvas" style="max-width: 100%; height: auto;"></canvas>
+      </div>
+
+      <!-- Product Inventory Chart -->
+      <div style="width: 45%; background-color: #f8f9fa; padding: 20px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); border-radius: 8px;">
+          <h2 style="margin-bottom: 20px; font-size: 24px; color: #333;">Product Inventory</h2>
+          <canvas id="inventoryGraph" style="max-width: 100%; height: auto;"></canvas>
+      </div>
   </div>
+</div>
+
+<div class="col-lg-12 mt-4">
+    <div class="card shadow" style="background-color: #fff;">
+        <div class="d-flex justify-content-around card-header">
+
+        <h3 class="">Best Products</h3>
+        <h2 class="">Best Sellers</h2>
+        <h3 class="">Best Category</h3>
+    </div>
+        <div class="card-body d-flex justify-content-around">
+            <div class="table-responsive me-3">
+                <table class="table table-white table-striped border-0 table-borderless">
+                    <thead>
+                        <tr>
+                            <th class="text-center">Product Image</th>
+                            <th class="text-center">Name</th>
+                            <th class="text-center">Total Sales</th>
+                            <th class="text-center">Price</th>
+                            <th class="text-center">Stock</th>
+                            <th class="text-center">Status</th>
+                            <!-- <th>Sold</th> -->
+                        </tr>
+                    </thead>
+                    <tbody >
+                        <% topSellingProducts.forEach(element => { %>
+                            <tr>
+                                <td class="text-center"><img src="/<%=element.image %>" width="50px" height="50px" alt=""></td>
+                                <td class="text-center"><%=element._id %></td>
+                                <td class="text-center"><%=element.totalQuantity %></td>
+                                <td class="text-center"><%=element.price %></td>
+                                <td class="text-center"><%=element.qunt %></td>
+                                <td class="<%= element.qunt > 0 ? 'text-success fw-bold' : 'text-danger fw-bold' %> table-white text-center">
+                                    <% if (element.qunt > 0) { %>
+                                    <% value = 'active'; %>
+                                    <% } else { %>
+                                    <% value = 'inactive'; %>
+                                    <% } %>
+                                    <%= value %>
+                                  </td>
+
+                            </tr>
+                            <% }) %>
+                    </tbody>
+                </table>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-white table-striped border-0 table-borderless">
+                    <thead>
+                        <tr>
+                            <th class="text-center">Product Image</th>
+                            <th class="text-center">Category Name</th>
+                            <th class="text-center">Total Sales</th>
+                            <th class="text-center">Total Revenue</th>
+
+                            <!-- <th>Sold</th> -->
+                        </tr>
+                    </thead>
+                    <tbody >
+                        <% topSellingBrand.forEach(element => { %>
+                            <tr>
+                                <td class="text-center"><img src="/<%=element.brandImage %>" width="50px" height="50px" alt=""></td>
+                                <td class="text-center"><%=element._id %></td>
+                                <td class="text-center"><%=element.totalQuantity %></td>
+                                <td class="text-center"><%=element.Revenue %></td>
+          
+
+                            </tr>
+                            <% }) %>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
 </main>
 
-  <!-- Bootstrap JavaScript Libraries -->
-  <%- include('admin_footer')%>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script> <!-- Include Chart.js library -->
+
+<script>
+// Sales Chart Data
+const salesData = JSON.parse('<%- JSON.stringify(salesData) %>');
+
+// Debug statement
+console.log("Sales Data:", salesData);
+
+// Sales Chart
+const salesCtx = document.getElementById('salesChartCanvas').getContext('2d');
+let salesChart; // Declare chart variable
+
+function updateChart(period) {
+  console.log("Updating chart for period:", period);
+  const data = salesData[period];
+  if (!data) return; // Handle invalid period
+  if (salesChart) {
+      salesChart.destroy(); // Destroy existing chart if exists
+  }
+
+  let labels = [];
+  if (period === 'monthly') {
+      labels = ['January', 'February', 'March', 'April','May']; // Example labels for monthly data
+  } else if (period === 'weekly') {
+      labels = ['Week 1', 'Week 2', 'Week 3', 'Week 4','Week 5',]; // Example labels for weekly data
+  } else if (period === 'yearly') {
+      const currentYear = new Date().getFullYear();
+      for (let i = currentYear ; i <= currentYear + 4; i++) {
+          labels.push(i.toString()); // Add years from 5 years ago to the current year
+      }
+  }
+
+  salesChart = new Chart(salesCtx, {
+      type: 'bar',
+      data: {
+          labels: labels,
+          datasets: [data]
+      },
+      options: {
+          scales: {
+              y: {
+                  beginAtZero: true
+              }
+          }
+      }
+  });
+}
+
+// Initialize the chart with monthly data
+updateChart('monthly');
+
+// Product Inventory Chart
+const inventoryData = JSON.parse('<%- JSON.stringify(inventoryData) %>');
+const inventoryCtx = document.getElementById('inventoryGraph').getContext('2d');
+new Chart(inventoryCtx, {
+  type: 'line',
+  data: inventoryData,
+  options: {
+      // Your options for the inventory chart
+  }
+});
+</script>
+<%- include('admin_footer') %> <!-- Include the admin footer -->

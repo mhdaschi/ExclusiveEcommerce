@@ -18,6 +18,7 @@ const usermodel = new mongoose.Schema({
         type: String,
         required: true,
     },
+ 
 
     status: {
         type: Boolean,
@@ -35,15 +36,26 @@ const usermodel = new mongoose.Schema({
         state:{type:String},
         pincode:{type:String},
         phone:{type:Number}
-    }]
+    }],
+
+    wallettotalAmount: { type: Number, default: 0 },
+wallet: [{
+    balanceamount: { type: String, default: '0' },
+    transactionType: { type: String},
+    Timestamp: { type: Date, default: Date.now },
+    description: { type: String }
+}],
+Phone:{
+    type: String,
+
+}
+
+
 });
 
 // Connect database
 mongoose.connect(process.env.MONGOURL, {
-    useNewUrlParser: true,
-    useUnifiedTopology: false
 }).then(() => {
-    console.log("Database Connected");
 }).catch((err) => {
     console.log(err);
 });

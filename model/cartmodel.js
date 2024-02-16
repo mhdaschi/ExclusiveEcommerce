@@ -7,7 +7,8 @@ const cartSchema = new mongoose.Schema({
         cartItem: mongoose.Types.ObjectId,
         quantity: Number,
     
-    }]
+    }],
+    couponcount :Number
 });
 
 const cartModel = mongoose.model('Cart', cartSchema);

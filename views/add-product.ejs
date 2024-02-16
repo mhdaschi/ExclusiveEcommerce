@@ -1,95 +1,8 @@
-<!doctype html>
-<html lang="en">
-
-<head>
-  <title>Title</title>
-  <!-- Required meta tags -->
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-
-  <!-- Bootstrap CSS v5.2.1 -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/css/bootstrap.min.css" rel="stylesheet"
-    integrity="sha384-iYQeCzEYFbKjA/T2uDLTpkwGzCiq6soy8tYaI1GyVh/UjpbCx/TYkiZhlZB6+fzT" crossorigin="anonymous">
-    <style>
-        body {
-          font-family: Arial, sans-serif;
-          background-color: #f4f4f4;
-          margin: 0;
-          padding: 0;
-        }
-    
-        .container {
-          max-width: 600px;
-          margin: 20px auto;
-          background-color: #fff;
-          padding: 20px;
-          border-radius: 8px;
-          box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
-    
-        h2 {
-          color: #333;
-        }
-    
-        label {
-          display: block;
-          margin: 10px 0 5px;
-          color: #555;
-        }
-    
-        input,
-        textarea {
-          width: 100%;
-          padding: 10px;
-          margin-bottom: 15px;
-          border: 1px solid #ccc;
-          border-radius: 4px;
-          box-sizing: border-box;
-        }
-      </style>
-</head>
-
-<body>
-    <header>
-        <nav class="navbar navbar-expand-lg navbar-light bg-light">
-            <div class="container-fluid">
-              <a class="navbar-brand" style="font-family: 'Inter', sans-serif; font-weight:bold; font-size: 24px; color: #000000;" href="#">Exclusive</a>
-              <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-              </button>
-              <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav">
-                  <li class="nav-item">
-                    <a class="nav-link active" style="font-family: Inter; font-size: 16px; font-weight: 400; line-height: 19px; letter-spacing: 0em; text-align: left;" aria-current="page" href="#">Users</a>
-                  </li>
-                  <li class="nav-item">
-                    <a class="nav-link active" style="font-family: Inter; font-size: 16px; font-weight: 400; line-height: 19px; letter-spacing: 0em; text-align: left;" href="#">Sales</a>
-                  </li>
-                  <li class="nav-item">
-                    <a class="nav-link active" style="font-family: Inter; font-size: 16px; font-weight: 400; line-height: 19px; letter-spacing: 0em; text-align: left;" href="#">Categories</a>
-                  </li>
-                  <li class="nav-item">
-                    <a class="nav-link active" style="font-family: Inter; font-size: 16px; font-weight: 400; line-height: 19px; letter-spacing: 0em; text-align: left;" href="#" tabindex="-1" aria-disabled="true">Products</a>
-                  </li>
-                  <li class="nav-item">
-                    <a class="nav-link active" style="font-family: Inter; font-size: 16px; font-weight: 400; line-height: 19px; letter-spacing: 0em; text-align: left;" href="#" tabindex="-1" aria-disabled="true">Dashboard</a>
-                  </li>
-                  <li class="nav-item">
-                    <a class="nav-link active" style="font-family: Inter; font-size: 16px; font-weight: 400; line-height: 19px; letter-spacing: 0em; text-align: left;" href="#" tabindex="-1" aria-disabled="true">Orders</a>
-                  </li>
-                  <li class="nav-item">
-                    <a class="nav-link active" style="font-family: Inter; font-size: 16px; font-weight: 400; line-height: 19px; letter-spacing: 0em; text-align: left;" href="#" tabindex="-1" aria-disabled="true">coupons</a>
-                  </li>
-                </ul>
-              </div>
-            </div>
-          </nav>
-        
-        </header>
+<%-include('header-admin')%>
   <main>
     <div class="container">
         <h2 class="mb-4">Add Product</h2>
-        <form action="/admin/addproduct" method="post" id="submit-form" enctype="multipart/form-data" >
+        <form action="/admin/addproduct" method="post" id="submit-form" enctype="multipart/form-data" onsubmit="return validateproduct()">
           <div class="mb-3">
             <label for="productName" class="form-label">Product Name:</label>
             <input type="text" id="productName" name="productName" class="form-control">
@@ -117,8 +30,14 @@
           </div>
     
           <div class="mb-3">
-            <label for="brand" class="form-label">Brand:</label>
-            <input type="text" id="brand" name="brand" class="form-control" >
+            <label for="brand" class="form-label">Category:</label>
+            <select class="form_control" id="brand" name="brand" style="width: 200px; padding: 8px; border: 1px solid #ccc; border-radius: 4px; font-size: 16px; outline: none;">
+              <% categoryData.forEach(element => { %>
+                <option><%= element.brand %></option>
+              <% }) %>
+            </select>
+            
+
             <div class="error" id="brandError" style="
             font-family: Poppins;
             font-size: 16px;
@@ -246,7 +165,7 @@
           "></div>
           </div>
     
-          <button type="button" class="btn btn-danger " onclick="validateproduct()">Add Product</button>
+          <button type="submit" class="btn btn-danger">Add Product</button>
 
           <p class="d-flex justify-content-center" id="msg" style="
                   font-family: Poppins;
@@ -267,9 +186,7 @@
   <!-- Your HTML code above -->
   <script>
     function validateproduct() {
-     
       // Reset error messages
-       const form = document.getElementById('submit-form');
       document.getElementById('productNameError').innerText = '';
       document.getElementById('stockError').innerText = '';
       document.getElementById('brandError').innerText = '';
@@ -281,7 +198,7 @@
       document.getElementById('productImage2Error').innerText = '';
       document.getElementById('productImage3Error').innerText = '';
       document.getElementById('productImage4Error').innerText = '';
-      
+  
       // Retrieve form values
       var productName = document.getElementById('productName').value.trim();
       var stock = document.getElementById('stock').value.trim();
@@ -290,67 +207,90 @@
       var variant = document.getElementById('variant').value.trim();
       var colour = document.getElementById('colour').value.trim();
       var description = document.getElementById('description').value.trim();
+      
       var productImage1 = document.getElementById('productImage1').value.trim();
       var productImage2 = document.getElementById('productImage2').value.trim();
       var productImage3 = document.getElementById('productImage3').value.trim();
       var productImage4 = document.getElementById('productImage4').value.trim();
-      
-      
+  
+      // Image input fields
+      var imageFields = [
+        document.getElementById('productImage1'),
+        document.getElementById('productImage2'),
+        document.getElementById('productImage3'),
+        document.getElementById('productImage4')
+      ];
+  
+      for (var i = 0; i < imageFields.length; i++) {
+        var fileInput = imageFields[i];
+        var errorSpan = document.getElementById(`productImage${i + 1}Error`);
+  
+        if (fileInput.files.length === 0) {
+          errorSpan.innerText = 'Please select an image file';
+          return false;
+        }
+  
+        var allowedExtensions = /(\.jpg|\.jpeg|\.png|\.gif)$/i;
+        var fileName = fileInput.files[0].name;
+  
+        if (!allowedExtensions.exec(fileName)) {
+          errorSpan.innerText = 'Only image files with extensions .jpg, .jpeg, .png, .gif are allowed';
+          return false;
+        }
+      }
+  
       if (productName === '') {
         document.getElementById('productNameError').innerText = 'Product name must be filled out';
         return false;
       }
-      
-      if (brand === ''){
-        document.getElementById('brandError').innerText = 'Brand name must be filled out'
+  
+      if (brand === '') {
+        document.getElementById('brandError').innerText = 'Brand name must be filled out';
         return false;
-        
-      }
-      
-      if (variant === ''){
-        document.getElementById('variantError').innerText = 'Variant must be filled out'
-        return false;
-        
-      }
-      
-      if (description === ''){
-        document.getElementById('descriptionError').innerText = 'Description must be filled out'
-        return false;
-        
-      }
-      
-      if (colour === ''){
-        document.getElementById('colourError').innerText = 'Colour must be filled out'
-        return false;
-        
       }
   
-      if (stock === ''){
-        document.getElementById('stockError').innerText = 'Stock Count must be filled out'
-        return false;
-        
-      }
-      
-      if(stock < 0 ){
-        document.getElementById('stockError').innerText = 'Enter a valid stock'
+      if (variant === '') {
+        document.getElementById('variantError').innerText = 'Variant must be filled out';
         return false;
       }
-      
-      
-      if (price === ''){
-        document.getElementById('priceError').innerText = 'Price must be filled out'
+  
+      if (description === '') {
+        document.getElementById('descriptionError').innerText = 'Description must be filled out';
         return false;
-        
       }
-      
-      if(price < 0 ){
-        document.getElementById('priceError').innerText = 'Enter a valid price '
+  
+      if (colour === '') {
+        document.getElementById('colourError').innerText = 'Colour must be filled out';
         return false;
-        }
-        
-        form.submit()
       }
-    </script>
+  
+      if (stock === '') {
+        document.getElementById('stockError').innerText = 'Stock Count must be filled out';
+        return false;
+      }
+  
+      if (stock < 0) {
+        document.getElementById('stockError').innerText = 'Enter a valid stock';
+        return false;
+      }
+  
+      if (price === '') {
+        document.getElementById('priceError').innerText = 'Price must be filled out';
+        return false;
+      }
+  
+      if (price < 0) {
+        document.getElementById('priceError').innerText = 'Enter a valid price';
+        return false;
+      }
+  
+      // Add any additional validation rules as needed
+  
+      // If all validations pass, you can proceed with form submission
+      return true;
+    }
+  </script>
+  
   
   <script>
     setTimeout(() => {

@@ -1,4 +1,13 @@
-<%-include('header-admin')%>
+<%- include('header-admin') %>
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.min.css">
+<link rel="stylesheet" href="https://cdn.datatables.net/searchbuilder/1.6.0/css/searchBuilder.dataTables.min.css">
+<link rel="stylesheet" href="https://cdn.datatables.net/datetime/1.5.1/css/dataTables.dateTime.min.css">
+<script src="https://code.jquery.com/jquery-3.7.0.js"></script>
+
+<script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/searchbuilder/1.6.0/js/dataTables.searchBuilder.min.js"></script>
+<script src="https://cdn.datatables.net/datetime/1.5.1/js/dataTables.dateTime.min.js"></script>
+
 <main>
   <div class="shadow container p-3 mt-5 mb-5 bg-white rounded d-flex flex-wrap justify-content-around">
     <!-- Cards Section -->
@@ -81,7 +90,7 @@
         color: #44db74;
         "><%= msg %></p>
 
-        <table class="table table-white table-striped border-0">
+        <table class="table table-white table-striped border-0" id="users">
           <thead>
             <tr>
               <th class="table-white text-dark text-center" scope="col">No.</th>
@@ -89,7 +98,6 @@
               <th class="table-white text-dark text-center" scope="col">Email</th>
               <th class="table-white text-dark text-center" scope="col">status</th>
               <th class="table-white text-dark text-center" scope="col">Action</th>
-              <th class="table-white text-dark text-center" scope="col">Delete</th>
             </tr>
           </thead>
           <tbody>
@@ -121,13 +129,6 @@
                 </form>
                 <% } %>
               </td>
-
-              <td class="text-center">
-                <form id="deleteForm" action="/admin/delete/<%-data._id%>" method="POST">
-                  <button type="button" class="text-white font-size btn btn-danger px-3 py-0"
-                    onclick="confirmDelete('<%= data.name %>','deleteForm')">Delete</button>
-                </form>
-              </td>
             </tr>
             <% }) %>
           </tbody>
@@ -145,10 +146,20 @@
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.20/dist/sweetalert2.all.min.js"></script>
 
 <script>
+  $(document).ready(function () {
+    $('#users').DataTable();
+  });
+</script>
+
+
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/searchbuilder/1.6.0/css/searchBuilder.dataTables.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/datetime/1.5.1/css/dataTables.dateTime.min.css">
+<script>
   setTimeout(() => {
-    var errmsg = document.querySelector('#msg')
-    errmsg.innerHTML=""
-  },4000);
+    var errmsg = document.querySelector('#msg');
+    errmsg.innerHTML = '';
+  }, 4000);
 </script>
 
 <script>

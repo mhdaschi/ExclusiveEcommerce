@@ -1,0 +1,79 @@
+<%- include('header') %>
+
+<!-- Include Toastr library -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+
+<div style="margin-top: 5%;">
+    <% usercoupen.forEach(element => { %>
+        
+        <div style="background: #fff; border-radius: 10px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); display: flex; justify-content: space-between; margin-bottom: 20px; padding: 20px;">
+            <!-- Left Section with Image and Date -->
+            <div style="padding: 20px;">
+                <div style="position: relative;">
+                    <!-- Add your image source here -->
+                    <!-- <p style="font-size: 1.2rem;" class="time font-weight-light">Valid On</p><br> -->
+                    <p ><%- element.expireAt.toISOString().split('T')[0] %></p>
+                </div>
+            </div>
+
+            <!-- Middle Section with Valid Badge, Discount, and Description -->
+            <div style="align-items: center; padding: 20px; display: flex; width: 100%; justify-content: start;">
+                <div>
+                    <% if (element.email) { %>
+                        <span style="background-color: #a73528; color: #fff; padding: 5px 10px; border-radius: 5px; font-size: 14px;">Alredy Use</span>
+                    <% } else { %>
+                        <span style="background-color: #28a745; color: #fff; padding: 5px 10px; border-radius: 5px; font-size: 14px;">Valid</span>
+                    <% } %>
+                    
+                    
+                     
+                    <h3 style="font-size: 1.5rem; margin: 10px 0;"><%- element.discount %>&#8377 OFF</h3>
+                    <p style="margin: 10px 0;"><%- element.description %></p>
+                </div>
+            </div>
+
+            <!-- Right Section with Expiration Info, Coupon Code, and Copy Button -->
+            <div style="border-left: 1px dashed #ddd; width: 40% !important; position: relative;">
+                <div style="content: ''; position: absolute; width: 20px; height: 20px; background: #dedede; border-radius: 50%; top: -10px; left: -10px;"></div>
+                <div style="content: ''; position: absolute; width: 20px; height: 20px; background: #dedede; border-radius: 50%; bottom: -10px; left: -10px;"></div>
+                <div style="display: flex; align-items: center; justify-content: space-between; padding: 0 20px; margin: 20px 0;">
+                    <div style="width: 100%;">
+                        <div style="text-align: right;">
+                            <span style="font-size: 1.2rem;" class="time font-weight-light">
+                                <span>Coupon Code</span><br>
+                                <p style="font-size: 1.2rem;" class="time font-weight-light"><%- element.couponCode %></p>
+                            </span>
+                        </div>
+                        <button onclick="copyToClipboard('<%- element.couponCode %>')" class="btn btn-sm btn-outline-danger btn-block" style="text-decoration: none; color: #dc3545; font-size: 1rem; border: 1px solid #dc3545; padding: 8px 16px; border-radius: 5px;">Copy</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    <% }) %>
+</div>
+
+<script>
+    function copyToClipboard(text) {
+        var dummy = document.createElement("textarea");
+        document.body.appendChild(dummy);
+        dummy.value = text;
+        dummy.select();
+        document.execCommand("copy");
+        document.body.removeChild(dummy);
+
+        // Use Toastr for notification
+        toastr.success('Coupon code copied to clipboard!');
+    }
+</script>
+
+<!-- Include Toastr initialization script -->
+<script>
+    toastr.options = {
+        "closeButton": true,
+        "positionClass": "toast-top-right",
+        "timeOut": 3000
+    };
+</script>
+
+<%- include('footer') %>

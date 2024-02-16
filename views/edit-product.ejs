@@ -1,351 +1,196 @@
-<!doctype html>
-<html lang="en">
+<%- include('header-admin') %>
 
-<head>
-  <title>Title</title>
-  <!-- Required meta tags -->
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<main>
+  <div class="container">
+    <h2 class="mb-4">Edit Product</h2>
+    <% useProduct.forEach(element => { %>
+      <form action="/admin/editproduct/<%= element._id %>" method="POST" enctype="multipart/form-data" onsubmit="return validateProduct()">
 
-  <!-- Bootstrap CSS v5.2.1 -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/css/bootstrap.min.css" rel="stylesheet"
-    integrity="sha384-iYQeCzEYFbKjA/T2uDLTpkwGzCiq6soy8tYaI1GyVh/UjpbCx/TYkiZhlZB6+fzT" crossorigin="anonymous">
-    <style>
-        body {
-          font-family: Arial, sans-serif;
-          background-color: #f4f4f4;
-          margin: 0;
-          padding: 0;
-        }
-    
-        .container {
-          max-width: 600px;
-          margin: 20px auto;
-          background-color: #fff;
-          padding: 20px;
-          border-radius: 8px;
-          box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
-    
-        h2 {
-          color: #333;
-        }
-    
-        label {
-          display: block;
-          margin: 10px 0 5px;
-          color: #555;
-        }
-    
-        input,
-        textarea {
-          width: 100%;
-          padding: 10px;
-          margin-bottom: 15px;
-          border: 1px solid #ccc;
-          border-radius: 4px;
-          box-sizing: border-box;
-        }
-      </style>
-</head>
 
-<body>
-    <header>
-        <nav class="navbar navbar-expand-lg navbar-light bg-light">
-            <div class="container-fluid">
-              <a class="navbar-brand" style="font-family: 'Inter', sans-serif; font-weight:bold; font-size: 24px; color: #000000;" href="#">Exclusive</a>
-              <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-              </button>
-              <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav">
-                  <li class="nav-item">
-                    <a class="nav-link active" style="font-family: Inter; font-size: 16px; font-weight: 400; line-height: 19px; letter-spacing: 0em; text-align: left;" aria-current="page" href="#">Users</a>
-                  </li>
-                  <li class="nav-item">
-                    <a class="nav-link active" style="font-family: Inter; font-size: 16px; font-weight: 400; line-height: 19px; letter-spacing: 0em; text-align: left;" href="#">Sales</a>
-                  </li>
-                  <li class="nav-item">
-                    <a class="nav-link active" style="font-family: Inter; font-size: 16px; font-weight: 400; line-height: 19px; letter-spacing: 0em; text-align: left;" href="#">Categories</a>
-                  </li>
-                  <li class="nav-item">
-                    <a class="nav-link active" style="font-family: Inter; font-size: 16px; font-weight: 400; line-height: 19px; letter-spacing: 0em; text-align: left;" href="#" tabindex="-1" aria-disabled="true">Products</a>
-                  </li>
-                  <li class="nav-item">
-                    <a class="nav-link active" style="font-family: Inter; font-size: 16px; font-weight: 400; line-height: 19px; letter-spacing: 0em; text-align: left;" href="#" tabindex="-1" aria-disabled="true">Dashboard</a>
-                  </li>
-                  <li class="nav-item">
-                    <a class="nav-link active" style="font-family: Inter; font-size: 16px; font-weight: 400; line-height: 19px; letter-spacing: 0em; text-align: left;" href="#" tabindex="-1" aria-disabled="true">Orders</a>
-                  </li>
-                  <li class="nav-item">
-                    <a class="nav-link active" style="font-family: Inter; font-size: 16px; font-weight: 400; line-height: 19px; letter-spacing: 0em; text-align: left;" href="#" tabindex="-1" aria-disabled="true">coupons</a>
-                  </li>
-                </ul>
+        <div class="mb-3">
+          <label for="productName" class="form-label">Product Name:</label>
+          <input type="text" id="productName" name="productName" class="form-control" required value="<%= element.product_name %>" />
+          <div class="error" style="color: red;" id="productNameError"></div>
+        </div>
+
+        <div class="mb-3">
+          <label for="stock" class="form-label">Stock:</label>
+          <input type="number" id="stock" name="stock" class="form-control" required value="<%= element.stock %>" />
+          <div class="error" style="color: red;" id="stockError"></div>
+        </div>
+
+        <div class="mb-3">
+          <label for="brand" class="form-label">Category:</label>
+          <select class="form-control" id="brand" name="brand" style="width: 200px; padding: 8px; border: 1px solid #ccc; border-radius: 4px; font-size: 16px; outline: none;">
+            <% categoryData.forEach(category => { %>
+              <option><%= category.brand %></option>
+            <% }) %>
+          </select>
+          <div class="error" style="color: red;" id="brandError"></div>
+        </div>
+
+        <div class="mb-3">
+          <label for="price" class="form-label">Price:</label>
+          <input type="number" id="price" name="price" class="form-control" required value="<%= element.price %>" />
+          <div class="error" style="color: red;" id="priceError"></div>
+        </div>
+
+        <div class="mb-3">
+          <label for="variant" class="form-label">Variant:</label>
+          <input type="text" id="variant" name="variant" class="form-control" required value="<%= element.variant %>" />
+          <div class="error" style="color: red;" id="variantError"></div>
+        </div>
+
+        <div class="mb-3">
+          <label for="colour" class="form-label">Colour:</label>
+          <input type="text" id="colour" name="colour" class="form-control" required value="<%= element.productColor %>" />
+          <div class="error" style="color: red;" id="colourError"></div>
+        </div>
+
+        <div class="mb-3">
+          <label for="description" class="form-label">Description:</label>
+          <textarea id="description" name="description" rows="4" class="form-control" required><%= element.description %></textarea>
+          <div class="error" style="color: red;" id="descriptionError"></div>
+        </div>
+
+        <div class="d-flex">
+          <% for (let i = 0; i < element.product_image.length; i++) { %>
+            <div class="mb-3 me-2">
+              <label for="updateImage<%= i %>" class="form-label">Update Product Image <%= i + 1 %>:</label>
+              <input type="checkbox" id="updateImage<%= i %>" name="updateImage[<%= i %>]" value="<%= i %>" />
+              <input type="file" id="productImage<%= i %>" name="productImage" class="form-control" multiple />
+              <input type="text" class="form-control" value="<%= element.product_image[i] %>" readonly>
+              <div class="d-flex justify-content-center mt-2">
+                <img src="/<%= element.product_image[i] %>" alt="" width="150px" height="150px">
               </div>
+              <div class="error" style="color: red;" id="productImage<%= i %>Error"></div>
             </div>
-          </nav>
+          <% } %>
+        </div>
         
-        </header>
-        <main>
-          <div class="container">
-            <h2 class="mb-4">Edit Product</h2>
-            <% useProduct.forEach(element => { %>
-              <form action="/admin/editproduct/<%= element._id %>" enctype="multipart/form-data" method="post" onsubmit="return validateproduct()">
+      <% }) %>
 
-              <div class="mb-3">
-                
-                <label for="productName" class="form-label">Product Name:</label>
-                <input type="text" id="productName" name="productName" class="form-control" required value="<%= element.product_name %>"/>
-                <div class="error" id="productNameError" style="
-                font-family: Poppins;
-                font-size: 16px;
-                font-weight: 400;
-                line-height: 24px;
-                letter-spacing: 0em;
-                color: #db4444;
-              "></div>
-                
-              
-                 
-                
-              </div>
-        
-              <div class="mb-3">
-                <label for="stock" class="form-label">Stock:</label>
-                <input type="number" id="stock" name="stock" class="form-control" required value="<%= element.stock %>"/>
-                <div class="error" id="stockError" style="
-                font-family: Poppins;
-                font-size: 16px;
-                font-weight: 400;
-                line-height: 24px;
-                letter-spacing: 0em;
-                color: #db4444;
-              "></div>
-                
-              </div>
-        
-              <div class="mb-3">
-                <label for="brand" class="form-label">Brand:</label>
-                <input type="text" id="brand" name="brand" class="form-control" required value="<%= element.brand %>" />
-                <div class="error" id="brandError" style="
-                font-family: Poppins;
-                font-size: 16px;
-                font-weight: 400;
-                line-height: 24px;
-                letter-spacing: 0em;
-                color: #db4444;
-              "></div>
-                
-              </div>
-        
-              <div class="mb-3">
-                <label for="price" class="form-label">Price:</label>
-                <input type="number" id="price" name="price" class="form-control" required value="<%= element.price %>"/>
-                <div class="error" id="priceError" style="
-                font-family: Poppins;
-                font-size: 16px;
-                font-weight: 400;
-                line-height: 24px;
-                letter-spacing: 0em;
-                color: #db4444;
-              "></div>
-              </div>
-        
-              <div class="mb-3">
-                <label for="variant" class="form-label">Variant:</label>
-                <input type="text" id="variant" name="variant" class="form-control" required value="<%= element.variant %>"/>
-                <div class="error" id="variantError" style="
-                font-family: Poppins;
-                font-size: 16px;
-                font-weight: 400;
-                line-height: 24px;
-                letter-spacing: 0em;
-                color: #db4444;
-              "></div>
-              </div>
-        
-              <div class="mb-3">
-                <label for="colour" class="form-label">Colour:</label>
-                <input type="text" id="colour" name="colour" class="form-control" required value="<%= element.productColor %>"/>
-                <div class="error" id="colourError" style="
-                font-family: Poppins;
-                font-size: 16px;
-                font-weight: 400;
-                line-height: 24px;
-                letter-spacing: 0em;
-                color: #db4444;
-              "></div>
-              </div>
-        
-              <div class="mb-3">
-                <label for="description" class="form-label">Description:</label>
-                <textarea id="description" name="description" rows="4" class="form-control" required> <%= element.description %></textarea>
-                <div class="error" id="descriptionError" style="
-                font-family: Poppins;
-                font-size: 16px;
-                font-weight: 400;
-                line-height: 24px;
-                letter-spacing: 0em;
-                color: #db4444;
-              "></div>
-              </div>
-        
-              <div class="mb-3">
-                <label for="updateImage1" class="form-label">Update Product Image 1:</label>
-                <input type="checkbox" id="updateImage1" name="updateImage[0]" value="true">
-                <input type="file" id="productImage1" name="productImage" class="form-control" multiple>
-                <input type="text" class="form-control" value="<%=element.product_image[0]%>" readonly>
-                <div class="error" id="productImage1Error" style="
-                font-family: Poppins;
-                font-size: 16px;
-                font-weight: 400;
-                line-height: 24px;
-                letter-spacing: 0em;
-                color: #db4444;
-              "></div>
-              </div>
-              
-              <div class="mb-3">
-                <label for="updateImage2" class="form-label">Update Product Image 2:</label>
-                <input type="checkbox" id="updateImage2" name="updateImage[1]" value="true">
-                <input type="file" id="productImage2" name="productImage" class="form-control" multiple>
-                <input type="text" class="form-control" value="<%=element.product_image[1]%>" readonly>
-                <div class="error" id="productImage2Error" style="
-                font-family: Poppins;
-                font-size: 16px;
-                font-weight: 400;
-                line-height: 24px;
-                letter-spacing: 0em;
-                color: #db4444;
-              "></div>
-              </div>
-              
-              <div class="mb-3">
-                <label for="updateImage3" class="form-label">Update Product Image 3:</label>
-                <input type="checkbox" id="updateImage3" name="updateImage[2]" value="true">
-                <input type="file" id="productImage3" name="productImage" class="form-control" multiple>
-                <input type="text" class="form-control" value="<%=element.product_image[2]%>" readonly>
-                <div class="error" id="productImage3Error" style="
-                font-family: Poppins;
-                font-size: 16px;
-                font-weight: 400;
-                line-height: 24px;
-                letter-spacing: 0em;
-                color: #db4444;
-              "></div>
-              </div>
-              
-              <div class="mb-3">
-                <label for="updateImage4" class="form-label">Update Product Image 4:</label>
-                <input type="checkbox" id="updateImage4" name="updateImage[3]" value="true">
-                <input type="file" id="productImage4" name="productImage" class="form-control" multiple>
-                <input type="text" class="form-control" value="<%=element.product_image[3]%>" readonly>
-                <div class="error" id="productImage4Error" style="
-                font-family: Poppins;
-                font-size: 16px;
-                font-weight: 400;
-                line-height: 24px;
-                letter-spacing: 0em;
-                color: #db4444;
-              "></div>
-              </div>
-              <% }) %>
-        
-              <button type="submit" class="btn btn-danger">Edite Product</button>
-
-            </form>
-        
-          </div>
-        </main>
-        <footer>
-    <!-- place footer here -->
-    <%- include('admin_footer')%>
-
-    <script>
-      function validateproduct() {
-        // Reset error messages
-        document.getElementById('productNameError').innerText = '';
-        document.getElementById('stockError').innerText = '';
-        document.getElementById('brandError').innerText = '';
-        document.getElementById('priceError').innerText = '';
-        document.getElementById('variantError').innerText = '';
-        document.getElementById('colourError').innerText = '';
-        document.getElementById('descriptionError').innerText = '';
-        document.getElementById('productImage1Error').innerText = '';
-        document.getElementById('productImage2Error').innerText = '';
-        document.getElementById('productImage3Error').innerText = '';
-        document.getElementById('productImage4Error').innerText = '';
-    
-        // Retrieve form values
-        var productName = document.getElementById('productName').value.trim();
-        var stock = document.getElementById('stock').value.trim();
-        var brand = document.getElementById('brand').value.trim();
-        var price = document.getElementById('price').value.trim();
-        var variant = document.getElementById('variant').value.trim();
-        var colour = document.getElementById('colour').value.trim();
-        var description = document.getElementById('description').value.trim();
-        var productImage1 = document.getElementById('productImage1').value.trim();
-        var productImage2 = document.getElementById('productImage2').value.trim();
-        var productImage3 = document.getElementById('productImage3').value.trim();
-        var productImage4 = document.getElementById('productImage4').value.trim();
-    
+      <button type="submit" class="btn btn-danger">Edit Product</button>
       
-        if (productName === '') {
-          document.getElementById('productNameError').innerText = 'Product name must be filled out';
-          return false;
+    </form>
+  </div>
+</main>
+
+<footer>
+  <!-- place footer here -->
+  <%- include('admin_footer') %>
+
+  <script>
+    function validateProduct() {
+      // Reset error messages
+      document.querySelectorAll('.error').forEach(error => error.innerText = '');
+
+      // Retrieve form values
+      var productName = document.getElementById('productName').value.trim();
+      var stock = document.getElementById('stock').value.trim();
+      var brand = document.getElementById('brand').value.trim();
+      var price = document.getElementById('price').value.trim();
+      var variant = document.getElementById('variant').value.trim();
+      var colour = document.getElementById('colour').value.trim();
+      var description = document.getElementById('description').value.trim();
+
+      var imageFields = [
+        {
+          checkbox: document.getElementById('updateImage0'),
+          fileInput: document.getElementById('productImage0'),
+          errorSpan: document.getElementById('productImage0Error')
+        },
+        {
+          checkbox: document.getElementById('updateImage1'),
+          fileInput: document.getElementById('productImage1'),
+          errorSpan: document.getElementById('productImage1Error')
+        },
+        {
+          checkbox: document.getElementById('updateImage2'),
+          fileInput: document.getElementById('productImage2'),
+          errorSpan: document.getElementById('productImage2Error')
+        },
+        {
+          checkbox: document.getElementById('updateImage3'),
+          fileInput: document.getElementById('productImage3'),
+          errorSpan: document.getElementById('productImage3Error')
         }
+      ];
 
-        if (brand === ''){
-          document.getElementById('brandError').innerText = 'Brand name must be filled out'
-          return false;
+      for (var i = 0; i < imageFields.length; i++) {
+        var field = imageFields[i];
 
+        // If checkbox is checked, validate the file
+        if (field.checkbox.checked) {
+          var fileInput = field.fileInput;
+          var errorSpan = field.errorSpan;
+
+          // Check if file is selected
+          if (fileInput.files.length === 0) {
+            errorSpan.innerText = 'Please select an image file';
+            return false;
+          }
+
+          // Validate file extension only
+          var allowedExtensions = /\.(jpg|jpeg|png|gif)$/i;
+          var fileName = fileInput.files[0].name;
+
+          if (!allowedExtensions.test(fileName)) {
+            errorSpan.innerText = 'Only image files with extensions .jpg, .jpeg, .png, .gif are allowed';
+            return false;
+          }
         }
-
-        if (variant === ''){
-          document.getElementById('variantError').innerText = 'Variant must be filled out'
-          return false;
-
-        }
-
-        if (description === ''){
-          document.getElementById('descriptionError').innerText = 'Description must be filled out'
-          return false;
-
-        }
-
-        if (colour === ''){
-          document.getElementById('colourError').innerText = 'Colour must be filled out'
-          return false;
-
-        }
-
-        if (stock === ''){
-          document.getElementById('stockError').innerText = 'Stock Count must be filled out'
-          return false;
-
-        }
-
-        if(stock < 0 ){
-          document.getElementById('stockError').innerText = 'Enter a valid stock'
-          return false;
-        }
-
-
-        if (price === ''){
-          document.getElementById('priceError').innerText = 'Price must be filled out'
-          return false;
-
-        }
-
-        if(price < 0 ){
-          document.getElementById('priceError').innerText = 'Enter a valid price '
-          return false;
-        }
-
-        
-
-    
-        return true;
       }
-    </script>
-    
+
+      if (productName === '') {
+        document.getElementById('productNameError').innerText = 'Product name must be filled out';
+        return false;
+      }
+
+      if (brand === '') {
+        document.getElementById('brandError').innerText = 'Brand name must be filled out';
+        return false;
+      }
+
+      if (variant === '') {
+        document.getElementById('variantError').innerText = 'Variant must be filled out';
+        return false;
+      }
+
+      if (description === '') {
+        document.getElementById('descriptionError').innerText = 'Description must be filled out';
+        return false;
+      }
+
+      if (colour === '') {
+        document.getElementById('colourError').innerText = 'Colour must be filled out';
+        return false;
+      }
+
+      if (stock === '') {
+        document.getElementById('stockError').innerText = 'Stock Count must be filled out';
+        return false;
+      }
+
+      if (stock < 0) {
+        document.getElementById('stockError').innerText = 'Enter a valid stock';
+        return false;
+      }
+
+      if (price === '') {
+        document.getElementById('priceError').innerText = 'Price must be filled out';
+        return false;
+      }
+
+      if (price < 0) {
+        document.getElementById('priceError').innerText = 'Enter a valid price';
+        return false;
+      }
+
+      // Add any additional validation rules as needed
+
+      // If all validations pass, you can proceed with form submission
+      return true;
+    }
+  </script>
+</footer>

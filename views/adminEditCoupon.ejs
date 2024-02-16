@@ -1,0 +1,47 @@
+<%- include('header-admin') %>
+
+<section style="max-width: 600px; margin: 20px auto; padding: 20px; background-color: #fff; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); border-radius: 8px;">
+
+  <form action="/admin/edit/coupon/<%= couponData._id %>" method="post" style="text-align: center;">
+    <label for="couponCode" style="display: block; font-weight: bold; margin-top: 15px;">Coupon Code:</label>
+    <input type="text" id="couponCode" name="couponCode" style="padding: 10px; margin-bottom: 20px; width: 100%; box-sizing: border-box;" value="<%= couponData.couponCode %>" required>
+
+    <label for="discount" style="display: block; font-weight: bold; margin-top: 15px;">Discount:</label>
+    <input type="text" id="discount" name="discount" style="padding: 10px; margin-bottom: 20px; width: 100%; box-sizing: border-box;" value="<%= couponData.discount %>" required>
+
+    <label for="discount_price" style="display: block; font-weight: bold; margin-top: 15px;">Discount Available Price:</label>
+    <input type="text" id="discount_price" name="discount_price" style="padding: 10px; margin-bottom: 20px; width: 100%; box-sizing: border-box;" value="<%= couponData.Discount_price %>" required>
+
+
+    <label for="expirationDate" style="display: block; font-weight: bold; margin-top: 15px;">Expiration Date:</label>
+    <input type="text" id="expirationDate" name="expirationDate" placeholder="MM/DD/YYYY" style="padding: 10px; margin-bottom: 20px; width: 100%; box-sizing: border-box;" value="<%= couponData.expireAt %>" required>
+
+    <!-- Add a description field -->
+    <label for="description" style="display: block; font-weight: bold; margin-top: 15px;">Description:</label>
+    <textarea id="description" name="description" style="padding: 10px; margin-bottom: 20px; width: 100%; box-sizing: border-box;" required><%= couponData.description %></textarea>
+
+    <button type="submit" style="padding: 12px 24px; background-color: #4caf50; color: #fff; border: none; border-radius: 4px; cursor: pointer; font-size: 16px; transition: background-color 0.3s ease;" onmouseover="this.style.backgroundColor='#45a049'" onmouseout="this.style.backgroundColor='#4caf50'">Edit Coupon</button>
+  </form>
+
+  <div class="back-btn" style="text-align: center; margin-top: 20px;">
+    <a href="/admin/Coupons" style="text-decoration: none; background-color: #333; color: #fff; padding: 12px 24px; border-radius: 4px; display: inline-block; transition: background-color 0.3s ease;" onmouseover="this.style.backgroundColor='#292929'" onmouseout="this.style.backgroundColor='#333'">Back to Coupons</a>
+  </div>
+
+</section>
+
+<%- include('admin_footer') %>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+<script>
+  const queryString = window.location.search;
+  const urlParams = new URLSearchParams(queryString);
+  const message = urlParams.get('msg');
+
+  if (message) {
+    Swal.fire({
+      icon: 'success',
+      title: 'Coupon Edited Successfully!',
+      text: message,
+    });
+  }
+</script>

@@ -156,5 +156,44 @@ router.get('/user/orders',userMiddleware,userController.GetOrder)
 router.post('/user/order/cancel/:id',userMiddleware,userController.CancelOrder)
 
 //order return
-router.post('/user/order/return/:id',userMiddleware,)
+router.post('/user/order/return/:id',userMiddleware,userController.returnOrder)
+
+//user Wallet
+router.get('/user/wallet',userMiddleware,userController.GetWallet)
+
+//Update cart Qundity
+router.post('/user/change/quantity',userMiddleware,userController.cartquandity)
+
+//User coupon
+router.get('/user/coupon',userMiddleware,userController.UserCoupen)
+
+//User Apply coupon
+router.post('/user/apply/coupon',userMiddleware,userController.ApplyCoupon)
+
+//razorpay webhook
+router.post('/user-Orderfail',userMiddleware,userController.paimentFail)
+
+//buy now
+router.get('/user/buynow/:id',userMiddleware,userController.buyNow)
+
+//buy now orderplace
+router.post('/placebuy/order',userMiddleware,userController.buyNowOrderplace)
+
+//view all flagship
+router.post('/user/ViewAll/FlagshipPhonesproduct',userMiddleware,userController.viewAllflagship)
+
+//view all flagshipkiller
+router.post('/user/allflagshipkiller/product',userMiddleware,userController.viewAllFlagkiller)
+
+//Browse by brand
+router.get('/viewall/category/:id',userMiddleware,userController.browsebybrand)
+
+//Filter 
+router.post('/user/productsfilter',userMiddleware,userController.filter)
+
+//user serch product
+router.post('/user/product/serch',userMiddleware,userController.usersechProduct) 
+
+//download invoice
+router.get('/download/invoice/:id',userMiddleware,userController.downloadPdf)
 module.exports = router;

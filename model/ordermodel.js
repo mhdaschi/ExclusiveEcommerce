@@ -46,6 +46,10 @@ const OrderSchema = new mongoose.Schema({
   PaymenMethod: {
     type: String,
   },
+  paymentStatus: {
+    type: String,
+  }
+
 });
 
 const Order = mongoose.model('Order', OrderSchema);

@@ -68,14 +68,14 @@
             </div>
           </div>
         </li>
-      <% }) %>
-    </ul>
-  </div>
-  <div class="d-flex justify-content-center">
-    <form action="/user/allproduct" method="post">
-      <button type="submit" class="btn btn-danger mt-3 btn-block gradient-custom-4 text-white">View All Product</button>
-    </form>
-  </div>
+      </ul>
+    </div>
+    <div class="d-flex justify-content-center">
+      <form action="/user/ViewAll/FlagshipPhonesproduct" method="post">
+        <button type="submit" class="btn btn-danger mt-3 btn-block gradient-custom-4 text-white">View All Product</button>
+      </form>
+    </div>
+    <% }) %>
   
 </div>
 
@@ -94,7 +94,7 @@
     <div class="col  d-flex justify-content-around flex-wrap">
       <% useBrand.forEach(data => { %>
         <div class="card my-2 shadow-0 custom-card  mx-auto shadow p-3 mb-5 bg-white">
-          <a href="#" class="">
+          <a href="/viewall/category/<%-data._id%>" class="">
             <img src="/<%=data.image %>" class="card-img-top rounded-2 custom-image">
           </a>
           <div class="card-body p-0 pt-2 custom-button">
@@ -143,7 +143,7 @@
     </ul>
   </div>
   <div class="d-flex justify-content-center">
-    <form action="/user/allproduct" method="post">
+    <form action="/user/allflagshipkiller/product" method="post">
       <button type="submit" class="btn btn-danger mt-3 btn-block gradient-custom-4 text-white">View All Product</button>
     </form>
   </div>
@@ -180,20 +180,24 @@
         const allProducts = useProduct.concat(use2Product);
         allProducts.forEach(data => { 
       %>
+      <% if (data.status === true) { %>
+   
+        
         <li class="card">
           <div class="product-card">
             <div class="card-image">
               <img src="/<%=data.product_image[0]%>" class="card-img-top rounded-2 custom-image">
-            </div>
-            <div class="card-content">
-              <h3 class="card-title"></h3><%= data.product_name %>
-              <p>₹<%= data.price %><del> ₹89,999</del></p>
-            </div>
-            <div class="card-link-wrapper">
-              <a href="/user/product/Details/<%- data._id %>" class="card-link">View Details</a>
-            </div>
-          </div>
-        </li>
+              </div>
+              <div class="card-content">
+                <h3 class="card-title"></h3><%= data.product_name %>
+                <p>₹<%= data.price %><del> ₹89,999</del></p>
+                </div>
+                <div class="card-link-wrapper">
+                  <a href="/user/product/Details/<%- data._id %>" class="card-link">View Details</a>
+                  </div>
+                  </div>
+                  </li>
+                  <% } %>
       <% }) %>
     </ul>
   </div>

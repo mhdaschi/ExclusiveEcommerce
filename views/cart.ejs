@@ -1,162 +1,234 @@
+<!-- Include the header partial -->
 <%- include('header') %>
 
+<!-- Start of the main content -->
 <main>
+    <!-- Container for the cart items -->
+    <% if (!cartItems || cartItems.length === 0) { %>
+        <h1 class="text-center  " style="margin-top: 250px;">You have no Cart Data <i class="fa fa-shopping-bag"></i></h1>
+        <div class="text-center"style=" margin-bottom:150px;">
+            <img src="/images/noorder.png" class="img-fluid"><br>
+            <a href="/user-home" class="btn rounded-pill border-success text-center my-3 text-success w-25">Back To Shopping</a>
+        </div>
+    <% } else { %>
     <div class="container p-5">
+        <!-- Unordered list for the cart items -->
         <ul class="responsive-table" style="list-style: none; padding: 0; margin: 0;">
+            <!-- List header for the cart items -->
             <li class="table-header" style="background-color: #ffffff; box-shadow: 0px 0px 9px 0px rgba(0, 0, 0, 0.1); border-radius: 3px; padding: 25px 30px; display: flex; justify-content: space-between; margin-bottom: 25px;">
+                <!-- Column for Product -->
                 <div class="col col-1" style="flex-basis: 10%;">Product</div>
+                <!-- Column for Product Name -->
                 <div class="col col-2" style="flex-basis: 30%;">Product Name</div>
+                <!-- Column for Quantity -->
                 <div class="col col-3" style="flex-basis: 25%;">Quantity</div>
+                <!-- Column for Price -->
                 <div class="col col-4" style="flex-basis: 33%;">Price</div>
+                <!-- Empty Column -->
                 <div class="col col-5" style="flex-basis: 2%;"></div>
             </li>
-    
-            
-                <% cartItems.forEach((data, i) => { %>
-                    <% if (data.productDetails) { %>
-                        <li class="table-row" style="background-color: #ffffff; box-shadow: 0px 0px 9px 0px rgba(0, 0, 0, 0.1); border-radius: 3px; padding: 25px 30px; display: flex; justify-content: space-between; margin-bottom: 25px;">
-                            <div class="col col-1" data-label="Job Id" style="flex-basis: 10%;">
-                                <a href="/user/product/details/<%- data.productDetails._id %>">
-                                    <img src="/<%- data.productDetails.product_image[0] %>" class="border rounded me-3" height="100px" width="100px" />
-                                </a>
-                            </div>
-                            <div class="col col-2" data-label="Customer Name" style="flex-basis: 30%;">
-                                <a href="/user/product/details/<%- data.productDetails._id %>" class="text-decoration-none fw-bold align-self-center">
-                                    <%= data.productDetails.product_name %> <br>
-                                    <br>
-                                    <i class="text-danger"><%= data.productDetails.stock %> Item left </i>
-                                </a> 
-                            </div>
 
-                            <div class="col col-3" style="flex-basis: 25%;">
-                                <input type="number" step="1" max="<%= data.productDetails.stock %>" value="<%= data.quantity %>" name="quantity" class="quantity-field border-0 text-center w-25" data-stock="<%= data.productDetails.stock %>" data-initial-quantity="<%= data.quantity %>">
-                            </div>
-                            
-                            <div class="col col-4" data-label="Price" style="flex-basis: 25%;">
-                                <p class="text-muted">Price:<strong><%= data.productDetails.totalPrice %></strong></p>
-                            </div>
-                            <div class="col col-5" style="flex-basis: 10%">
-                                <form id="deleteFormCategories" action="/user/cartItems/remove/<%- data.productDetails._id %>" method="POST">
-                                    <button type="submit" class="text-white font-size btn btn-danger">Remove</button>
-                                </form>
-                            </div>
-                        </li>
-                     
-                    <% } %>
+            <!-- Loop through cartItems and display each item -->
+            <% cartItems.forEach((data, i) => { %>
+
+                <% if (data.productDetails) { %>
+                    <!-- List item for a cart item -->
+                    <li class="table-row" style="background-color: #ffffff; box-shadow: 0px 0px 9px 0px rgba(0, 0, 0, 0.1); border-radius: 3px; padding: 25px 30px; display: flex; justify-content: space-between; margin-bottom: 25px;">
+                        <!-- Column for Product Image -->
+                        <div class="col col-1" data-label="Job Id" style="flex-basis: 10%;">
+                            <!-- Link to the product details page -->
+                            <a href="/user/product/details/<%- data.productDetails._id %>">
+                                <!-- Product image -->
+                                <img src="/<%=data.productDetails.product_image[0]%>" class="border rounded me-3" height="100px" width="100px" />
+                            </a>
+                        </div>
+                        <!-- Column for Product Name -->
+                        <div class="col col-2" data-label="Customer Name" style="flex-basis: 30%;">
+                            <!-- Link to the product details page with product name and stock information -->
+                            <a href="/user/product/details/<%- data.productDetails._id %>" class="text-decoration-none fw-bold align-self-center">
+                                <%= data.productDetails.product_name %> <br>
+                                <br>
+                                <!-- Display stock information -->
+                                <i class="text-danger"><%= data.productDetails.stock %> Item left </i>
+                            </a>
+                        </div>
+                        <!-- Column for Quantity with buttons to change quantity -->
+                        <div class="col col-3 d-flex align-items-center" style="flex-basis: 25%;">
+                            <!-- Button to decrease quantity -->
+                            <button class="btn btn-outline-dark me-3" onclick="quantity('<%- data.productDetails._id %>','-1')" <%= (data.quantity <= 1) ? 'disabled' : '' %>>-</button>
+                            <!-- Span to display quantity -->
+                            <span class="btn btn-dark px-3" id="value-<%- data.productDetails._id %>"><%= data.quantity %></span>
+                            <!-- Button to increase quantity -->
+                            <button class="btn btn-outline-dark ms-3" onclick="quantity('<%- data.productDetails._id %>','1')" <%= (data.quantity == data.productDetails.stock) ? 'disabled' : '' %>>+</button>
+                        </div>
+                        <!-- Column for Price -->
+                        <div class="col col-4 d-flex align-items-center" data-label="Price" style="flex-basis: 25%;">
+                            <!-- Display product total price -->
+                            <p class="text-muted">Price:<strong><%= data.productDetails.totalPrice %></strong></p>
+                        </div>
+                        <!-- Column for Remove button -->
+                        <div class="col col-5 d-flex align-items-center" style="flex-basis: 10%">
+                            <!-- Form to submit a request to remove the item from the cart -->
+                            <form id="deleteFormCategories" action="/user/cartItems/remove/<%- data.productDetails._id %>" method="POST">
+                                <!-- Remove button -->
+                                <button type="submit" class="text-white font-size btn btn-danger">Remove</button>
+                            </form>
+                        </div>
+                    </li>
+                <% } %>
                 <% }) %>
             </ul>
-            
         </div>
-
-      
-
-        <div class="d-flex justify-content-between">
+        
+        <!-- Buttons for returning to shop and updating cart -->
+        <!-- <div class="d-flex justify-content-between">
+            Button to return to shop
             <div class="align-self-center">
-                <button class="btn mt-3 btn-block border-black">Return To shop</button>
-            </div>
-            <div class="align-self-center">
-                <button class="btn mt-3 btn-block border-black">Update Card</button>
-            </div>
+            <button class="btn mt-3 btn-block border-black">Return To shop</button>
         </div>
-
-        <div class="container mt-5 box-shadow p-4">
-            <div class="row">
+        Button to update cart -->
+        <!-- <div class="align-self-center"> -->
+            <!-- <button class="btn mt-3 btn-block border-black">Update Card</button>
+        </div>-->
+    </div> 
+    
+    <!-- Container for coupon code and cart total -->
+    <div class="container mt-5 box-shadow p-4 ">
+        <!-- Row for coupon code input and apply button -->
+        <div class="row d-flex justify-content-end ">
+            <form action="/user/apply/coupon" method="post">
+                <!-- Input for entering coupon code -->
                 <div class="col-lg-7 col-md-7 col-sm-12 d-flex flex-column flex-md-row ">
                     <div class="me-md-2 mb-2">
-                        <input type="string" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Coupon Code ">
+                        <input type="string" class="form-control" name="couponCode" id="couponCode" aria-describedby="emailHelp" placeholder="Coupon Code">
                     </div>
+                    <!-- Button to apply coupon code -->
                     <div class="mb-2">
                         <button type="submit" class="btn btn-danger btn-block gradient-custom-4 text-white">Apply Coupon</button>
                     </div>
                 </div>
-
-                <input type="hidden" name="totalAmount" id="totalAmount" value="0.00">
-
-                <div class="col-lg-5 col-md-5 col-sm-12 border p-3 shadow">
-                    <h5>Cart Total</h5>
-                    <% totalPrice.forEach(element => { %>
-                     
-                        <div class="d-flex justify-content-between border-bottom">
-                            <div>
-                                <p>Sub total:</p>
-                            </div>
-                            <div>
-                                <p class="total-price">₹<%= element.total %>.00</p>
-                            </div>
+            </form>
+            
+            <!-- Hidden input for storing the total amount -->
+            <input type="hidden" name="totalAmount" id="totalAmount" value="0.00">
+            
+            <!-- Container for displaying cart total -->
+            <div class="col-lg-5 col-md-5 col-sm-12 border p-3 shadow mb-4">
+                <!-- Heading for Cart Total -->
+                <h5>Cart Total</h5>
+                <!-- Loop through totalPrice array and display total, shipping, and sub-total -->
+                <!-- Row for Sub total -->
+                <% totalPrice.forEach(element => { %>
+                <div class="d-flex justify-content-between border-bottom">
+                    <div>
+                        <p>Sub total:</p>
+                    </div>
+                    <div>
+                        <!-- Display sub total price -->
+                        <p class="total-price">₹<%= element.subTotal %>.00</p>
+                    </div>
+                </div>
+                <!-- Row for Shipping -->
+                <div class="d-flex justify-content-between border-bottom">
+                    <div>
+                        <p>Shipping:</p>
+                    </div>
+                    <div>
+                        <!-- Display shipping information -->
+                        <p>Free</p>
+                    </div>
+                </div>
+                
+                
+                
+                    
+                    <div class="d-flex justify-content-between border-bottom">
+                        <div>
+                            <p>Coupon Discount:</p>
                         </div>
-                        <div class="d-flex justify-content-between border-bottom">
-                            <div>
-                                <p>Shipping:</p>
-                            </div>
-                            <div>
-                                <p>Free</p>
-                            </div>
+                        <div>
+                            <!-- Display shipping information -->
+                            <p class="mb-2 text-danger">- ₹<%= element.CouponDiscount %>.00</p>
+                            
                         </div>
-                        <div class="d-flex justify-content-between">
-                            <div>
-                                <p>Total:</p>
-                            </div>
-                            <div>
-                                <p class="total-price" id="displayedTotalPrice">₹<%= element.total %>.00</p>
-                            </div>
+                    </div>
+
+                    
+                    <!-- Row for Total -->
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <p>Total:</p>
                         </div>
+                        <div>
+                            <!-- Display total price -->
+                            <p class="total-price" id="displayedTotalPrice">₹<%= element.total %>.00</p>
+                        </div>
+                    </div>
+                    <% }) %>
+                <!-- Form for processing checkout -->
+                <div class="d-flex justify-content-center mx-5">
+                    <form action="/user/checkout" method="get" id="checkoutForm">
+                        <!-- Hidden input field to store the original total amount -->
+                        <input type="hidden" name="totalAmount" id="totalAmount" value="0.00">
+                        <!-- Button triggers the form submission -->
+                        <button type="submit" class="btn btn-danger mt-3 btn-block gradient-custom-4 text-white">Process to Checkout</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <% } %>
 
+    <!-- End of the main content -->
 
-                        <% }) %>
-                        <div class="d-flex justify-content-center mx-5">
-                            <!-- Update your HTML form -->
-<form action="/user/checkout" method="get" id="checkoutForm">
-    <!-- Hidden input field to store the original total amount -->
-    <input type="hidden" name="totalAmount" id="totalAmount" value="0.00">
+    <!-- Include the footer partial -->
+    <%- include('footer') %>
+
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
     
-    <!-- Button triggers the form submission -->
-    <button type="submit" class="btn btn-danger mt-3 btn-block gradient-custom-4 text-white">Process to Checkout</button>
-</form>
+    <script>
 
-
-
-
-
-  </main>
-
-<%- include('footer') %>
-
-
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        var quantityInputs = document.querySelectorAll('.quantity-field');
-
-        quantityInputs.forEach(function (input) {
-            input.addEventListener('change', function () {
-                checkQuantity(input.getAttribute('data-stock'), input.getAttribute('data-initial-quantity'), input.value);
+    
+        function quantity(productID, count) {
+            $.ajax({
+                url: '/user/change/quantity',
+                data: {
+                    productId: productID,
+                    count: count
+                },
+                method: 'post',
+                dataType: 'json',
+                success: (response) => {
+                    window.location.reload();
+                },
+                error: (xhr, status, error) => {
+                    console.error('AJAX error:', error);
+                }
             });
-        });
-    });
-
-    function checkQuantity(stock, initialQuantity, currentQuantity) {
-        stock = parseInt(stock);
-        currentQuantity = parseInt(currentQuantity);
-
-        if (currentQuantity > stock) {
-            // Display a Tostify notification when the user increases the quantity
-            Tostify.success("Quantity increased successfully");
-        } else if (currentQuantity < stock) {
-            // Display a Tostify notification when the user decreases the quantity
-            Tostify.success("Quantity decreased successfully");
-        } else if (currentQuantity === stock) {
-            // Display a Tostify notification when stock is equal to the input field value
-            Tostify.error("Stock is currently " + stock + ". Quantity not increased.");
-        } else if (currentQuantity < 0) {
-            // Display a Tostify notification when the user enters a negative quantity
-            Tostify.error("Quantity cannot be negative");
-        } else {
-            // Handle other cases or operations as needed
         }
-    }
-</script>
+    </script>
+    <script>
+        function showToast(message, type = 'error') {
+            Toastify({
+                text: message,
+                duration: 5000, // 5 seconds
+                gravity: 'top', // 'top' or 'bottom'
+                position: 'center', // 'left', 'center', or 'right'
+                backgroundColor: type === 'error' ? '#FF0000' : '#32CD32' // Red for error, green for success (customize as needed)
+            }).showToast();
+        }
+    
+        $(document).ready(function () {
+            const urlParams = new URLSearchParams(window.location.search);
+            const msgParam = urlParams.get('msg');
+    
+            if (msgParam) {
+                showToast(decodeURIComponent(msgParam));
+            }
+        });
+    </script>
+    
 
 
-
-
-
-
+</main>
