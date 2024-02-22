@@ -40,7 +40,9 @@ app.use(flash());
 // Use the routers
 app.use('/', adminRouter);
 app.use('/', userRouter);
-
+app.use('*',(req,res)=>{
+  res.render('404')
+})
 // Start the server
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);

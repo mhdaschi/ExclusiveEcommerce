@@ -196,4 +196,7 @@ router.post('/user/product/serch',userMiddleware,userController.usersechProduct)
 
 //download invoice
 router.get('/download/invoice/:id',userMiddleware,userController.downloadPdf)
+
+//User shop
+router.get('/user/shop',userMiddleware,userController.UserShop)
 module.exports = router;

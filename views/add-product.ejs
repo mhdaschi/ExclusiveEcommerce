@@ -2,7 +2,7 @@
   <main>
     <div class="container">
         <h2 class="mb-4">Add Product</h2>
-        <form action="/admin/addproduct" method="post" id="submit-form" enctype="multipart/form-data" onsubmit="return validateproduct()">
+        <form  id="submit-form" enctype="multipart/form-data" onsubmit="return validateproduct()">
           <div class="mb-3">
             <label for="productName" class="form-label">Product Name:</label>
             <input type="text" id="productName" name="productName" class="form-control">
@@ -112,78 +112,179 @@
             </select>
           </div>
         
-    
-          <div class="mb-3">
-            <label for="productImage" class="form-label">Product Images 1:</label>
-            <input type="file" id="productImage1" name="productImage" class="form-control " multiple>
-            <div class="error" id="productImage1Error" style="
-            font-family: Poppins;
-            font-size: 16px;
-            font-weight: 400;
-            line-height: 24px;
-            letter-spacing: 0em;
-            color: #db4444;
-          "></div>
-          </div>
+    <div class="d-flex">
+         <!-- Add image preview containers for each image -->
+         <div class="mb-3 me-3">
+          <label for="productImage1" class="form-label">Product Image 1 Preview:</label>
+          <img id="productImage1Preview" src="#" alt="Select a product Image" style="max-width: 100px; height: auto;">
+        </div>
+  
+        <div class="mb-3 me-3">
+          <label for="productImage2" class="form-label">Product Image 2 Preview:</label>
+          <img id="productImage2Preview" src="#" alt="Select a product Image" style="max-width: 100px; height: auto;">
+        </div>
+  
+        <div class="mb-3 me-3">
+          <label for="productImage3" class="form-label">Product Image 3 Preview:</label>
+          <img id="productImage3Preview" src="#" alt="Select a product Image" style="max-width: 100px; height: auto;">
+        </div>
+  
+        <div class="mb-3 me-3">
+          <label for="productImage4" class="form-label">Product Image 4 Preview:</label>
+          <img id="productImage4Preview" src="#" alt="Select a product Image" style="max-width: 100px; height: auto;">
+        </div>
 
-          <div class="mb-3">
-            <label for="productImage" class="form-label">Product Images 2:</label>
-            <input type="file" id="productImage2" name="productImage" class="form-control " multiple>
-            <div class="error" id="productImage2Error" style="
-            font-family: Poppins;
-            font-size: 16px;
-            font-weight: 400;
-            line-height: 24px;
-            letter-spacing: 0em;
-            color: #db4444;
-          "></div>
-          </div>
-
-          <div class="mb-3">
-            <label for="productImage" class="form-label">Product Images 3:</label>
-            <input type="file" id="productImage3" name="productImage" class="form-control " multiple>
-            <div class="error" id="productImage3Error" style="
-            font-family: Poppins;
-            font-size: 16px;
-            font-weight: 400;
-            line-height: 24px;
-            letter-spacing: 0em;
-            color: #db4444;
-          "></div>
-          </div>
-
-          <div class="mb-3">
-            <label for="productImage" class="form-label">Product Images 4:</label>
-            <input type="file" id="productImage4" name="productImage" class="form-control " multiple>
-            <div class="error" id="productImage4Error" style="
-            font-family: Poppins;
-            font-size: 16px;
-            font-weight: 400;
-            line-height: 24px;
-            letter-spacing: 0em;
-            color: #db4444;
-          "></div>
-          </div>
-    
-          <button type="submit" class="btn btn-danger">Add Product</button>
-
-          <p class="d-flex justify-content-center" id="msg" style="
-                  font-family: Poppins;
-                  font-size: 16px;
-                  font-weight: 400;
-                  line-height: 24px;
-                  letter-spacing: 0em;
-                  
-                  color: #db4444;
-                  "><%= locals.err %></p>
-        </form>
       </div>
+        <!-- End of image preview containers -->
+  <div class="d-flex">
+        <div class="mb-3 me-3">
+          <label for="productImage1" class="form-label">Product Image 1:</label>
+          <input type="file" id="productImage1" name="productImage" class="form-control" multiple>
+          <div class="error" id="productImage1Error" style="
+              font-family: Poppins;
+              font-size: 16px;
+              font-weight: 400;
+              line-height: 24px;
+              letter-spacing: 0em;
+              color: #db4444;
+            "></div>
+        </div>
+  
+        <div class="mb-3 me-3">
+          <label for="productImage2" class="form-label">Product Image 2:</label>
+          <input type="file" id="productImage2" name="productImage" class="form-control" multiple>
+          <div class="error" id="productImage2Error" style="
+              font-family: Poppins;
+              font-size: 16px;
+              font-weight: 400;
+              line-height: 24px;
+              letter-spacing: 0em;
+              color: #db4444;
+            "></div>
+        </div>
+  
+        <div class="mb-3 me-3">
+          <label for="productImage3" class="form-label">Product Image 3:</label>
+          <input type="file" id="productImage3" name="productImage" class="form-control" multiple>
+          <div class="error" id="productImage3Error" style="
+              font-family: Poppins;
+              font-size: 16px;
+              font-weight: 400;
+              line-height: 24px;
+              letter-spacing: 0em;
+              color: #db4444;
+            "></div>
+        </div>
+  
+        <div class="mb-3 me-3">
+          <label for="productImage4" class="form-label">Product Image 4:</label>
+          <input type="file" id="productImage4" name="productImage" class="form-control" multiple>
+          <div class="error" id="productImage4Error" style="
+              font-family: Poppins;
+              font-size: 16px;
+              font-weight: 400;
+              line-height: 24px;
+              letter-spacing: 0em;
+              color: #db4444;
+            "></div>
+        </div>
+
+      </div>
+  
+        <!-- Your existing form fields -->
+  
+        <button type="submit" class="btn btn-danger">Add Product</button>
+  
+        <p class="d-flex justify-content-center" id="msg" style="
+                font-family: Poppins;
+                font-size: 16px;
+                font-weight: 400;
+                line-height: 24px;
+                letter-spacing: 0em;
+                
+                color: #db4444;
+                "><%= locals.err %></p>
+      </form>
+    </div>
   </main>
   
+  <!-- Your existing JavaScript code -->
   
-  
-  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.js"></script>
+  <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+
   <!-- Your HTML code above -->
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const imageInputs = [
+      document.getElementById('productImage1'),
+      document.getElementById('productImage2'),
+      document.getElementById('productImage3'),
+      document.getElementById('productImage4')
+    ];
+    const imagePreviews = [
+      document.getElementById('productImage1Preview'),
+      document.getElementById('productImage2Preview'),
+      document.getElementById('productImage3Preview'),
+      document.getElementById('productImage4Preview')
+    ];
+    let croppers = [];
+
+    for (let i = 0; i < imageInputs.length; i++) {
+      const imageInput = imageInputs[i];
+      const imagePreview = imagePreviews[i];
+
+      imageInput.addEventListener('change', function (e) {
+        const file = e.target.files[0];
+        const reader = new FileReader();
+
+        reader.onload = function (event) {
+          imagePreview.src = event.target.result;
+          croppers[i] = new Cropper(imagePreview, {
+            aspectRatio: 1 / 1,
+            viewMode: 1,
+            autoCropArea: 1,
+          });
+        };
+
+        reader.readAsDataURL(file);
+      });
+    }
+
+    // Handle form submission
+    document.getElementById('submit-form').addEventListener('submit', function (e) {
+      e.preventDefault();
+
+      // Extract cropped image data and add to FormData
+      const formData = new FormData(this);
+
+      for (let i = 0; i < croppers.length; i++) {
+        const croppedImageData = croppers[i].getCroppedCanvas().toDataURL('image/jpeg');
+        formData.append(`croppedImage${i + 1}`, croppedImageData);
+      }
+
+      // Send FormData to server
+      fetch('/admin/addproduct', {
+        method: 'POST',
+        body: formData
+      })
+      .then(response => {
+   if (response.ok) {
+      // Handle successful response
+      // Redirect to /product-home
+      window.location.href = '/product-home?err=Product added successfully';
+   } else {
+      swal("Error", "Fill All Datas!", "error");
+   }
+})
+      .catch(error => {
+        console.error('Error:', error);
+        // Show error message or retry
+      });
+    });
+  });
+</script>
+
   <script>
     function validateproduct() {
       // Reset error messages

@@ -185,7 +185,7 @@ function updateChart(period) {
   if (period === 'monthly') {
       labels = ['January', 'February', 'March', 'April','May']; // Example labels for monthly data
   } else if (period === 'weekly') {
-      labels = ['Week 1', 'Week 2', 'Week 3', 'Week 4','Week 5',]; // Example labels for weekly data
+      labels = ['Week 1', 'Week 2', 'Week 3', 'Week 4',]; // Example labels for weekly data
   } else if (period === 'yearly') {
       const currentYear = new Date().getFullYear();
       for (let i = currentYear ; i <= currentYear + 4; i++) {

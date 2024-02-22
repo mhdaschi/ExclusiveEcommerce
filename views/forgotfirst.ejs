@@ -45,33 +45,35 @@
             </div>
         </div>
     </header>
-    <div class="container-fluid">
+    <div class="container-fluid mb-5 mt-5">
         <div class="row mt-5">
             <div class="col-md-6 left-box">
                 <div class="featured-image">
-                    <img src="./20+ Best eCommerce Blogger Template 2022_ Download Free Ecommerce Blogger Template in 2022_.jpeg" class="img-fluid" style="width: 100%" />
+                    <img src="/forgot.png" class="img-fluid" style="width: 100%" alt="hahahh">
                 </div>
             </div>
-            <div class="col-md-6 form-container">
+            
+            <div class="col-md-6 form-container mt-5">
                 <div class="col-md-12">
                     <h1 style="font-family: Inter; font-size: 36px; font-weight: 500; line-height: 30px;">Forgot Password</h1>
                     <h1 style="font-family: Poppins; font-size: 16px; font-weight: 400; line-height: 24px; letter-spacing: 0em; text-align: left;">
                         No worries. Enter your account email address and we will share a reset page
                     </h1>
                 </div>
-                <form action="/user/forgot" method="POST" name="forgot">
+                <form action="/user/forgot" method="POST" name="forgot" onsubmit="return validateForm()">
                     <div class="form-group">
                         <label for="exampleInputEmail1"></label>
                         <input
                             type="email"
                             name="email"
-                            class="form-control border-bottom"
+                            class="form-control border-bottom mb-1"
                             style="border: 0; box-shadow: none"
                             id="email"
                             aria-describedby="emailHelp"
                             placeholder="Enter your Email  "
-                            required
+                            
                         />
+
                         <button
                             id="login-button"
                             type="submit"
@@ -80,6 +82,8 @@
                         >
                             Login
                         </button>
+                        <div id="email-validation-message" class="text-danger"></div>
+
                     </div>
                 </form>
             </div>
@@ -89,7 +93,28 @@
     <%- include('footer')%>
     <!-- Bootstrap JavaScript Libraries -->
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/js/bootstrap.min.js" integrity="sha384-BBtl+eGJRgqQAUMxJ7pMwbEyER4l1g+O15P+16Ep7Q9Q+zqX6gSbd85u4mG4QzX+" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/js/bootstrap.min.js" integrity="sha384-Cf3v4uMTlxtSb+SHrM+8dz0lsz9e0I/+r5XtIjwPgveLOtj4zDf+GEPtJXT6wrwE" crossorigin="anonymous"></script>
+
 </body>
+<script>
+function validateForm() {
+    var emailInput = document.getElementById('email');
+    var email = emailInput.value.trim();
+    var isValid = true;
+
+    // Check for empty input
+    if (email.length === 0) {
+        document.getElementById('email-validation-message').innerText = 'Email is required.';
+        isValid = false;
+    } else if (!email.toLowerCase().endsWith(".com")) {
+                document.getElementById('email-validation-message').innerText = "Email must end with .com";
+                isValid = false;
+            }
+
+    return isValid;
+}
+
+</script>
+
 
 </html>

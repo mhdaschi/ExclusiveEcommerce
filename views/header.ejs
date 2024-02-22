@@ -302,13 +302,13 @@ h2 {
                   <div class="d-flex">
                     <a class="text-reset me-3" href="/user/cart">
                       <span><i class="fas fa-shopping-cart"></i></span>
-                      <span class="badge rounded-pill bg-danger">1</span>
+                      <span class="badge rounded-pill bg-danger"><%- cartNo %></span>
                     </a>
 
-                    <a class="text-reset me-3" href="#">
+                    <!-- <a class="text-reset me-3" href="#">
                         <span><i class="fa-regular fa-heart" style="color: #00060f;"></i>
                         </span>
-                      </a>
+                      </a> -->
           
                     
                      
@@ -324,7 +324,6 @@ h2 {
                       <!-- Dropdown menu for user profile -->
                       <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdownMenuLink">
                         <li><a class="dropdown-item" href="/user/profile">My profile</a></li>
-                        <li><a class="dropdown-item" href="#">Settings</a></li>
                         <li><a class="dropdown-item" href="/logout">Logout</a></li>
                       </ul>
                     </div>
@@ -343,7 +342,7 @@ h2 {
                       <a class="nav-link" href="/user-home">Home</a>
                     </li>
                     <li class="nav-item me-2 me-lg-0 d-none d-md-inline-block">
-                      <a class="nav-link" href="#">Contact</a>
+                      <a class="nav-link" href="/user/shop">Shop</a>
                     </li>
                     <li class="nav-item me-2 me-lg-0 d-none d-md-inline-block">
                       <a class="nav-link" href="#">About</a>

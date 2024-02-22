@@ -3,6 +3,8 @@ const bcrypt = require("bcrypt");
 const Products = require('../model/productmodel')
 const Categorie = require('../model/brandmodel')
 const Cart = require("../model/cartmodel")
+const global = require('../global/globalfunction')
+
 const admin = {
     email: "admin@gmail.com",
     password: "admin123",
@@ -24,14 +26,16 @@ const loginController = {
             const useProduct = await Products.find().limit(10);
             const use2Product = await Products.find().skip(10)
             const useBrand = await Categorie.find({status:true}).limit(3);
-
+            const loggedUser=await global.findLoggedUser(req.session.user)
+  
             const useflagship = await Products.find({ phone_type:"Flagship phones",status:true})
             const useCameraphones = await Products.find({phone_type:"Camera phones"})
             const useBatterylife = await Products.find({phone_type:"Battery life champions"})
             const useflagshipkiller = await Products.find({phone_type:"Flagship killers"})
             const useGaming = await Products.find({phone_type:"Gaming phones"})
-
-             res.render('user-dashboard',{useBrand,use2Product,useflagship,useCameraphones,useBatterylife,useflagshipkiller,useGaming,useProduct});
+            const cartNo = await global.cartNo(loggedUser[0]._id)
+      
+             res.render('user-dashboard',{useBrand,use2Product,useflagship,useCameraphones,useBatterylife,useflagshipkiller,useGaming,useProduct,cartNo});
         } else {
             res.redirect('/login-home');
         }

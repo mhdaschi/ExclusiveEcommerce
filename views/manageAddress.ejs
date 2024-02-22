@@ -131,47 +131,46 @@
                             </div>
                             <div class="modal-body">
                               <!-- Edit Address Form -->
-                              <form action="/user/editAddress/<%= x._id %>" method="post">
+                              <form action="/user/editAddress/<%= x._id %>" method="post" >
                                 <div class="form-group">
-                                  <label for="editName<%= x._id %>" class="col-form-label">Name:</label>
-                                  <input type="text" name="name" class="form-control" id="editName<%= x._id %>" value="<%= x.name %>"
-                                    required>
+                                    <label for="editName<%= x._id %>" class="col-form-label">Name:</label>
+                                    <input type="text" name="name" class="form-control" id="editName<%= x._id %>" value="<%= x.name %>" required>
+                                    <div id="name-validation-message<%= x._id %>" class="text-danger"></div>
                                 </div>
                                 <div class="form-group">
-                                  <label for="editAddress<%= x._id %>" class="col-form-label">Address:</label>
-                                  <input type="text" name="address" class="form-control" id="editAddress<%= x._id %>"
-                                    value="<%= x.address %>" required>
+                                    <label for="editAddress<%= x._id %>" class="col-form-label">Address:</label>
+                                    <input type="text" name="address" class="form-control" id="editAddress<%= x._id %>" value="<%= x.address %>" required>
+                                    <div id="address-validation-message<%= x._id %>" class="text-danger"></div>
                                 </div>
                                 <div class="form-group">
-                                  <label for="editCity<%= x._id %>" class="col-form-label">City:</label>
-                                  <input type="text" name="city" class="form-control" id="editCity<%= x._id %>" value="<%= x.city %>"
-                                    required>
+                                    <label for="editCity<%= x._id %>" class="col-form-label">City:</label>
+                                    <input type="text" name="city" class="form-control" id="editCity<%= x._id %>" value="<%= x.city %>" required>
+                                    <div id="city-validation-message<%= x._id %>" class="text-danger"></div>
                                 </div>
                                 <div class="form-group">
-                                  <label for="editPincode<%= x._id %>" class="col-form-label">Pincode:</label>
-                                  <input type="text" name="pincode" class="form-control" id="editPincode<%= x._id %>"
-                                    oninput="this.value = this.value.replace(/[^0-9]/g, '');" pattern="[0-9]*" maxlength="6"
-                                    value="<%= x.pincode %>" required>
-                                  <div id="pincode-validation-message" class="text-danger"></div>
+                                    <label for="editPincode<%= x._id %>" class="col-form-label">Pincode:</label>
+                                    <input type="text" name="pincode" class="form-control" id="editPincode<%= x._id %>" oninput="this.value = this.value.replace(/[^0-9]/g, '');" pattern="[0-9]*" maxlength="6" value="<%= x.pincode %>" required>
+                                    <div id="pincode-validation-message<%= x._id %>" class="text-danger"></div>
                                 </div>
                                 <div class="form-group">
-                                  <label for="editState<%= x._id %>" class="col-form-label">State:</label>
-                                  <input type="text" name="state" class="form-control" id="editState<%= x._id %>" value="<%= x.state %>"
-                                    required>
+                                    <label for="editState<%= x._id %>" class="col-form-label">State:</label>
+                                    <input type="text" name="state" class="form-control" id="editState<%= x._id %>" value="<%= x.state %>" required>
+                                    <div id="state-validation-message<%= x._id %>" class="text-danger"></div>
                                 </div>
                                 <div class="form-group">
-                                  <label for="editNumber<%= x._id %>" class="col-form-label">Mobile Number:</label>
-                                  <input type="number" name="number" class="form-control" id="editNumber<%= x._id %>"
-                                    value="<%= x.phone %>" required>
+                                    <label for="editNumber<%= x._id %>" class="col-form-label">Mobile Number:</label>
+                                    <input type="number" name="number" class="form-control" id="editNumber<%= x._id %>" value="<%= x.phone %>" required>
+                                    <div id="number-validation-message<%= x._id %>" class="text-danger"></div>
                                 </div>
                                 <!-- End of Edit Address Form -->
-                            </div>
-                            <div class="modal-footer">
-                              <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                              <button type="submit" class="btn btn-primary">Save Changes</button>
+                              </div>
+                              <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                <button type="submit" class="btn btn-primary" onclick="return validateEditForm('<%= x._id %>')">Save Changes</button>
                               </form>
-                            </div>
-                          </div>
+                        </div>
+                                     
+                      </div>
                         </div>
                       </div>
                       <!-- End of Edit Address Modal -->
@@ -290,6 +289,72 @@
             $('#editAddressModal' + addressId).modal('show');
         }
     </script>
+<script>
+  // Function to validate the edit address form fields before submission
+  function validateEditForm(editId) {
+      console.log('Validating edit form for ID:', editId);
+
+      var name = document.getElementById('editName' + editId).value.trim();
+      var address = document.getElementById('editAddress' + editId).value.trim();
+      var city = document.getElementById('editCity' + editId).value.trim();
+      var pincode = document.getElementById('editPincode' + editId).value.trim();
+      var state = document.getElementById('editState' + editId).value.trim();
+      var number = document.getElementById('editNumber' + editId).value.trim();
+
+      var isValid = true;
+
+      // Name Validation
+      if (name.length === 0) {
+          document.getElementById('name-validation-message' + editId).innerText = 'Name is required.';
+          isValid = false;
+      } else {
+          document.getElementById('name-validation-message' + editId).innerText = '';
+      }
+
+      // Address Validation
+      if (address.length === 0) {
+          document.getElementById('address-validation-message' + editId).innerText = 'Address is required.';
+          isValid = false;
+      } else {
+          document.getElementById('address-validation-message' + editId).innerText = '';
+      }
+
+      // City Validation
+      if (city.length === 0) {
+          document.getElementById('city-validation-message' + editId).innerText = 'City is required.';
+          isValid = false;
+      } else {
+          document.getElementById('city-validation-message' + editId).innerText = '';
+      }
+
+      // Pincode Validation
+      if (pincode.length !== 6 || !/^\d{6}$/.test(pincode)) {
+          document.getElementById('pincode-validation-message' + editId).innerText = 'Pincode must be 6 digits long.';
+          isValid = false;
+      } else {
+          document.getElementById('pincode-validation-message' + editId).innerText = '';
+      }
+
+      // State Validation
+      if (state.length === 0) {
+          document.getElementById('state-validation-message' + editId).innerText = 'State is required.';
+          isValid = false;
+      } else {
+          document.getElementById('state-validation-message' + editId).innerText = '';
+      }
+
+      // Number Validation
+      if (number.length === 0) {
+          document.getElementById('number-validation-message' + editId).innerText = 'Number is required.';
+          isValid = false;
+      } else {
+          document.getElementById('number-validation-message' + editId).innerText = '';
+      }
+
+      return isValid;
+  }
+</script>
+
     <script>
       // Function to validate the form fields before submission
       function validateForm() {

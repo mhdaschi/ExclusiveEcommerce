@@ -14,8 +14,8 @@ const { sendOTP } = require("../controller/otpController");
 const generateOTP = require("../utils/otpgenerator");
 const mongoose = require('mongoose');
 const Razorpay  = require('razorpay')
-const { ObjectId } = require('mongoose').Types;
 const easyinvoice = require('easyinvoice');
+const global = require('../global/globalfunction')
 
 
 const razorpay = new Razorpay({
@@ -30,35 +30,20 @@ const razorpay = new Razorpay({
 const userController = {
   getIndex: async (req, res) => {
     try {
-      const useProduct = await Products.find({status: true}).sort({ product_image: 1 });
-      const useBrand = await Categorie.find({ status: true }).limit(3);
-      const useflagship = await Products.find({
-        status: true,phone_type: "Flagship phones"
-        
-      });
-      const useCameraphones = await Products.find({
-        status: true, phone_type: "Camera phones"
-      });
-      const useBatterylife = await Products.find({
-        status: true, phone_type: "Battery life champions"
-      });
-      const useflagshipkiller = await Products.find({
-        status: true, phone_type: "Flagship killers",
-      });
-      const useGaming = await Products.find({status: true, phone_type: "Gaming phones" });
-  
-      res.render("get-index", {
-        useProduct,
-        useBrand,
-        useflagship,
-        useCameraphones,
-        useBatterylife,
-        useflagshipkiller,
-        useGaming,
-      });
+      const useProduct = await Products.find().limit(10);
+      const use2Product = await Products.find().skip(10)
+      const useBrand = await Categorie.find({status:true}).limit(3);
+
+      const useflagship = await Products.find({ phone_type:"Flagship phones",status:true})
+      const useCameraphones = await Products.find({phone_type:"Camera phones"})
+      const useBatterylife = await Products.find({phone_type:"Battery life champions"})
+      const useflagshipkiller = await Products.find({phone_type:"Flagship killers"})
+      const useGaming = await Products.find({phone_type:"Gaming phones"})
+      res.render("get-index", {useBrand,use2Product,useflagship,useCameraphones,useBatterylife,useflagshipkiller,useGaming,useProduct,});
       
     } catch (error) {
       console.error(error);
+      res.render('500')
       
     }
    
@@ -71,6 +56,7 @@ const userController = {
       
     } catch (error) {
       console.error(error);
+      res.render('500')
       
     }
     
@@ -102,12 +88,13 @@ const userController = {
       }
     } catch (error) {
       console.error(error);
+      res.render('500')
     }
   },
 
   showOtpPage: (req, res) => {
     if (req.session.signOtp || req.session.forgot) {
-      res.render("otp", { title: "OTP" });
+      res.render("otp", { title: "OTP",err:'' });
     } else {
       res.redirect("/sign-up");
     }
@@ -148,6 +135,7 @@ const userController = {
       }
     } catch (err) {
       console.log(err);
+      res.render('500')
     }
   },
 
@@ -167,7 +155,7 @@ const userController = {
         // Handle the case where Otp is not found or has expired
         await OTP.deleteOne({ email: data.email });
         req.session.err = "OTP not found or has expired";
-        return res.render("otp", { err: "OTP not found or has expired" });
+        return res.render("otp", { err: "OTP has expired" });
       }
 
       const hashed = Otp.otp;
@@ -202,7 +190,9 @@ const userController = {
       res.render("forgotfirst");
     } catch (error) {
       console.error(error);
+      res.render('500')
     }
+
   },
 
   Postforgot: async (req, res) => {
@@ -220,6 +210,7 @@ const userController = {
       }
     } catch (error) {
       console.error(error);
+      res.render('500')
     }
   },
 
@@ -228,6 +219,7 @@ const userController = {
       res.render("forgottPchange");
     } catch (error) {
       console.error(error);
+      res.render('500')
     }
   },
 
@@ -263,11 +255,15 @@ const userController = {
       if (!item) {
         return res.status(404).send("page not found");
       }
+      const loggedUser=await global.findLoggedUser(req.session.user)
+      const cartNo = await global.cartNo(loggedUser[0]._id)
 
-      res.render("product-deteals", { item });
+
+
+      res.render("product-deteals", { item ,cartNo});
     } catch (error) {
       console.log(error);
-      res.status(500).send("Internal Server Error");
+      res.status(500).render('500')
     }
   },
 // GetCart route
@@ -350,12 +346,14 @@ GetCart: async (req, res) => {
     const totalPrice = await Cart.aggregate(totalPricePipeline);
 
     req.session.totalPrice = totalPrice;
+    const loggedUser=await global.findLoggedUser(req.session.user)
+    const cartNo = await global.cartNo(loggedUser[0]._id)
 
 
-    res.render('cart', { cartItems, totalPrice, discountPrice });
+    res.render('cart', { cartItems, totalPrice, discountPrice ,cartNo});
   } catch (error) {
     console.error('Error in GetCart:', error);
-    res.status(500).send('Internal Server Error');
+    res.status(500).render('500')
   }
 },
 
@@ -403,8 +401,10 @@ GetCart: async (req, res) => {
             if (!item) {
               return res.status(404).send("page not found");
             }
+            const loggedUser=await global.findLoggedUser(req.session.user)
+            const cartNo = await global.cartNo(loggedUser[0]._id)
       
-            res.render("product-deteals", { item, message: "Only This Much Stock Available" });
+            res.render("product-deteals", { item, message: "Only This Much Stock Available",cartNo });
 
           }
         } else {
@@ -444,7 +444,8 @@ GetCart: async (req, res) => {
     }
   } catch (error) {
     console.error('Error in Getaddtocart:', error);
-    return res.status(500).send('Internal Server Error');
+    return res.status(500).render('500')
+
   }
 },
 
@@ -470,6 +471,8 @@ cartquandity : async (req,res) =>{
     
   } catch (error) {
     console.error('Error in :', error);
+    res.status(500).render('500')
+
 
     
   }
@@ -508,10 +511,12 @@ Userprofile: async (req, res) => {
   try {
     const email = req.session.user;
     const userData = await User.findOne({ email: email });
-    res.render('profile', { userData });
+    const loggedUser=await global.findLoggedUser(req.session.user)
+    const cartNo = await global.cartNo(loggedUser[0]._id)
+    res.render('profile', { userData ,cartNo});
   } catch (error) {
     console.error("Error :", error);
-    res.status(500).send("Internal Server Error");
+    res.status(500).render('500')
   }
 },
 
@@ -521,12 +526,11 @@ EditeUserName: async (req, res) => {
     const userId = req.params.id;
     const newName = req.body.username; 
     const Phone = req.body.Phone;
-    console.log(">>>>>",Phone);
     await User.updateOne({ _id: userId }, { $set: { username: newName , Phone:Phone } });
     res.redirect('/user/profile?msg="User Name changed"');
   } catch (error) {
     console.error("Error :", error);
-    res.status(500).send("Internal Server Error");
+    res.status(500).render('500')
   }
 },
 
@@ -557,7 +561,7 @@ ChangePassword: async (req, res) => {
       }
   } catch (error) {
       console.error("Error:", error);
-      return res.status(500).json({ success: false, error: "Internal Server Error" });
+      res.status(500).render('500')
   }
 },
 
@@ -572,7 +576,7 @@ ProfilePhoto: async (req, res) => {
     
   } catch (error) {
     console.error("Error:", error);
-    res.status(500).send("Internal Server Error");
+    res.status(500).render('500')
   }
 },
 
@@ -581,11 +585,13 @@ ManageAddress: async (req,res) =>{
   try {
     const email = req.session.user
     const userData = await User.findOne({ email: email });
-    res.render('manageAddress',{userData})
+    const loggedUser=await global.findLoggedUser(req.session.user)
+    const cartNo = await global.cartNo(loggedUser[0]._id)
+    res.render('manageAddress',{userData,cartNo})
     
   } catch (error) {
     console.error("Error:", error); 
-    res.status(500).send("Internal Server Error");
+    res.status(500).render('500')
     
   }
 },
@@ -631,7 +637,7 @@ AddAddress: async (req, res) => {
     }
   } catch (error) {
     console.error('Error:', error);
-    res.status(500).send('Internal Server Error');
+    res.status(500).render('500')
   }
 },
 
@@ -654,7 +660,7 @@ DeleteAddress: async (req, res) => {
     
   } catch (error) {
     console.error('Error:', error);
-    res.status(500).send('Internal Server Error');
+    res.status(500).render('500')
   }
 },
  EditAddress : async (req, res) => {
@@ -681,7 +687,7 @@ DeleteAddress: async (req, res) => {
     res.redirect('/user-manageAddress');
   } catch (error) {
     console.error('Error:', error);
-    res.status(500).send('Internal Server Error');
+    res.status(500).render('500')
   }
 },
 
@@ -777,10 +783,12 @@ CheckOut: async (req, res) => {
     
 
     let i = 0;
+    const loggedUser=await global.findLoggedUser(req.session.user)
+    const cartNo = await global.cartNo(loggedUser[0]._id)
 
 
 
-    res.render('checkOutPage', { userAddress, i , userCartData, totalPrice, discountPrice });
+    res.render('checkOutPage', { userAddress, i , userCartData, totalPrice, discountPrice,cartNo });
   } catch (error) {
     console.error('Error in CheckOut:', error);
     res.status(500).send('Internal Server Error');
@@ -861,13 +869,15 @@ OrderPlace: async (req, res) => {
         quantity: cartItem.quantity,
       };
     });
+    const totalPrice = req.session.totalPrice ;
+    const overallamount = totalPrice[0].total
 
     if (paymentMethod === 'Online') {
 const orderCreateData = {
   nameuser: addressData.name,
   email: email,
   phonenumber: addressData.phone,
-  orderTotalPrice: orderTotalPrice,
+  orderTotalPrice: overallamount,
   orderaddress: addressData.address,
   city: addressData.city,
   state: addressData.state,
@@ -881,7 +891,7 @@ const orderCreateData = {
 
 const cartId = await Cart.find({user:user._id})
 
-const orderAmount = orderTotalPrice;
+const orderAmount = overallamount;
 const currency = 'INR';
 
 const options = {
@@ -905,7 +915,7 @@ res.json({
         nameuser: addressData.name,
         email: email,
         phonenumber: addressData.phone,
-        orderTotalPrice: orderTotalPrice,
+        orderTotalPrice: overallamount,
         orderaddress: addressData.address,
         city: addressData.city,
         state: addressData.state,
@@ -924,7 +934,7 @@ res.json({
           nameuser: addressData.name,
           email: email,
           phonenumber: addressData.phone,
-          orderTotalPrice: orderTotalPrice,
+          orderTotalPrice: overallamount,
           orderaddress: addressData.address,
           city: addressData.city,
           state: addressData.state,
@@ -984,17 +994,19 @@ res.json({
 
   } catch (error) {
     console.error("Error placing order:", error);
-    return res.status(500).json({ success: false, error: "Error placing order" });
+    return res.status(500).render('500')
+
   }
 },
 
 paimentFail : async (req,res) =>{
   const orderId = req.query.orderId;
-  console.log('>>>>>>>>>>>',orderId);
 
     const deleteOrder = await Order.findByIdAndDelete(orderId);
     console.log('deleteOrder',deleteOrder);
-    res.render('paymentFail')
+    const loggedUser=await global.findLoggedUser(req.session.user)
+    const cartNo = await global.cartNo(loggedUser[0]._id)
+    res.render('paymentFail',{cartNo})
 
   },
 
@@ -1109,14 +1121,15 @@ paimentFail : async (req,res) =>{
           quantity: cartItem.quantity,
         };
       });
+      const totalPrice = req.session.totalPrice ;
+      const overallamount = totalPrice[0].total
   
-      console.log('Received orderId:', orderId);
       if (orderId == 'razorpay') {
         const orderCreateData = {
           nameuser: addressData.name,
           email: email,
           phonenumber: addressData.phone,
-          orderTotalPrice: orderTotalPrice,
+          orderTotalPrice: overallamount,
           orderaddress: addressData.address,
           city: addressData.city,
           state: addressData.state,
@@ -1143,13 +1156,14 @@ paimentFail : async (req,res) =>{
     }
   
 
-
+    const loggedUser=await global.findLoggedUser(req.session.user)
+    const cartNo = await global.cartNo(loggedUser[0]._id)
   
-      res.render('conformOrder'); 
+      res.render('conformOrder',{cartNo}); 
   
     } catch (error) {
       console.error("Error rendering order page:", error);
-      res.status(500).json({ success: false, error: "Error rendering order page" });
+      res.status(500).render('500')
     }
   },
 
@@ -1157,12 +1171,14 @@ GetOrder : async (req,res) =>{
   try {
     const email = req.session.user;
     const orderData = await Order.find({email:email})
-    res.render('userorder',{orderData})
+    const loggedUser=await global.findLoggedUser(req.session.user)
+    const cartNo = await global.cartNo(loggedUser[0]._id)
+    res.render('userorder',{orderData,cartNo})
 
     
   } catch (error) {
     console.error("Error rendering order page:", error);
-    res.status(500).json({ success: false, error: "Error rendering order page" });
+    res.status(500).render('500')
     
   }
 },
@@ -1249,7 +1265,7 @@ CancelOrder: async (req, res) => {
     }
   } catch (error) {
     console.error("Error cancelling order:", error);
-    res.status(500).json({ success: false, error: "Error cancelling order" });
+    res.status(500).render('500')
   }
 },
 
@@ -1257,7 +1273,6 @@ CancelOrder: async (req, res) => {
 returnOrder: async (req, res) => {
   try {
     const ID = req.params.id;
-      console.log(".................",ID);
       const data = "Returned";
       const email = req.session.user;
 
@@ -1289,7 +1304,6 @@ returnOrder: async (req, res) => {
 
           const cancel = await Order.updateOne({ _id: ID }, { $set: { orderStatus: data } });
 
-          console.log(">>>>>>>>>>>>",cancel);
          
           const product = await Order.findOne({ _id: ID }, { orderedproducts: 1 });
 
@@ -1304,7 +1318,7 @@ returnOrder: async (req, res) => {
       }
   } catch (error) {
       console.error("Error cancel order:", error);
-      res.status(500).json({ success: false, error: "Error cancel order" });
+      res.status(500).render('500')
   }
 },
 
@@ -1319,22 +1333,25 @@ GetWallet: async (req, res) => {
   try {
     const email = req.session.user;
     const walletData = await User.find({ email: email });
-    console.log("Wallet Data:", walletData); 
-    res.render('userWallet', { walletData });
+    const loggedUser=await global.findLoggedUser(req.session.user)
+    const cartNo = await global.cartNo(loggedUser[0]._id)
+    res.render('userWallet', { walletData,cartNo });
   } catch (error) {
     console.error("Error fetching wallet:", error);
-    res.status(500).json({ success: false, error: "Error fetching wallet" });
+    res.status(500).render('500')
   }
 },
 
 UserCoupen: async (req,res)=>{
   try {
-    const usercoupen = await Coupon.find()
-    res.render('userCoupen',{usercoupen})
+    const usercoupen = await Coupon.find();
+    const loggedUser=await global.findLoggedUser(req.session.user)
+    const cartNo = await global.cartNo(loggedUser[0]._id)
+    res.render('userCoupen',{usercoupen,cartNo})
     
   } catch (error) {
     console.error("Error fetching coupon:", error);
-    res.status(500).json({ success: false, error: "Error fetching coupon" });
+    res.status(500).render('500')
     
   }
 },
@@ -1346,7 +1363,6 @@ ApplyCoupon: async (req, res) => {
 
       const coupendiscount = await Coupon.findOne({ couponCode: CouponCode });
       const CouponCount = await Cart.findOne({user: user._id},{couponcount:1})
-      console.log("CouponCount",CouponCount);
       if(CouponCount.couponcount == 1){  
         res.redirect("/user/cart?msg=Already%20Applied");
         return; 
@@ -1360,6 +1376,7 @@ ApplyCoupon: async (req, res) => {
       }
 
       const discountPrice = coupendiscount.discount;
+      
 
       const cartItemsPipeline = [
         { $match: { user: user._id } },
@@ -1448,16 +1465,22 @@ ApplyCoupon: async (req, res) => {
         
         const totalPrice = await Cart.aggregate(totalPricePipeline);
           req.session.coupendiscount = coupendiscount.discount;
+          console.log("coupendiscount.discount:",coupendiscount.discount);
           req.session.totalPrice = totalPrice;
+          console.log("totalPrice:",totalPrice.total);
+
+
           await Coupon.updateOne(
               { couponCode: CouponCode },
               { $set: { email: email, productName: cartItems.product_name } }
           );
-          res.render('cart', { cartItems, totalPrice, discountPrice });
+          const loggedUser=await global.findLoggedUser(req.session.user)
+          const cartNo = await global.cartNo(loggedUser[0]._id)
+          res.render('cart', { cartItems, totalPrice, discountPrice,cartNo });
       }
   } catch (error) {
       console.error("Error Applying coupon:", error);
-      res.status(500).json({ success: false, error: "Error Applying coupon" });
+      res.status(500).render('500')
   }
 },
 
@@ -1470,7 +1493,9 @@ buyNow: async (req,res)=>{
 
     const user = await User.findOne({ email: email });
     const userAddress = user 
-    res.render('buynowcheck',{userAddress,productData})
+    const loggedUser=await global.findLoggedUser(req.session.user)
+    const cartNo = await global.cartNo(loggedUser[0]._id)
+    res.render('buynowcheck',{userAddress,productData,cartNo})
     
   } catch (error) {
     console.error("Error rendering Buy now Checkout page:", error);
@@ -1492,6 +1517,10 @@ buyNowOrderplace: async (req,res)=>{
       email: email,
       'address._id': AddressId,
     });
+    if (!user) {
+      const redirectMsg = `Please Add a Address`;
+      return res.json({ codSuccess: false, message: redirectMsg });
+    }
 
     const addressData = user.address.find(address => address._id.toString() === AddressId);
     const productData = await Products.findOne({_id: productId});
@@ -1503,7 +1532,7 @@ buyNowOrderplace: async (req,res)=>{
       image: productData.product_image[0],
       colour: productData.productColor,
       price: productData.price,
-      quantity: productData.quantity,
+      quantity: 1,
     };
     
 
@@ -1623,7 +1652,8 @@ buyNowOrderplace: async (req,res)=>{
             }
           } else {
             console.log("Invalid payment method:", paymentMethod);
-            return res.status(400).json({ error: 'Invalid payment method' });
+            return res.status(500).render('500')
+
           }
 
 
@@ -1631,7 +1661,7 @@ buyNowOrderplace: async (req,res)=>{
     
   } catch (error) {
     console.error("Error Order placing:", error);
-    res.status(500).json({ success: false, error: "Error Order placing" });
+    res.status(500).render('500')
     
   }
 },
@@ -1644,11 +1674,13 @@ viewAllflagship: async (req,res)=>{
     });
     const categoryData = await Categorie.find({});
     const phoneType = 'Flagship'
+    const loggedUser=await global.findLoggedUser(req.session.user)
+    const cartNo = await global.cartNo(loggedUser[0]._id)
   
-    res.render('viewAll',{productData,categoryData,phoneType})
+    res.render('viewAll',{productData,categoryData,phoneType,cartNo})
   } catch (error) {
     console.error("Error in View All Products:", error);
-    res.status(500).json({ success: false, error: "Error in View All Products" });
+    res.status(500).render('500')
     
   }
 
@@ -1663,11 +1695,13 @@ viewAllFlagkiller: async (req,res)=>{
     });
     const categoryData = await Categorie.find({});
     const phoneType = 'Flagship killer'
+    const loggedUser=await global.findLoggedUser(req.session.user)
+    const cartNo = await global.cartNo(loggedUser[0]._id)
   
-    res.render('viewAll',{productData,categoryData,phoneType})
+    res.render('viewAll',{productData,categoryData,phoneType,cartNo})
   } catch (error) {
     console.error("Error in View All Products:", error);
-    res.status(500).json({ success: false, error: "Error in View All Products" });
+    res.status(500).render('500')
     
   }
 
@@ -1682,15 +1716,17 @@ browsebybrand: async (req,res)=>{
       status: true,
     });
     const phoneType = category.brand;
+    const loggedUser=await global.findLoggedUser(req.session.user)
+    const cartNo = await global.cartNo(loggedUser[0]._id)
     
     const categoryData = await Categorie.find({});
-    res.render('viewAll',{productData,categoryData,phoneType})
+    res.render('viewAll',{productData,categoryData,phoneType,cartNo})
 
 
 
   } catch (error) {
     console.error("Error in View All Products:", error);
-    res.status(500).json({ success: false, error: "Error in View All Products" });
+    res.status(500).render('500')
     
   }
 },
@@ -1702,6 +1738,8 @@ filter: async (req,res)=>{
     const brandNames = brands.map(category => category.brand);
     const categoryData = await Categorie.find({});
     const phoneType = ' ';
+    const loggedUser=await global.findLoggedUser(req.session.user)
+    const cartNo = await global.cartNo(loggedUser[0]._id)
   
   
     if(req.body.priceSort == 'highToLow'){
@@ -1709,26 +1747,27 @@ filter: async (req,res)=>{
         brand: { $in: brandNames },
         status: true,
       }).sort({ price: -1 });
-      res.render('viewAll',{productData,categoryData,phoneType})
+      res.render('viewAll',{productData,categoryData,phoneType,cartNo})
     }else if(req.body.priceSort == 'lowToHigh'){
       const productData = await Products.find({
         brand: { $in: brandNames },
         status: true,
       }).sort({ price: 1 });
-      res.render('viewAll',{productData,categoryData,phoneType})
+      res.render('viewAll',{productData,categoryData,phoneType,cartNo})
   
     }else{
       const productData = await Products.find({
         brand: { $in: brandNames },
         status: true,
       });
-      res.render('viewAll',{productData,categoryData,phoneType})
+  
+      res.render('viewAll',{productData,categoryData,phoneType,cartNo})
   
     }
     
   } catch (error) {
     console.error("Error in Filtering time:", error);
-    res.status(500).json({ success: false, error: "Error in Filtering time"});
+    res.status(500).render('500')
     
   }
 
@@ -1742,11 +1781,13 @@ usersechProduct: async(req,res)=>{
     const productData = await Products.find({ product_name: { $regex: data, $options: "i" } });
     const categoryData = await Categorie.find({});
     const phoneType = data;
-    res.render('viewAll',{productData,categoryData,phoneType});
+    const loggedUser=await global.findLoggedUser(req.session.user)
+    const cartNo = await global.cartNo(loggedUser[0]._id)
+    res.render('viewAll',{productData,categoryData,phoneType,cartNo});
     
   } catch (error) {
     console.error("Error in user serching time:", error);
-    res.status(500).json({ success: false, error: "Error in user serching time"});
+    res.status(500).render('500')
     
   }
 },
@@ -1757,7 +1798,8 @@ downloadPdf : async (req, res) => {
     const order = await Order.findById(orderId);
 
     if (!order) {
-        return res.status(404).json({ success: false, error: 'Order not found' });
+        return res.status(500).render('500')
+
     }
 
     const invoiceData = {
@@ -1816,8 +1858,30 @@ downloadPdf : async (req, res) => {
     res.end(pdfBuffer); 
 } catch (error) {
     console.error('Error in downloading PDF:', error);
-    res.status(500).json({ success: false, error: 'Error in downloading PDF' });
-}
+    res.status(500).render('500')
+  }
+},
+
+UserShop : async (req,res)=>{
+  try {
+    const category = await Categorie.find();
+    const productData = await Products.find({
+      status: true
+    });
+    const phoneType = "";
+    
+    const categoryData = await Categorie.find({});
+    const loggedUser=await global.findLoggedUser(req.session.user)
+    const cartNo = await global.cartNo(loggedUser[0]._id)
+    res.render('viewAll',{productData,categoryData,phoneType,cartNo})
+
+
+
+  } catch (error) {
+    console.error("Error in View All Products:", error);
+    res.status(500).render('500')
+    
+  }
 },
 
 

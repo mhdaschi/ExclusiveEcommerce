@@ -47,106 +47,36 @@
   </div>
 
   <div class="ms-3">
-    <a  style="font-family: 'Inter', sans-serif; font-weight: 600; font-size: 36px; color: #000000;">Flash Sales</a>
+    <a  style="font-family: 'Inter', sans-serif; font-weight: 600; font-size: 36px; color: #000000;">Flagship Phone</a>
   </div>
 
 
- <div class="container">
-  <ul class="cards">
-
-    <li class="card">
-      <div class="product-card">
-        <div class="card-image">
-          <img src="images.jpeg" class="card-img" alt="Product 1">
-        </div>
-        <div class="card-content">
-          <h3 class="card-title"></h3>Samsung Galaxy S23 5G 
-          <p >₹79,999 <del > ₹89,999</del></p>
-        </div>
-        <div class="card-link-wrapper">
-          <a href="#" class="card-link">View Details</a>
-        </div>
-      </div>
-    </li>
-
-
-    <li class="card">
-      <div class="product-card">
-        <div class="card-image">
-          <img src="images.jpeg" class="card-img" alt="Product 1">
-        </div>
-        <div class="card-content">
-          <h3 class="card-title"></h3>Samsung Galaxy S23 5G 
-          <p class="">₹79,999 <del> ₹89,999</del></p>
-        </div>
-        <div class="card-link-wrapper">
-          <a href="#" class="card-link">View Details</a>
-        </div>
-      </div>
-
-    </li>
-
-    <li class="card">
-      <div class="product-card">
-        <div class="card-image">
-          <img src="images.jpeg" class="card-img" alt="Product 1">
-        </div>
-        <div class="card-content">
-          <h3 class="card-title"></h3>Samsung Galaxy S23 5G 
-          <p class="">₹79,999 <del> ₹89,999</del></p>
-        </div>
-        <div class="card-link-wrapper">
-          <a href="#" class="card-link">View Details</a>
-        </div>
-      </div>
-    </li>
-
-    <li class="card">
-      <div class="product-card">
-        <div class="card-image">
-          <img src="images.jpeg" class="card-img" alt="Product 1">
-        </div>
-        <div class="card-content">
-          <h3 class="card-title"></h3>Samsung Galaxy S23 5G 
-          <p class="">₹79,999 <del> ₹89,999</del></p>
-        </div>
-        <div class="card-link-wrapper">
-          <a href="#" class="card-link">View Details</a>
-        </div>
-      </div>
-    </li>
-
-    <li class="card">
-      <div class="product-card">
-        <div class="card-image">
-          <img src="images.jpeg" class="card-img" alt="Product 1">
-        </div>
-        <div class="card-content">
-          <h3 class="card-title"></h3>Samsung Galaxy S23 5G 
-          <p class="">₹79,999 <del> ₹89,999</del></p>
-        </div>
-        <div class="card-link-wrapper">
-          <a href="#" class="card-link">View Details</a>
-        </div>
-      </div>
-    </li>
-
-    <li class="card">
-      <div class="product-card">
-        <div class="card-image">
-          <img src="images.jpeg" class="card-img" alt="Product 1">
-        </div>
-        <div class="card-content">
-          <h3 class="card-title"></h3>Samsung Galaxy S23 5G 
-          <p class="">₹79,999 <del> ₹89,999</del></p>
-        </div>
-        <div class="card-link-wrapper">
-          <a href="#" class="card-link">View Details</a>
-        </div>
-      </div>
-    </li>
-  </ul>
-</div>
+  <div class="container">
+    <ul class="cards">
+      <% useflagship.forEach(data => { %>
+        <li class="card">
+          <div class="product-card">
+            <div class="card-image">
+              <img src="/<%=data.product_image[0]%>" class="card-img-top rounded-2 custom-image">
+            </div>
+            <div class="card-content">
+              <h3 class="card-title"></h3><%= data.product_name %>
+              <p>₹<%= data.price %><del> ₹89,999</del></p>
+            </div>
+            <div class="card-link-wrapper">
+              <a href="/sign-up" class="card-link">View Details</a>
+            </div>
+          </div>
+        </li>
+      </ul>
+    </div>
+    <div class="d-flex justify-content-center">
+      <form action="/sign-up" method="get">
+        <button type="submit" class="btn btn-danger mt-3 btn-block gradient-custom-4 text-white">View All Product</button>
+      </form>
+    </div>
+    <% }) %>
+  
 </div>
 
 
@@ -160,123 +90,63 @@
     <a  style="font-family: 'Inter', sans-serif; font-weight: 600; font-size: 36px; color: #000000;">Browse By Brands</a>
   </div>
 
+  <div class="row my-5 ">
+    <div class="col  d-flex justify-content-around flex-wrap">
+      <% useBrand.forEach(data => { %>
+        <div class="card my-2 shadow-0 custom-card  mx-auto shadow p-3 mb-5 bg-white">
+          <a href="/sign-up" class="">
+            <img src="/<%=data.image %>" class="card-img-top rounded-2 custom-image">
+          </a>
+          <div class="card-body p-0 pt-2 custom-button">
+            <button class="btn btn " style="color: white; padding-bottom:10px;"><%=data.brand%></button>
+          </div>
+        </div>
+     
+        <% }) %>
+    </div>
   
-  
-
 
 
     
 
 <!-- section 3 -->
-
-<div class="border-bottom  p-1 mb-5">
+<div class="border-bottom  p-1">
   <div class="ms-3 mt-5 mb-2 ">
-    <a style="font-family: 'Poppins', sans-serif; font-weight: 600; font-size: 16px; color: #DB4444;"><i class="fa-solid fa-square fa-spin fa-spin-reverse mx-2" style="color: #e63a0f;"></i>This Month</a>
+    <a style="font-family: 'Poppins', sans-serif; font-weight: 600; font-size: 16px; color: #DB4444;"><i class="fa-solid fa-square fa-spin fa-spin-reverse mx-2" style="color: #e63a0f;"></i>Today’s</a>
   </div>
 
   <div class="ms-3">
-    <a  style="font-family: 'Inter', sans-serif; font-weight: 600; font-size: 36px; color: #000000;">Best Selling Products</a>
+    <a  style="font-family: 'Inter', sans-serif; font-weight: 600; font-size: 36px; color: #000000;">Flagship Killers</a>
   </div>
 
 
- <div class="container">
-  <ul class="cards">
-
-    <li class="card">
-      <div class="product-card">
-        <div class="card-image">
-          <img src="images.jpeg" class="card-img" alt="Product 1">
-        </div>
-        <div class="card-content">
-          <h3 class="card-title"></h3>Samsung Galaxy S23 5G 
-          <p >₹79,999 <del > ₹89,999</del></p>
-        </div>
-        <div class="card-link-wrapper">
-          <a href="#" class="card-link">View Details</a>
-        </div>
-      </div>
-    </li>
-
-
-    <li class="card">
-      <div class="product-card">
-        <div class="card-image">
-          <img src="images.jpeg" class="card-img" alt="Product 1">
-        </div>
-        <div class="card-content">
-          <h3 class="card-title"></h3>Samsung Galaxy S23 5G 
-          <p class="">₹79,999 <del> ₹89,999</del></p>
-        </div>
-        <div class="card-link-wrapper">
-          <a href="#" class="card-link">View Details</a>
-        </div>
-      </div>
-
-    </li>
-
-    <li class="card">
-      <div class="product-card">
-        <div class="card-image">
-          <img src="images.jpeg" class="card-img" alt="Product 1">
-        </div>
-        <div class="card-content">
-          <h3 class="card-title"></h3>Samsung Galaxy S23 5G 
-          <p class="">₹79,999 <del> ₹89,999</del></p>
-        </div>
-        <div class="card-link-wrapper">
-          <a href="#" class="card-link">View Details</a>
-        </div>
-      </div>
-    </li>
-
-    <li class="card">
-      <div class="product-card">
-        <div class="card-image">
-          <img src="images.jpeg" class="card-img" alt="Product 1">
-        </div>
-        <div class="card-content">
-          <h3 class="card-title"></h3>Samsung Galaxy S23 5G 
-          <p class="">₹79,999 <del> ₹89,999</del></p>
-        </div>
-        <div class="card-link-wrapper">
-          <a href="#" class="card-link">View Details</a>
-        </div>
-      </div>
-    </li>
-
-    <li class="card">
-      <div class="product-card">
-        <div class="card-image">
-          <img src="images.jpeg" class="card-img" alt="Product 1">
-        </div>
-        <div class="card-content">
-          <h3 class="card-title"></h3>Samsung Galaxy S23 5G 
-          <p class="">₹79,999 <del> ₹89,999</del></p>
-        </div>
-        <div class="card-link-wrapper">
-          <a href="#" class="card-link">View Details</a>
-        </div>
-      </div>
-    </li>
-
-    <li class="card">
-      <div class="product-card">
-        <div class="card-image">
-          <img src="images.jpeg" class="card-img" alt="Product 1">
-        </div>
-        <div class="card-content">
-          <h3 class="card-title"></h3>Samsung Galaxy S23 5G 
-          <p class="">₹79,999 <del> ₹89,999</del></p>
-        </div>
-        <div class="card-link-wrapper">
-          <a href="#" class="card-link">View Details</a>
-        </div>
-      </div>
-    </li>
-  </ul>
+  <div class="container">
+    <ul class="cards">
+      <% useflagshipkiller.forEach(data => { %>
+        <li class="card">
+          <div class="product-card">
+            <div class="card-image">
+              <img src="/<%=data.product_image[0]%>" class="card-img-top rounded-2 custom-image">
+            </div>
+            <div class="card-content">
+              <h3 class="card-title"></h3><%= data.product_name %>
+              <p>₹<%= data.price %><del> ₹89,999</del></p>
+            </div>
+            <div class="card-link-wrapper">
+              <a href="/sign-up" class="card-link">View Details</a>
+            </div>
+          </div>
+        </li>
+      <% }) %>
+    </ul>
+  </div>
+  <div class="d-flex justify-content-center">
+    <form action="/sign-up" method="get">
+      <button type="submit" class="btn btn-danger mt-3 btn-block gradient-custom-4 text-white">View All Product</button>
+    </form>
+  </div>
+  
 </div>
-</div>
-
 
 <!-- section 4 baner -->
 <div class="container p-5  border-bottom">
@@ -284,217 +154,53 @@
 </div>
 
 <!-- section 5 -->
-<div class="border-bottom  p-1 mb-5">
-  <div class="ms-3 mt-5 mb-2 ">
-    <a style="font-family: 'Poppins', sans-serif; font-weight: 600; font-size: 16px; color: #DB4444;"><i class="fa-solid fa-square fa-spin fa-spin-reverse mx-2" style="color: #e63a0f;"></i>Our Products</a>
+<div class="border-bottom p-1 mb-5">
+  <div class="ms-3 mt-5 mb-2">
+    <a style="font-family: 'Poppins', sans-serif; font-weight: 600; font-size: 16px; color: #DB4444;">
+      <i class="fa-solid fa-square fa-spin fa-spin-reverse mx-2" style="color: #e63a0f;"></i>Our Products
+    </a>
   </div>
 
   <div class="ms-3">
-    <a  style="font-family: 'Inter', sans-serif; font-weight: 600; font-size: 36px; color: #000000;">Explore Our Products</a>
+    <a style="font-family: 'Inter', sans-serif; font-weight: 600; font-size: 36px; color: #000000;">Explore Our Products</a>
+  </div>
+
+  <div class="scroll-buttons d-flex justify-content-sm-end me-5 mt-2">
+    <button class="btn " id="scroll-left-button"><i class="fa fa-arrow-left" aria-hidden="true"></i></button>
+    <button class="btn " id="scroll-right-button"><i class="fa fa-arrow-right" aria-hidden="true"></i></button>
   </div>
 
   <div class="container">
-    <div class="scroll-buttons d-flex justify-content-sm-end me-5 mt-2">
-      <button class="btn " id="scroll-left-button"><i class="fa fa-arrow-left" aria-hidden="true"></i></button>
-      <button class="btn " id="scroll-right-button"><i class="fa fa-arrow-right" aria-hidden="true"></i></button>
-    </div>
-    
-    <div class="container">
-      <ul class="cards btnscroll">
-    
+    <ul class="cards">
+      <% 
+        const allProducts = useProduct.concat(use2Product);
+        allProducts.forEach(data => { 
+      %>
+      <% if (data.status === true) { %>
+   
+        
         <li class="card">
           <div class="product-card">
             <div class="card-image">
-              <img src="images.jpeg" class="card-img" alt="Product 1">
-            </div>
-            <div class="card-content">
-              <h3 class="card-title"></h3>Samsung Galaxy S23 5G 
-              <p >₹79,999 <del > ₹89,999</del></p>
-            </div>
-            <div class="card-link-wrapper">
-              <a href="#" class="card-link">View Details</a>
-            </div>
-          </div>
-        </li>
-    
-    
-        <li class="card">
-          <div class="product-card">
-            <div class="card-image">
-              <img src="images.jpeg" class="card-img" alt="Product 1">
-            </div>
-            <div class="card-content">
-              <h3 class="card-title"></h3>Samsung Galaxy S23 5G 
-              <p class="">₹79,999 <del> ₹89,999</del></p>
-            </div>
-            <div class="card-link-wrapper">
-              <a href="#" class="card-link">View Details</a>
-            </div>
-          </div>
-    
-        </li>
-    
-        <li class="card">
-          <div class="product-card">
-            <div class="card-image">
-              <img src="images.jpeg" class="card-img" alt="Product 1">
-            </div>
-            <div class="card-content">
-              <h3 class="card-title"></h3>Samsung Galaxy S23 5G 
-              <p class="">₹79,999 <del> ₹89,999</del></p>
-            </div>
-            <div class="card-link-wrapper">
-              <a href="#" class="card-link">View Details</a>
-            </div>
-          </div>
-        </li>
-    
-        <li class="card">
-          <div class="product-card">
-            <div class="card-image">
-              <img src="images.jpeg" class="card-img" alt="Product 1">
-            </div>
-            <div class="card-content">
-              <h3 class="card-title"></h3>Samsung Galaxy S23 5G 
-              <p class="">₹79,999 <del> ₹89,999</del></p>
-            </div>
-            <div class="card-link-wrapper">
-              <a href="#" class="card-link">View Details</a>
-            </div>
-          </div>
-        </li>
-    
-        <li class="card">
-          <div class="product-card">
-            <div class="card-image">
-              <img src="images.jpeg" class="card-img" alt="Product 1">
-            </div>
-            <div class="card-content">
-              <h3 class="card-title"></h3>Samsung Galaxy S23 5G 
-              <p class="">₹79,999 <del> ₹89,999</del></p>
-            </div>
-            <div class="card-link-wrapper">
-              <a href="#" class="card-link">View Details</a>
-            </div>
-          </div>
-        </li>
-    
-        <li class="card">
-          <div class="product-card">
-            <div class="card-image">
-              <img src="images.jpeg" class="card-img" alt="Product 1">
-            </div>
-            <div class="card-content">
-              <h3 class="card-title"></h3>Samsung Galaxy S23 5G 
-              <p class="">₹79,999 <del> ₹89,999</del></p>
-            </div>
-            <div class="card-link-wrapper">
-              <a href="#" class="card-link">View Details</a>
-            </div>
-          </div>
-        </li>
-      </ul>
-    </div>
-    <div class="container">
-      <ul class="cards">
-    
-        <li class="card">
-          <div class="product-card">
-            <div class="card-image">
-              <img src="images.jpeg" class="card-img" alt="Product 1">
-            </div>
-            <div class="card-content">
-              <h3 class="card-title"></h3>Samsung Galaxy S23 5G 
-              <p >₹79,999 <del > ₹89,999</del></p>
-            </div>
-            <div class="card-link-wrapper">
-              <a href="#" class="card-link">View Details</a>
-            </div>
-          </div>
-        </li>
-    
-    
-        <li class="card">
-          <div class="product-card">
-            <div class="card-image">
-              <img src="images.jpeg" class="card-img" alt="Product 1">
-            </div>
-            <div class="card-content">
-              <h3 class="card-title"></h3>Samsung Galaxy S23 5G 
-              <p class="">₹79,999 <del> ₹89,999</del></p>
-            </div>
-            <div class="card-link-wrapper">
-              <a href="#" class="card-link">View Details</a>
-            </div>
-          </div>
-    
-        </li>
-    
-        <li class="card">
-          <div class="product-card">
-            <div class="card-image">
-              <img src="images.jpeg" class="card-img" alt="Product 1">
-            </div>
-            <div class="card-content">
-              <h3 class="card-title"></h3>Samsung Galaxy S23 5G 
-              <p class="">₹79,999 <del> ₹89,999</del></p>
-            </div>
-            <div class="card-link-wrapper">
-              <a href="#" class="card-link">View Details</a>
-            </div>
-          </div>
-        </li>
-    
-        <li class="card">
-          <div class="product-card">
-            <div class="card-image">
-              <img src="images.jpeg" class="card-img" alt="Product 1">
-            </div>
-            <div class="card-content">
-              <h3 class="card-title"></h3>Samsung Galaxy S23 5G 
-              <p class="">₹79,999 <del> ₹89,999</del></p>
-            </div>
-            <div class="card-link-wrapper">
-              <a href="#" class="card-link">View Details</a>
-            </div>
-          </div>
-        </li>
-    
-        <li class="card">
-          <div class="product-card">
-            <div class="card-image">
-              <img src="images.jpeg" class="card-img" alt="Product 1">
-            </div>
-            <div class="card-content">
-              <h3 class="card-title"></h3>Samsung Galaxy S23 5G 
-              <p class="">₹79,999 <del> ₹89,999</del></p>
-            </div>
-            <div class="card-link-wrapper">
-              <a href="#" class="card-link">View Details</a>
-            </div>
-          </div>
-        </li>
-    
-        <li class="card">
-          <div class="product-card">
-            <div class="card-image">
-              <img src="images.jpeg" class="card-img" alt="Product 1">
-            </div>
-            <div class="card-content">
-              <h3 class="card-title"></h3>Samsung Galaxy S23 5G 
-              <p class="">₹79,999 <del> ₹89,999</del></p>
-            </div>
-            <div class="card-link-wrapper">
-              <a href="#" class="card-link">View Details</a>
-            </div>
-          </div>
-        </li>
-      </ul>
-    </div>
-    
-    
+              <img src="/<%=data.product_image[0]%>" class="card-img-top rounded-2 custom-image">
+              </div>
+              <div class="card-content">
+                <h3 class="card-title"></h3><%= data.product_name %>
+                <p>₹<%= data.price %><del> ₹89,999</del></p>
+                </div>
+                <div class="card-link-wrapper">
+                  <a href="/sign-up" class="card-link">View Details</a>
+                  </div>
+                  </div>
+                  </li>
+                  <% } %>
+      <% }) %>
+    </ul>
   </div>
 </div>
+
+
+
 </main>
 <%- include('footer')%>
 

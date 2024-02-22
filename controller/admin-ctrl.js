@@ -5,6 +5,8 @@ const Order = require("../model/ordermodel")
 const Coupon = require("../model/couponmodel")
 const moment = require('moment');
 const uploadDirectory = 'uploads';
+const fs = require('fs');
+
 const adminController = {
   AdminDashboard: async (req, res) => {
     try {
@@ -109,7 +111,7 @@ const topSellingProducts = await Order.aggregate([
     $sort: { totalQuantity: -1 } 
   },
   {
-    $limit: 5 
+    $limit: 10 
   }
 ]);
 
@@ -153,7 +155,6 @@ const topSellingBrand = await Order.aggregate([
 ]);
 
 
-console.log(">>>>>>>>>>>>>>>>>",topSellingBrand);
 
 
 
@@ -162,7 +163,7 @@ console.log(">>>>>>>>>>>>>>>>>",topSellingBrand);
       
     } catch (error) {
       console.error(error);
-      res.status(500).send("Internal Server Error");
+      res.status(500).render('500')
       
     }
     
@@ -172,7 +173,7 @@ console.log(">>>>>>>>>>>>>>>>>",topSellingBrand);
 
 // Dashusers route
 Dashusers: async (req, res) => {
- 
+  try {
     const useData = await user.find().sort({ username: 1, email: 1, status: 1 });
     const msg = req.query.err; 
     var i = 0;
@@ -180,22 +181,43 @@ Dashusers: async (req, res) => {
 
   
     res.render("user-list", { useData, i, msg });
+    
+  } catch (error) {
+    console.error(error);
+    res.status(500).render('500')
+    
+  }
+ 
+
  
 
 },
 
 // Blockuser route
 Blockuser: async (req, res) => {
-  const id = req.params.id;
-  const status = await user.updateOne({ _id: id }, { $set: { status: false } });
-  res.redirect("/admin/users?err=User Blocked"); 
+  try {
+    const id = req.params.id;
+    const status = await user.updateOne({ _id: id }, { $set: { status: false } });
+    res.redirect("/admin/users?err=User Blocked"); 
+  } catch (error) {
+    console.error(error);
+    res.status(500).render('500')
+  }
+
 },
 
 // Activeuser route
 Activeuser: async (req, res) => {
-  const id = req.params.id;
-  const status = await user.updateOne({ _id: id }, { $set: { status: true } });
-  res.redirect("/admin/users?err=User Activated"); 
+  try {
+    const id = req.params.id;
+    const status = await user.updateOne({ _id: id }, { $set: { status: true } });
+    res.redirect("/admin/users?err=User Activated"); 
+  } catch (error) {
+    console.error(error);
+    res.status(500).render('500')
+    
+  }
+ 
 },
 
 
@@ -213,7 +235,7 @@ Serchuser: async (req, res) => {
     res.render("user-list", { useData, i, msg });
   } catch (error) {
     console.error(error);
-    res.status(500).send("Internal Server Error");
+    res.status(500).render('500')
   }
 },
 
@@ -222,7 +244,7 @@ Serchuser: async (req, res) => {
 
 
   AdminCategories: async (req, res) => {
-  
+    try {
       const useBrand = await Categorie.find().sort({
         brand: 1,
         status: 1,
@@ -232,6 +254,14 @@ Serchuser: async (req, res) => {
       var i = 0;
       req.session.adminLoggedin=true
       res.render("Categories", { useBrand, i ,msg});
+      
+    } catch (error) {
+      console.error(error);
+      res.status(500).render('500')
+      
+    }
+  
+      
    
   },
 
@@ -256,7 +286,7 @@ Serchuser: async (req, res) => {
   
     } catch (error) {
       console.error(error);
-      res.status(500).send("Internal Server Error");
+      res.status(500).render('500')
     }
   },
 
@@ -270,7 +300,7 @@ Serchuser: async (req, res) => {
       
     } catch (error) {
       console.error(error);
-      res.status(500).send("Internal Server Error");
+      res.status(500).render('500')
       
     }
   },
@@ -287,7 +317,7 @@ Serchuser: async (req, res) => {
       res.render("edit-categories", { editeBrand });
     } catch (error) {
       console.error(error);
-      res.status(500).send("Internal Server Error");
+      res.status(500).render('500')
     }
   },
 
@@ -312,7 +342,7 @@ Serchuser: async (req, res) => {
       }
     } catch (error) {
       console.error(error);
-      res.status(500).send("Internal Server Error");
+      res.status(500).render('500')
     }
   },
 
@@ -323,7 +353,7 @@ Serchuser: async (req, res) => {
       res.redirect("/admin/Categories?err= Brand Deleted");
     } catch (error) {
       console.error(error);
-      res.status(500).send("Internal Server Error");
+      res.status(500).render('500')
     }
   },
 
@@ -337,7 +367,7 @@ Serchuser: async (req, res) => {
       res.redirect("/admin/Categories?err= Brand Blocked");
     } catch (error) {
       console.error(error);
-      res.status(500).send("Internal Server Error");
+      res.status(500).render('500')
     }
   },
 
@@ -351,23 +381,32 @@ Serchuser: async (req, res) => {
       res.redirect("/admin/Categories?err = Brand Actived");
     } catch (error) {
       console.error(error);
-      res.status(500).send("Internal Server Error");
+      res.status(500).render('500')
     }
   },
 
   AdminProducts: async (req, res) => {
-    var i = 0;
-    const useProduct = await Products.find().sort({
-      prduct_name: 1,
-      brand: 1,
-      status: 1,
-      price: 1,
-      stock: 1,
-      variant: 1,
-      product_image: 1,
-    });
-    req.session.adminLoggedin= true
+    try {
+      let i = 0;
+      const useProduct = await Products.find().sort({
+        prduct_name: 1,
+        brand: 1,
+        status: 1,
+        price: 1,
+        stock: 1,
+        variant: 1,
+        product_image: 1,
+      });
+      req.session.adminLoggedin= true
       res.render("Products", { useProduct, i });
+    } catch (error) {
+      console.error(error);
+      res.status(500).render('500')
+
+      
+    }
+
+  
    
   },
 
@@ -375,29 +414,30 @@ Serchuser: async (req, res) => {
 
     try {
       const serchdata = req.body;
-      var i = 0;
+      let i = 0;
       const useProduct = await Products.find({ product_name: { $regex: serchdata.search, $options: "i" } });
       res.render('Products',{useProduct,i})
       
     } catch (error) {
       console.error(error);
-      res.status(500).send("Internal Server Error");
+      res.status(500).render('500')
       
     }
    
   },
 
   Getproduct: async (req, res) => {
-    var i = 0;
-    const useProduct = await Products.find().sort({
-      prduct_name: 1,
-      brand: 1,
-      status: 1,
-      price: 1,
-      stock: 1,
-      variant: 1,
-    });
+
     try {
+      let i = 0;
+      const useProduct = await Products.find().sort({
+        prduct_name: 1,
+        brand: 1,
+        status: 1,
+        price: 1,
+        stock: 1,
+        variant: 1,
+      });
       
         const msg =req.query.err
         req.session.adminLoggedin=  true;
@@ -405,13 +445,13 @@ Serchuser: async (req, res) => {
       
     } catch (error) {
       console.error(error);
-      res.status(500).send("Internal Server Error");
+      res.status(500).render('500')
     }
   },
 
   Blockproduct: async (req, res) => {
-    const id = req.params.id;
     try {
+      const id = req.params.id;
       const status = await Products.updateOne(
         { _id: id },
         { $set: { status: false } }
@@ -419,12 +459,12 @@ Serchuser: async (req, res) => {
       res.redirect("/product-home?err= Product Blocked");
     } catch (error) {
       console.error(error);
-      res.status(500).send("Internal Server Error");
+      res.status(500).render('500')
     }
   },
   Activeproduct: async (req, res) => {
-    const id = req.params.id;
     try {
+      const id = req.params.id;
       const status = await Products.updateOne(
         { _id: id },
         { $set: { status: true } }
@@ -432,13 +472,13 @@ Serchuser: async (req, res) => {
       res.redirect("/product-home?err= Product Active ");
     } catch (error) {
       console.error(error);
-      res.status(500).send("Internal Server Error");
+      res.status(500).render('500')
     }
   },
 
   Deleteproduct: async (req, res) => {
-    const id = req.params.id;
     try {
+      const id = req.params.id;
       const status = await Products.deleteOne({ _id: id });
       res.redirect("/product-home?err= Product deleted");
     } catch (error) {
@@ -448,20 +488,20 @@ Serchuser: async (req, res) => {
   },
 
   Editeproduct: async (req, res) => {
-    const id = req.params.id;
     try {
+      const id = req.params.id;
       const categoryData = await Categorie.find();
       const useProduct = await Products.find({ _id: id });
       res.render("edit-product", { useProduct,categoryData });
     } catch (error) {
       console.error(error);
-      res.status(500).send("Internal Server Error");
+      res.status(500).render('500')
     }
   },
 
  PostEditeproduct: async (req, res) => {
-  const id = req.params.id;
-  try {
+   try {
+    const id = req.params.id;
     const updateFields = {
       product_name: req.body.productName,
       stock: req.body.stock,
@@ -472,7 +512,6 @@ Serchuser: async (req, res) => {
       description: req.body.description,
     };
 
-    console.log("ID:", id);
     if (req.body.updateImage && Array.isArray(req.body.updateImage) && req.files && Array.isArray(req.files)) {
       let updateImageValues = req.body.updateImage.map(value => {
         return parseInt(value.trim());
@@ -502,7 +541,7 @@ Serchuser: async (req, res) => {
   } catch (error) {
     console.error("Error:", error.message);
     console.error("Stack Trace:", error.stack);
-    res.status(500).send("Internal Server Error");
+    res.status(500).render('500')
   }
 },
 
@@ -515,63 +554,87 @@ Serchuser: async (req, res) => {
       res.render("add-product",{categoryData});
     } catch (error) {
       console.error(error);
-      res.status(500).send("Internal Server Error");
+      res.status(500).render('500')
     }
   },
 
   AddproductDb: async (req, res) => {
     try {
-      const {
-        productName,
-        stock,
-        brand,
-        price,
-        Varient,
-        colour,
-        description,
-        phone_type,
-      } = req.body;
-      const productImages = req.files ? req.files.map((file) => file.path) : [];
-  
-      const existingProduct = await Products.find(
-        { product_name: productName },
-        { product_name: 1, _id: 0 }
-      );
-  
-      if (existingProduct.length === 0) {
+        const {
+            productName,
+            stock,
+            brand,
+            price,
+            Varient,
+            colour,
+            description,
+            phone_type,
+        } = req.body;
+        const productImages = req.files ? req.files.map((file) => file.path) : [];
 
-        const newProduct = await Products.create({
-          product_name: productName,
-          stock: stock,
-          brand: brand,
-          price: price,
-          variant: Varient,
-          productColor: colour,
-          description: description,
-          phone_type: phone_type,
-          product_image: productImages.map((filename) =>
-            filename.replace(`${uploadDirectory}\\`, '')
-          ),
-        });
-        res.redirect('/product-home?err=Product Added');
-      } else {
-        res.render('add-product', { err: 'Product with the same name already exists' });
-      }
+        // Extract cropped image data from FormData
+        const croppedImages = [];
+        for (let i = 1; i <= 4; i++) {
+            const croppedImageData = req.body[`croppedImage${i}`];
+            if (croppedImageData) {
+                // Decode base64 data and create a buffer
+                const base64Data = croppedImageData.replace(/^data:image\/\w+;base64,/, '');
+                const buffer = Buffer.from(base64Data, 'base64');
+
+                // Generate a unique filename for the cropped image
+                const filename = `cropped_image_${Date.now()}_${i}.jpg`;
+                const filePath = `${uploadDirectory}/${filename}`;
+
+                // Save the decoded image to disk
+                fs.writeFileSync(filePath, buffer);
+
+                // Remove the uploadDirectory part from the file path
+                const relativePath = filePath.replace(`${uploadDirectory}/`, '');
+
+                // Store the relative file path in the croppedImages array
+                croppedImages.push(relativePath);
+            }
+        }
+
+        const existingProduct = await Products.find(
+            { product_name: productName },
+            { product_name: 1, _id: 0 }
+        );
+        if (existingProduct.length === 0) {
+
+            const newProduct = await Products.create({
+                product_name: productName,
+                stock: stock,
+                brand: brand,
+                price: price,
+                variant: Varient,
+                productColor: colour,
+                description: description,
+                phone_type: phone_type,
+                product_image: croppedImages, // Store the paths of cropped images
+            });
+
+            res.status(200).json({ success: true, message: 'Product added successfully' });
+        } else {
+          res.status(200).json({ success: false, message: 'Product alredy exist'  });
+
+        }
     } catch (error) {
-      console.error(error);
-      res.status(500).send('Internal Server Error');
-    }
-  },
+        console.error(error);
+        res.status(500).render('500')
+      }
+},
+
 
   GetOrder : async (req,res)=>{
     try {
-      var i = 0
+      let i = 0
       const orderData = await Order.find()
       res.render('adminOrder',{orderData,i})
       
     } catch (error) {
       console.error(error);
-      res.status(500).send('Internal Server Error');
+      res.status(500).render('500')
     }
   },
   OrderStatus : async (req,res)=>{
@@ -583,7 +646,7 @@ Serchuser: async (req, res) => {
       
     } catch (error) {
       console.error(error);
-      res.status(500).send('Internal Server Error');
+      res.status(500).render('500')
       
     }
   },
@@ -594,7 +657,7 @@ Serchuser: async (req, res) => {
       
     } catch (error) {
       console.error(error);
-      res.status(500).send('Internal Server Error');
+      res.status(500).render('500')
       
     }
   },
@@ -606,7 +669,7 @@ Serchuser: async (req, res) => {
       
     } catch (error) {
       console.error(error);
-      res.status(500).send('Internal Server Error');
+      res.status(500).render('500')
     }
   },
   SaveCouon: async(req,res)=>{
@@ -622,7 +685,7 @@ Serchuser: async (req, res) => {
       res.redirect('/admin/add-coupon?msg="coupon created succesfully"')    
     } catch (error) {
       console.error("Error saving coupon data:", error);
-      res.status(500).json({ success: false, error: "Error saving coupon data" });
+      res.status(500).render('500')
     }
 
     
@@ -637,7 +700,7 @@ Serchuser: async (req, res) => {
       res.redirect('/admin/Coupons?msg="Coupon deleted "')
     } catch (error) {
       console.error("Error deleting coupon data:", error);
-      res.status(500).json({ success: false, error: "Error deleting coupon data" });
+      res.status(500).render('500')
     }
 
   },
@@ -648,7 +711,7 @@ Serchuser: async (req, res) => {
       res.render('adminEditCoupon', { couponData });
     } catch (error) {
       console.error("Error fetching coupon data:", error);
-      res.status(500).json({ success: false, error: "Error fetching coupon data" });
+      res.status(500).render('500')
     }
   },
 
@@ -666,7 +729,7 @@ Serchuser: async (req, res) => {
       res.redirect(`/admin/edit-coupon/${Id}?msg=coupon+edited+successfully`); 
     } catch (error) {
       console.error("Error editing coupon data:", error);
-      res.status(500).json({ success: false, error: "Error editing coupon data" });
+      res.status(500).render('500')
       
     }
 
