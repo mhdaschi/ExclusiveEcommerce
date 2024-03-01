@@ -45,6 +45,7 @@ const upload = multer({ storage: storage, fileFilter: fileFilter });
 
 // Dashboard route
 router.get('/admin/Dashboard', adminverify, adminController.AdminDashboard);
+router.post('/download-sales-report',adminverify,adminController.SalesReportDownload)
 
 // User-related routes
 router.get('/admin/users',adminverify, adminController.Dashusers);

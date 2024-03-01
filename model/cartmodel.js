@@ -8,7 +8,12 @@ const cartSchema = new mongoose.Schema({
         quantity: Number,
     
     }],
-    couponcount :Number
+    couponcount :Number,
+    couponcode: String,
+    resetcoupon:{
+    type:Boolean,
+    default: false,
+    }
 });
 
 const cartModel = mongoose.model('Cart', cartSchema);

@@ -18,6 +18,7 @@ const easyinvoice = require('easyinvoice');
 const global = require('../global/globalfunction')
 
 
+
 const razorpay = new Razorpay({
   key_id: 'rzp_test_h2KMHrmhqDKgVl',
   key_secret: 'FprhnazqVcjTQToP8lGJykbW',
@@ -348,9 +349,10 @@ GetCart: async (req, res) => {
     req.session.totalPrice = totalPrice;
     const loggedUser=await global.findLoggedUser(req.session.user)
     const cartNo = await global.cartNo(loggedUser[0]._id)
+    const CouponCode =""
 
 
-    res.render('cart', { cartItems, totalPrice, discountPrice ,cartNo});
+    res.render('cart', { cartItems, totalPrice, discountPrice ,cartNo,CouponCode});
   } catch (error) {
     console.error('Error in GetCart:', error);
     res.status(500).render('500')
@@ -453,7 +455,6 @@ cartquandity : async (req,res) =>{
   try {
     const productId = req.body.productId;
     const count = req.body.count;
-    console.log("..>>>>>>",count);
 
       const email = req.session.user;
     const userData = await User.findOne({ email: email });
@@ -1362,8 +1363,8 @@ ApplyCoupon: async (req, res) => {
       const user = await User.findOne({ email });
 
       const coupendiscount = await Coupon.findOne({ couponCode: CouponCode });
-      const CouponCount = await Cart.findOne({user: user._id},{couponcount:1})
-      if(CouponCount.couponcount == 1){  
+      const CouponCount = await Cart.findOne({user: user._id})
+      if(CouponCount.couponcount === 1 && CouponCount.resetcoupon === false ){  
         res.redirect("/user/cart?msg=Already%20Applied");
         return; 
       }
@@ -1372,7 +1373,7 @@ ApplyCoupon: async (req, res) => {
           res.redirect("/user/cart?msg=Invalid%20Coupon");
           return; 
       } else{
-        const cartupdate = await Cart.updateOne({user: user._id},{$set:{couponcount:1}})
+        const cartupdate = await Cart.updateOne({user: user._id},{$set:{couponcount:1,couponcode:CouponCode}})
       }
 
       const discountPrice = coupendiscount.discount;
@@ -1465,9 +1466,7 @@ ApplyCoupon: async (req, res) => {
         
         const totalPrice = await Cart.aggregate(totalPricePipeline);
           req.session.coupendiscount = coupendiscount.discount;
-          console.log("coupendiscount.discount:",coupendiscount.discount);
           req.session.totalPrice = totalPrice;
-          console.log("totalPrice:",totalPrice.total);
 
 
           await Coupon.updateOne(
@@ -1476,13 +1475,112 @@ ApplyCoupon: async (req, res) => {
           );
           const loggedUser=await global.findLoggedUser(req.session.user)
           const cartNo = await global.cartNo(loggedUser[0]._id)
-          res.render('cart', { cartItems, totalPrice, discountPrice,cartNo });
+          res.render('cart', { cartItems, totalPrice, discountPrice,cartNo,CouponCode });
       }
   } catch (error) {
       console.error("Error Applying coupon:", error);
       res.status(500).render('500')
   }
 },
+
+RemoveCoupon: async (req, res) => {
+  try {
+      const CouponCode = req.body.couponCode;
+      console.log(CouponCode,"couuuuuuuuuuu");
+      const email = req.session.user;
+      const user = await User.findOne({email: email });
+      const coupendiscount = await Coupon.findOne({ couponCode: CouponCode });
+
+      const test = await Cart.updateOne({user:user._id},{$set:{resetcoupon:true}})
+      console.log(test,"ggggggggggggg");
+
+      const cartItemsPipeline = [
+          { $match: { user: user._id } },
+          { $unwind: '$products' },
+          {
+              $project: {
+                  item: '$products.cartItem',
+                  quantity: '$products.quantity',
+              },
+          },
+          {
+              $lookup: {
+                  from: 'products',
+                  localField: 'item',
+                  foreignField: '_id',
+                  as: 'productDetails',
+              },
+          },
+          {
+              $project: {
+                  item: 1,
+                  quantity: 1,
+                  productDetails: { $arrayElemAt: ['$productDetails', 0] },
+              },
+          },
+          {
+              $addFields: {
+                  'productDetails.totalPrice': {
+                      $multiply: [
+                          '$quantity',
+                          { $toDouble: '$productDetails.price' },
+                      ],
+                  },
+                  'productDetails.couponDiscount': 0,
+              },
+          },
+      ];
+
+      const cartItems = await Cart.aggregate(cartItemsPipeline);
+
+      const totalPricePipeline = [
+        ...cartItemsPipeline,
+        {
+            $group: {
+                _id: null,
+                total: {
+                    $sum: '$productDetails.totalPrice',
+                },
+                CouponDiscount: {
+                    $sum: '$productDetails.couponDiscount' // Assuming CouponDiscount is supposed to be summed up
+                },
+                subTotal: {
+                    $sum: '$productDetails.totalPrice',
+                },
+            },
+        },
+        {
+            $project: {
+                _id: 0,
+                total: '$subTotal',
+                CouponDiscount: 1,
+                subTotal: 1
+            },
+        },
+    ];
+    
+      const totalPrice = await Cart.aggregate(totalPricePipeline);
+      req.session.coupendiscount = 0 ;
+      req.session.totalPrice = totalPrice;
+
+      // Unset email and productName fields from coupon
+      await Coupon.updateOne(
+          { couponCode: CouponCode },
+          { $unset: { email: "", productName: "" } }
+      );
+
+
+
+
+      const loggedUser = await global.findLoggedUser(req.session.user)
+      const cartNo = await global.cartNo(loggedUser[0]._id)
+      res.render('cart', { cartItems, totalPrice, cartNo, CouponCode });
+  } catch (error) {
+      console.error("Error Removing coupon:", error);
+      res.status(500).render('500')
+  }
+},
+
 
 buyNow: async (req,res)=>{
   try {
