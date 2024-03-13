@@ -6,6 +6,12 @@ const Coupon = require("../model/couponmodel")
 const moment = require('moment');
 const uploadDirectory = 'uploads';
 const fs = require('fs');
+const {jsPDF} = require('jspdf');
+require('jspdf-autotable'); 
+const path = require('path');
+const os = require('os');
+
+
 
 const adminController = {
   AdminDashboard: async (req, res) => {
@@ -171,6 +177,78 @@ const topSellingBrand = await Order.aggregate([
    
   },
 
+  // sales Report download 
+  SalesReportDownload: async (req, res) => {
+    const { startDate, endDate } = req.body;
+    console.log('Received request for sales report with startDate:', startDate, 'and endDate:', endDate);
+
+    try {
+        // Query orders between the specified dates
+        const orders = await Order.find({
+            orderAdded: {
+                $gte: new Date(startDate),
+                $lte: new Date(endDate)
+            }
+        });
+
+        // Initialize PDF document
+        const document = new jsPDF();
+
+        // Set document properties
+        document.setProperties({
+            title: 'Sales Report',
+            subject: `Sales data between ${startDate} and ${endDate}`,
+            author: 'Your Company Name',
+            keywords: 'sales, report, data',
+            creator: 'Your Company Name'
+        });
+
+        // Set document header
+        document.setFontSize(18);
+        document.text('Sales Report', 14, 22);
+
+        // Generate sales report table
+        const salesData = orders.map(order => {
+          const orderedItems = [];
+      
+          order.orderedproducts.forEach(product => {
+              orderedItems.push(product.orderedItem);
+          });
+      
+          return [
+              order._id.toString(),
+              order.nameuser.toString(),
+              orderedItems.join(', '), // Join orderedItems array into a string
+              order.orderTotalPrice.toString(),
+              moment(order.orderAdded).format('YYYY-MM-DD')
+          ];
+      });
+      
+
+        // Set table headers
+        const headers = [['Order ID', 'name user', 'Products', 'Total Price', 'Date']];
+        const tableData = headers.concat(salesData);
+
+        // Add table to PDF using autotable plugin
+        document.autoTable({
+            head: tableData.slice(0, 1),
+            body: tableData.slice(1)
+        });
+
+        const pdfFilename = 'sales-report.pdf'; // Assuming the PDF is generated in the current directory
+
+        // Save the PDF file
+        const downloadsPath = path.join(os.homedir(), 'Downloads');
+        const absolutePath = path.join(downloadsPath, pdfFilename);
+        document.save(absolutePath);
+
+        // Send the PDF file as response
+        res.sendFile(absolutePath);
+    } catch (error) {
+        console.error('Error downloading sales report:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+},
 // Dashusers route
 Dashusers: async (req, res) => {
   try {
@@ -187,8 +265,6 @@ Dashusers: async (req, res) => {
     res.status(500).render('500')
     
   }
- 
-
  
 
 },

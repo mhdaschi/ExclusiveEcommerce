@@ -85,12 +85,32 @@
   </div>
 </div>
 
+<div class="mt-4 mb-4" style="max-width: 1200px; margin: 0 auto; padding: 20px; background-color: #fff; border-radius: 8px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);">
+    <div style="text-align: center; margin-bottom: 20px;">
+        <h3>Sales Report Download</h3>
+    </div>
+    <div style="display: flex; justify-content: center;">
+        <div style="margin-right: 10px;">
+            <label style="font-weight: bold; margin-bottom: 5px;" for="startDate">Start Date:</label><br>
+            <input style="width: 200px; padding: 8px; border: 1px solid #ccc; border-radius: 4px; margin-bottom: 15px; box-sizing: border-box;" type="date" id="startDate" name="startDate" required>
+        </div>
+        <div>
+            <label style="font-weight: bold; margin-bottom: 5px;" for="endDate">End Date:</label><br>
+            <input style="width: 200px; padding: 8px; border: 1px solid #ccc; border-radius: 4px; margin-bottom: 15px; box-sizing: border-box;" type="date" id="endDate" name="endDate" required>
+        </div>
+    </div>
+    <div style="text-align: center; margin-top: 20px;">
+        <!-- Add onclick event to the button -->
+        <button onclick="downloadSalesReport()" style="padding: 10px; background-color: #d51a20; color: #fff; border: none; border-radius: 4px; cursor: pointer; transition: background-color 0.3s ease;" type="button">Download Report</button>
+    </div>
+</div>
+
+
 <div class="col-lg-12 mt-4">
     <div class="card shadow" style="background-color: #fff;">
         <div class="d-flex justify-content-around card-header">
 
         <h3 class="">Best Products</h3>
-        <h2 class="">Best Sellers</h2>
         <h3 class="">Best Category</h3>
     </div>
         <div class="card-body d-flex justify-content-around">
@@ -161,6 +181,78 @@
 </main>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> <!-- Include Chart.js library -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
+
+<!-- Add SweetAlert library -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+
+<script>
+    async function downloadSalesReport() {
+        var startDateInput = document.getElementById('startDate');
+        var endDateInput = document.getElementById('endDate');
+
+        var startDateValue = startDateInput.value;
+        var endDateValue = endDateInput.value;
+
+        if (startDateValue === "" || startDateValue > endDateValue) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: 'Please select a valid start date.'
+            });
+            return;
+        }
+
+        if (endDateValue === "" || endDateValue < startDateValue) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: 'Please select a valid end date.'
+            });
+            return;
+        }
+
+        try {
+            const response = await fetch('/download-sales-report', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ startDate: startDateValue, endDate: endDateValue })
+            });
+
+            if (!response.ok) {
+                throw new Error(`Failed to download sales report. Server returned status ${response.status}`);
+            }
+
+            // Create Blob object from the response
+            const blob = await response.blob();
+
+            // Create object URL
+            const url = URL.createObjectURL(blob);
+
+            // Create anchor element
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'sales-report.pdf';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+
+            // Revoke object URL
+            URL.revokeObjectURL(url);
+        } catch (error) {
+            console.error('Error downloading sales report:', error);
+            Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: 'Failed to download sales report. Please try again later.'
+            });
+        }
+    }
+</script>
+
+
 
 <script>
 // Sales Chart Data

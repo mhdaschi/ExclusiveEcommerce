@@ -170,6 +170,9 @@ router.get('/user/coupon',userMiddleware,userController.UserCoupen)
 //User Apply coupon
 router.post('/user/apply/coupon',userMiddleware,userController.ApplyCoupon)
 
+//user remove coupon
+router.post('/user/remove/coupon',userMiddleware,userController.RemoveCoupon)
+
 //razorpay webhook
 router.post('/user-Orderfail',userMiddleware,userController.paimentFail)
 
