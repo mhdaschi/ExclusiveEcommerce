@@ -183,6 +183,7 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> <!-- Include Chart.js library -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
 
+<<<<<<< HEAD
 <!-- Add SweetAlert library -->
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
 
@@ -253,6 +254,64 @@
 </script>
 
 
+=======
+<script>
+ async function downloadSalesReport() {
+    const startDate = document.getElementById('startDate').value;
+    const endDate = document.getElementById('endDate').value;
+
+    try {
+        const response = await fetch('/download-sales-report', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ startDate, endDate })
+        });
+
+        if (!response.ok) {
+            throw new Error(`Failed to download sales report. Server returned status ${response.status}`);
+        }
+
+        // Create Blob object from the response
+        const blob = await response.blob();
+
+        // Create object URL
+        const url = URL.createObjectURL(blob);
+
+        // Create anchor element
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'sales-report.pdf';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+
+        // Revoke object URL
+        URL.revokeObjectURL(url);
+    } catch (error) {
+        console.error('Error downloading sales report:', error);
+        alert('Failed to download sales report. Please try again later.');
+    }
+}
+
+
+// function generatePDFContent(salesData) {
+//     // Generate PDF content using sales data
+//     let content = '';
+//     content += '<h1>Sales Report</h1>';
+//     content += '<table>';
+//     content += '<tr><th>Order ID</th><th>Total Price</th><th>Date</th></tr>';
+//     salesData.forEach(sale => {
+//         content += `<tr><td>${sale.orderId}</td><td>${sale.orderTotalPrice}</td><td>${sale.orderAdded}</td></tr>`;
+//     });
+//     content += '</table>';
+//     return content;
+// }
+
+
+</script>
+>>>>>>> db3be2ada273484a3fef659d57ddb2aebb975c74
 
 <script>
 // Sales Chart Data
