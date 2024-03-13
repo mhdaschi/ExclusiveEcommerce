@@ -9,11 +9,8 @@ const fs = require('fs');
 const {jsPDF} = require('jspdf');
 require('jspdf-autotable'); 
 const path = require('path');
-<<<<<<< HEAD
 const os = require('os');
 
-=======
->>>>>>> db3be2ada273484a3fef659d57ddb2aebb975c74
 
 
 const adminController = {
@@ -241,12 +238,10 @@ const topSellingBrand = await Order.aggregate([
         const pdfFilename = 'sales-report.pdf'; // Assuming the PDF is generated in the current directory
 
         // Save the PDF file
-<<<<<<< HEAD
+
         const downloadsPath = path.join(os.homedir(), 'Downloads');
         const absolutePath = path.join(downloadsPath, pdfFilename);
-=======
-        const absolutePath = path.join(__dirname, pdfFilename);
->>>>>>> db3be2ada273484a3fef659d57ddb2aebb975c74
+
         document.save(absolutePath);
 
         // Send the PDF file as response
