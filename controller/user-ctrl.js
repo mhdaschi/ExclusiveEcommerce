@@ -274,6 +274,7 @@ GetCart: async (req, res) => {
     const user = await User.findOne({ email });
     const discountPrice = req.session.coupendiscount ? req.session.coupendiscount : 0;
 
+    const CouponCode  = req.session.couponCode ? req.session.couponCode : "";
 
     const cartItemsPipeline = [
       { $match: { user: user._id } },
@@ -349,10 +350,10 @@ GetCart: async (req, res) => {
     req.session.totalPrice = totalPrice;
     const loggedUser=await global.findLoggedUser(req.session.user)
     const cartNo = await global.cartNo(loggedUser[0]._id)
-    const CouponCode =""
 
+    let success = false
 
-    res.render('cart', { cartItems, totalPrice, discountPrice ,cartNo,CouponCode});
+    res.render('cart', { cartItems, totalPrice, discountPrice ,cartNo,CouponCode,success});
   } catch (error) {
     console.error('Error in GetCart:', error);
     res.status(500).render('500')
@@ -1358,9 +1359,15 @@ UserCoupen: async (req,res)=>{
 },
 ApplyCoupon: async (req, res) => {
   try {
+    console.log("EATHIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII");
       const CouponCode = req.body.couponCode;
+console.log(CouponCode,"kkkkkkkkkkkkkkkkkkkkkk");
+      req.session.couponCode = CouponCode
+      console.log(req.body,"CouponCode");
       const email = req.session.user;
+      console.log("..........",email);
       const user = await User.findOne({ email });
+      console.log("::::::::::",user);
 
       const coupendiscount = await Coupon.findOne({ couponCode: CouponCode });
       const CouponCount = await Cart.findOne({user: user._id})
@@ -1377,6 +1384,7 @@ ApplyCoupon: async (req, res) => {
       }
 
       const discountPrice = coupendiscount.discount;
+      console.log("discountPrice",discountPrice);
       
 
       const cartItemsPipeline = [
@@ -1419,20 +1427,13 @@ ApplyCoupon: async (req, res) => {
 
     const cartItems = await Cart.aggregate(cartItemsPipeline);
 
-
-    
-    
-    
       const cartAmount = req.session.totalPrice;
-
-
-
-
       if (coupendiscount.Discount_price >= cartAmount[0].total) {
           res.redirect("/user/cart?msg=Not%20Available%20for%20This%20Order%20Amount");
           return; 
 
       } else if (coupendiscount.email === email) {
+        console.log(coupendiscount.email,"EMAILLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL");
         res.redirect("/user/cart?msg=You%20Already%20Applied%20This%20Coupon");
         return; 
       } else {
@@ -1475,7 +1476,12 @@ ApplyCoupon: async (req, res) => {
           );
           const loggedUser=await global.findLoggedUser(req.session.user)
           const cartNo = await global.cartNo(loggedUser[0]._id)
-          res.render('cart', { cartItems, totalPrice, discountPrice,cartNo,CouponCode });
+          console.log(discountPrice);
+          let success = true
+          res.render('cart', { cartItems, totalPrice, discountPrice, cartNo, CouponCode,success });
+          res.json({ success: success });
+
+
       }
   } catch (error) {
       console.error("Error Applying coupon:", error);
@@ -1486,13 +1492,12 @@ ApplyCoupon: async (req, res) => {
 RemoveCoupon: async (req, res) => {
   try {
       const CouponCode = req.body.couponCode;
-      console.log(CouponCode,"couuuuuuuuuuu");
       const email = req.session.user;
       const user = await User.findOne({email: email });
       const coupendiscount = await Coupon.findOne({ couponCode: CouponCode });
+      req.session.couponCode = ""
 
       const test = await Cart.updateOne({user:user._id},{$set:{resetcoupon:true}})
-      console.log(test,"ggggggggggggg");
 
       const cartItemsPipeline = [
           { $match: { user: user._id } },
@@ -1542,7 +1547,7 @@ RemoveCoupon: async (req, res) => {
                     $sum: '$productDetails.totalPrice',
                 },
                 CouponDiscount: {
-                    $sum: '$productDetails.couponDiscount' // Assuming CouponDiscount is supposed to be summed up
+                    $sum: '$productDetails.couponDiscount' 
                 },
                 subTotal: {
                     $sum: '$productDetails.totalPrice',
@@ -1574,7 +1579,14 @@ RemoveCoupon: async (req, res) => {
 
       const loggedUser = await global.findLoggedUser(req.session.user)
       const cartNo = await global.cartNo(loggedUser[0]._id)
-      res.render('cart', { cartItems, totalPrice, cartNo, CouponCode });
+      console.log("-----------------");
+      let success = true
+      res.redirect("/user/cart?msg=coupon%20removed%20");
+      // res.render('cart', { cartItems, totalPrice, cartNo, CouponCode });
+      res.json({ success: success });
+
+
+
   } catch (error) {
       console.error("Error Removing coupon:", error);
       res.status(500).render('500')

@@ -86,27 +86,25 @@
     <div class="container mt-5 box-shadow p-4 ">
         <!-- Row for coupon code input and apply button -->
         <div class="row d-flex justify-content-end ">
-            <form action="/user/apply/coupon" method="post">
                 <!-- Input for entering coupon code -->
-                <div class="col-lg-7 col-md-7 col-sm-12 d-flex flex-column flex-md-row ">
+            <div>
+                <div class="col-lg-7 col-md-7 col-sm-12 d-flex flex-column flex-md-row">
                     <div class="me-md-2 mb-2 d-flex">
                         <input type="string" class="form-control" name="couponCode" id="couponCode" aria-describedby="emailHelp" placeholder="Coupon Code" value="<%-CouponCode%>">
                     </div>
+                 
                     <!-- Button to apply coupon code -->
-                    <% if (CouponCode === "" ) { %>
-                        <div class="mb-2">
-                            <button type="submit" class="btn btn-danger btn-block gradient-custom-4 text-white" onclick="applyCouon()">Apply Coupon</button>
-                        </div>
-                    </form>
-                        <% } else { %>
-                        <div class="mb-2">
-                            <button type="submit" class="btn btn-danger btn-block gradient-custom-4 text-white" onclick="removeCoupon('<%-CouponCode%>')">Remove Coupon</button>
-                        </div>
-                            <% } %>
-
-
-                   
-                </div>
+                    <% if (CouponCode === "") { %>
+                    <div class="mb-2">
+                        <button type="submit" class="btn btn-danger btn-block gradient-custom-4 text-white" onclick="applyCoupon('<%- success %>')">Apply Coupon</button>
+                    </div>
+                    <% } else { %>
+                    <div class="mb-2">
+                        <button type="submit" class="btn btn-danger btn-block gradient-custom-4 text-white" onclick="removeCoupon('<%-CouponCode%>')">Remove Coupon</button>
+                    </div>
+                    <% } %>
+                </div>           
+             </div>
             
             <!-- Hidden input for storing the total amount -->
             <input type="hidden" name="totalAmount" id="totalAmount" value="0.00">
@@ -209,21 +207,62 @@
     </script>
 
 <script>
-    function removeCoupon(couponCode){
+    function applyCoupon(success) {
+        var couponCode = document.getElementById("couponCode").value;
+        const data = {
+            couponCode: couponCode
+        };
+        var jsondata = JSON.stringify(data);
+        console.log("couponCode", couponCode); 
         $.ajax({
-            url:'/user/remove/coupon',
-            data : {couponCode},
-            method:'post',
-            dataType:'json',
-            success: (response) => {
-                    window.location.reload();
-                },
-                error: (xhr, status, error) => {
-                    console.error('AJAX error:', error);
+            url: '/user/apply/coupon',
+            data: jsondata,
+            contentType: 'application/json',
+            method: 'post',  
+            success: function(response) {
+                console.log("Coupon applied successfully");
+                if (response) {
+                  
+                        console.log("Reloading page...");
+                        window.location.reload();
+                 
                 }
+            },
+            error: function(xhr, status, error) {
+                console.error('AJAX error:', error);
+            }
         });
     }
-</script>    
+</script>
+
+
+
+<script>
+    function removeCoupon(couponCode){
+        const data = {
+            couponCode: couponCode
+        };
+        var jsondata = JSON.stringify(data);
+        $.ajax({
+            url:'/user/remove/coupon',
+            data : jsondata,
+            method:'post',
+            contentType: 'application/json',
+            success: function(response) {
+                console.log("Coupon removed successfully");
+                if (response) {                 
+                        console.log("Reloading page...");
+                        window.location.reload();
+                 
+                }
+            },
+            error: (xhr, status, error) => {
+                console.error('AJAX error:', error);
+            }
+        });
+    }
+</script>
+
     <script>
         function showToast(message, type = 'error') {
             Toastify({

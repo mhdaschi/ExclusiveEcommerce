@@ -78,13 +78,7 @@
 
               <div class="col d-flex justify-content-around flex-wrap col-lg-3">
                 <div class="custom-card-container ms-5 mt-5 position-relative">
-                  <form action="/user/wishlist/add/<%-data._id%>" method="post" class="position-relative">
-                    <button aria-hidden="false" type="submit"
-                      class="border-0 custom-icon-heart position-absolute top-0 end-0 py-2 px-2"
-                      aria-label="Add to Wishlist">
-                      <i class="fa-regular fa-heart"></i>
-                    </button>
-                  </form>
+                  
                   <a href="/user/product/Details/<%- data._id %>">
                     <img class="img-fluid card-img-top" src="/<%=data.product_image[0]%>" alt="Card image cap"
                       style="height: 190px; width: 210px;">
