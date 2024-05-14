@@ -42,8 +42,16 @@
               <% orderData.forEach((data, i) => { %>
                 <tr>
                   <td class="text-center"><%= i + 1 %></td>
-                  <td class="text-center"><%= data.nameuser %></td>
-                  <td class="text-center"><%= data.orderAdded %></td>
+                  <td>
+                    <% for (let x of orderUserData) { %>
+                        <% if (x._id && data.userId && x._id.toString() === data.userId.toString()) { %>
+                            <%= x.username %>
+                            <% break; %>
+                        <% } %>
+                    <% } %>
+                </td>
+                               
+                 <td class="text-center"><%= data.orderAdded.toLocaleString() %></td>
                   <td class="text-center">
                     <span class="badge <%= data.orderStatus === 'Pending' ? 'bg-warning' : (data.orderStatus === 'Shipped' ? 'bg-info' : 'bg-success') %>">
                       <%= data.orderStatus %>
@@ -58,12 +66,21 @@
                     <% }) %>
                   </td>
                   <td class="text-center"><%= data.orderTotalPrice %>.Rs</td>
-                  <td class="text-center">
-                    <p class="mb-1"><strong>State:</strong> <%= data.state %></p>
-                    <p class="mb-1"><strong>City:</strong> <%= data.city %></p>
-                    <p class="mb-1"><strong>Pincode:</strong> <%= data.pincode %></p>
-                    <p class="mb-1"><strong>Address:</strong> <%= data.orderaddress %></p>
-                  </td>
+   
+                 
+                  <td>
+                    <% for (let x of orderUserData) { %>
+                        <% if (x._id && data.userId && x._id.toString() === data.userId.toString()) { %>
+                          <p class="mb-1"><strong>Name:</strong> <%= x.address[0].name %></p>
+                          <p class="mb-1"><strong>Address:</strong> <%= x.address[0].address %></p>
+                          <p class="mb-1"><strong>City:</strong> <%= x.address[0].city %></p>
+                          <p class="mb-1"><strong>State:</strong> <%= x.address[0].state %></p>
+                          <p class="mb-1"><strong>Pincode:</strong> <%= x.address[0].pincode %></p>
+                          <p class="mb-1"><strong>Phone:</strong> <%= x.address[0].phone %></p>
+                            <% break; %>
+                        <% } %>
+                    <% } %>
+                </td>
                   <td class="text-center">
                     <form action="/admin/order/status/<%- data._id %>" method="POST">
                       <select class="form-select" name="orderStatus">

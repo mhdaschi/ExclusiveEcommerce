@@ -466,17 +466,17 @@ Serchuser: async (req, res) => {
   AdminProducts: async (req, res) => {
     try {
       let i = 0;
-      const useProduct = await Products.find().sort({
-        prduct_name: 1,
-        brand: 1,
-        status: 1,
-        price: 1,
-        stock: 1,
-        variant: 1,
-        product_image: 1,
-      });
+      const useProduct = await Products.find().sort({ product_name: 1 });
+        
+      // Fetch brand data for each product
+      const brandDataPromises = useProduct.map(product => Categorie.findById(product.brand));
+      const brandData = await Promise.all(brandDataPromises);
+      console.log("brandData",brandData);
+
+
+
       req.session.adminLoggedin= true
-      res.render("Products", { useProduct, i });
+      res.render("Products", { useProduct, i ,brandData});
     } catch (error) {
       console.error(error);
       res.status(500).render('500')
@@ -516,10 +516,14 @@ Serchuser: async (req, res) => {
         stock: 1,
         variant: 1,
       });
+      const brandDataPromises = useProduct.map(product => Categorie.findById(product.brand));
+      const brandData = await Promise.all(brandDataPromises);
+      console.log("brandData",brandData);
+
       
         const msg =req.query.err
         req.session.adminLoggedin=  true;
-        res.render("Products", { useProduct, i, msg });
+        res.render("Products", { useProduct, i, msg,brandData});
       
     } catch (error) {
       console.error(error);
@@ -580,10 +584,12 @@ Serchuser: async (req, res) => {
  PostEditeproduct: async (req, res) => {
    try {
     const id = req.params.id;
+    const brandData = await Categorie.find({brand:req.body.brand})
+
     const updateFields = {
       product_name: req.body.productName,
       stock: req.body.stock,
-      brand: req.body.brand,
+      brand: brandData[0]._id,
       price: req.body.price,
       variant: req.body.variant,
       productColor: req.body.colour,
@@ -649,7 +655,9 @@ Serchuser: async (req, res) => {
             phone_type,
         } = req.body;
         const productImages = req.files ? req.files.map((file) => file.path) : [];
+        const brandData = await Categorie.find({brand:req.body.brand})
 
+        
         // Extract cropped image data from FormData
         const croppedImages = [];
         for (let i = 1; i <= 4; i++) {
@@ -683,7 +691,7 @@ Serchuser: async (req, res) => {
             const newProduct = await Products.create({
                 product_name: productName,
                 stock: stock,
-                brand: brand,
+                brand: brandData[0]._id,
                 price: price,
                 variant: Varient,
                 productColor: colour,
@@ -691,6 +699,8 @@ Serchuser: async (req, res) => {
                 phone_type: phone_type,
                 product_image: croppedImages, // Store the paths of cropped images
             });
+
+            console.log("newProduct",newProduct);
 
             res.status(200).json({ success: true, message: 'Product added successfully' });
         } else {
@@ -708,7 +718,10 @@ Serchuser: async (req, res) => {
     try {
       let i = 0
       const orderData = await Order.find()
-      res.render('adminOrder',{orderData,i})
+      const orderUserData = await user.find()
+
+      
+      res.render('adminOrder',{orderData,i,orderUserData})
       
     } catch (error) {
       console.error(error);

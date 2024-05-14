@@ -10,12 +10,13 @@ const Categorie = require("../model/brandmodel");
 const Cart = require("../model/cartmodel");
 const Order = require("../model/ordermodel")
 const Coupon  = require("../model/couponmodel")
+const Wallet = require("../model/walletmodel")
 const { sendOTP } = require("../controller/otpController");
 const generateOTP = require("../utils/otpgenerator");
 const mongoose = require('mongoose');
 const Razorpay  = require('razorpay')
 const easyinvoice = require('easyinvoice');
-const global = require('../global/globalfunction')
+const global = require('../global/globalfunction');
 
 
 
@@ -323,7 +324,7 @@ GetCart: async (req, res) => {
           total: {
             $sum: '$productDetails.totalPrice',
           },
-          CouponDiscount: { $sum: discountPrice },
+          CouponDiscount: { $first: discountPrice },
           subTotal: {
             $sum: '$productDetails.totalPrice',
           }, 
@@ -352,7 +353,7 @@ GetCart: async (req, res) => {
     const cartNo = await global.cartNo(loggedUser[0]._id)
 
     let success = false
-
+    console.log(totalPrice,'------------------------------------');
     res.render('cart', { cartItems, totalPrice, discountPrice ,cartNo,CouponCode,success});
   } catch (error) {
     console.error('Error in GetCart:', error);
@@ -456,32 +457,55 @@ cartquandity : async (req,res) =>{
   try {
     const productId = req.body.productId;
     const count = req.body.count;
-
-      const email = req.session.user;
+    const email = req.session.user;
     const userData = await User.findOne({ email: email });
     const userId = userData._id;
-    // const limit = await Cart.findOne({user: userId, 'products.cartItem': productId},{'products.$.quantity':1})
-    // console.log("..>>>>>>",limit);
+
   
     await Cart.updateOne(
       { user: userId, 'products.cartItem': productId, },
       { $inc: { 'products.$.quantity': count } }
     );
-    
-    
-    res.json({success:true})
+    let cart = await Cart.findOne(
+      { user: userId, 'products.cartItem': productId },
+      { 'products.$': 1 }
+    );
+    let allCartData = await Cart.find({ user: userId });
+    let totalPrice = 0;
+
+    for (const cartData of allCartData) {
+        for (const item of cartData.products) {
+            const productDetails = await Products.findById(item.cartItem);
+
+            if (productDetails) {
+                totalPrice += productDetails.price * item.quantity;
+            }
+        }
+    }
+
+  
+   let productPrice = await Products.find({_id:productId},{price:1,_id:0})
+   let eachProductPrice = productPrice[0].price
+   let quantity;
+  if (cart && cart.products && cart.products.length > 0) {
+      quantity = cart.products[0].quantity;
+  }
+
+  let overAllPrice 
+  if (req.session.coupendiscount) {
+    overAllPrice = req.session.coupendiscount;
+  } else{
+    overAllPrice = 0;
+  }
+
+  let productStock = await Products.findOne({_id:productId})
+  let availableStock = productStock.stock
+    res.json({success:true,quantity,totalPrice,eachProductPrice,overAllPrice,availableStock})
     
   } catch (error) {
     console.error('Error in :', error);
     res.status(500).render('500')
-
-
-    
   }
- 
-
-
-
 },
 
   RemoveCartItem: async (req, res) => {
@@ -803,8 +827,9 @@ OrderPlace: async (req, res) => {
     const AddressId = req.body.address;
     req.session.AddressId = req.body.address
     const paymentMethod = req.body.paymentMethod;
+    const userId = req.session.userId;
 
-    const user = await User.findOne({
+    const user = await User.findOne({ 
       email: email,
       'address._id': AddressId,
     });
@@ -914,14 +939,9 @@ res.json({
 });
     } else if (paymentMethod === 'COD') {
       const orderCreateData = {
-        nameuser: addressData.name,
-        email: email,
-        phonenumber: addressData.phone,
+        userId: req.session.userId,
         orderTotalPrice: overallamount,
-        orderaddress: addressData.address,
-        city: addressData.city,
-        state: addressData.state,
-        pincode: addressData.pincode,
+        orderaddress:  AddressId,
         orderAdded: new Date(),
         orderedproducts: orderedProducts,
         paymentStatus: 'Pending', 
@@ -933,21 +953,16 @@ res.json({
     } else if (paymentMethod === 'Wallet') {
       try {
         const orderCreateData = {
-          nameuser: addressData.name,
-          email: email,
-          phonenumber: addressData.phone,
+          userId: req.session.userId,
           orderTotalPrice: overallamount,
-          orderaddress: addressData.address,
-          city: addressData.city,
-          state: addressData.state,
-          pincode: addressData.pincode,
+          orderaddress:  AddressId,
           orderAdded: new Date(),
           orderedproducts: orderedProducts,
           paymentStatus: 'Paid', 
           PaymenMethod: "Wallet Payment",
         };
     
-        const user = await User.findOne({ email }, { wallettotalAmount: 1 });
+        const user = await Wallet.findOne({ userId }, { wallettotalAmount: 1 });
     
         if (user) {
           const walletTotalAmount = user.wallettotalAmount;
@@ -956,8 +971,8 @@ res.json({
           const formattedDate = currentDate.toISOString();
     
           if (orderedprice < walletTotalAmount) {
-            const decresewallet = await User.updateOne(
-              { email: email },
+            const decresewallet = await Wallet.updateOne(
+              { userId: userId },
               {
                 $push: {
                   "wallet": {
@@ -1089,14 +1104,9 @@ paimentFail : async (req,res) =>{
 
       if (orderId == 'razorpay') {
         const orderCreateData = {
-          nameuser: addressData.name,
-          email: email,
-          phonenumber: addressData.phone,
+          userId: req.session.userId,
           orderTotalPrice: orderTotalPrice,
-          orderaddress: addressData.address,
-          city: addressData.city,
-          state: addressData.state,
-          pincode: addressData.pincode,
+          orderaddress:  AddressId,
           orderAdded: new Date(),
           orderedproducts: orderedProducts,
           paymentStatus: 'Paid',
@@ -1104,6 +1114,7 @@ paimentFail : async (req,res) =>{
         };
   
         const orderCreate = await Order.create(orderCreateData);
+        console.log("orderCreate",orderCreate);
       }
       await Products.updateOne({ _id: productId}, { $inc: { stock: -1 } });
 
@@ -1128,14 +1139,9 @@ paimentFail : async (req,res) =>{
   
       if (orderId == 'razorpay') {
         const orderCreateData = {
-          nameuser: addressData.name,
-          email: email,
-          phonenumber: addressData.phone,
+          userId: req.session.userId,
           orderTotalPrice: overallamount,
-          orderaddress: addressData.address,
-          city: addressData.city,
-          state: addressData.state,
-          pincode: addressData.pincode,
+          orderaddress:  AddressId,
           orderAdded: new Date(),
           orderedproducts: orderedProducts,
           paymentStatus: 'Paid',
@@ -1143,6 +1149,8 @@ paimentFail : async (req,res) =>{
         };
   
         const orderCreate = await Order.create(orderCreateData);
+        console.log("orderCreate",orderCreate);
+
       }
 
       const cart = await Cart.findOne({ user: user._id }, { products: 1, _id: 0 });
@@ -1172,7 +1180,8 @@ paimentFail : async (req,res) =>{
 GetOrder : async (req,res) =>{
   try {
     const email = req.session.user;
-    const orderData = await Order.find({email:email})
+    const userId = req.session.userId;
+    const orderData = await Order.find({userId:userId})
     const loggedUser=await global.findLoggedUser(req.session.user)
     const cartNo = await global.cartNo(loggedUser[0]._id)
     res.render('userorder',{orderData,cartNo})
@@ -1190,7 +1199,7 @@ CancelOrder: async (req, res) => {
     const ID = req.params.id;
     const data = "Cancelled";
     const email = req.session.user;
-
+    const userId = req.session.userId;
     const order = await Order.findOne({ _id: ID });
     const balance = order.orderTotalPrice;
 
@@ -1198,8 +1207,8 @@ CancelOrder: async (req, res) => {
       const currentDate = new Date();
       const formattedDate = currentDate.toISOString();
 
-      const walletData = await User.updateMany(
-        { email: email },
+      const walletData = await Wallet.updateMany(
+        { userId: userId },
         {
           $push: {
             "wallet": {
@@ -1219,7 +1228,9 @@ CancelOrder: async (req, res) => {
 
       const product = await Order.findOne({ _id: ID }, { orderedproducts: 1 });
 
+
       for (const item of product.orderedproducts) {
+
         await Products.updateOne({ product_name: item.orderedItem }, { $inc: { stock: item.quantity } });
       }
 
@@ -1228,8 +1239,8 @@ CancelOrder: async (req, res) => {
       const currentDate = new Date();
       const formattedDate = currentDate.toISOString();
 
-      const walletData = await User.updateMany(
-        { email: email },
+      const walletData = await Wallet.updateMany(
+        { userId: userId },
         {
           $push: {
             "wallet": {
@@ -1277,6 +1288,7 @@ returnOrder: async (req, res) => {
     const ID = req.params.id;
       const data = "Returned";
       const email = req.session.user;
+      const userId = req.session.userId;
 
       const order = await Order.findOne({ _id: ID });
       const total = order.orderTotalPrice;    
@@ -1287,8 +1299,8 @@ returnOrder: async (req, res) => {
           const currentDate = new Date();
           const formattedDate = currentDate.toISOString();
 
-          const walletdata = await User.updateMany(
-              { email: email },
+          const walletdata = await Wallet.updateMany(
+              { userId: userId },
               {
                   $push: {
                       "wallet": {
@@ -1334,7 +1346,8 @@ returnOrder: async (req, res) => {
 GetWallet: async (req, res) => {
   try {
     const email = req.session.user;
-    const walletData = await User.find({ email: email });
+    const userId = req.session.userId;
+    const walletData = await Wallet.find({ userId: userId });
     const loggedUser=await global.findLoggedUser(req.session.user)
     const cartNo = await global.cartNo(loggedUser[0]._id)
     res.render('userWallet', { walletData,cartNo });
@@ -1359,18 +1372,14 @@ UserCoupen: async (req,res)=>{
 },
 ApplyCoupon: async (req, res) => {
   try {
-    console.log("EATHIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII");
       const CouponCode = req.body.couponCode;
-console.log(CouponCode,"kkkkkkkkkkkkkkkkkkkkkk");
       req.session.couponCode = CouponCode
-      console.log(req.body,"CouponCode");
       const email = req.session.user;
-      console.log("..........",email);
       const user = await User.findOne({ email });
-      console.log("::::::::::",user);
 
       const coupendiscount = await Coupon.findOne({ couponCode: CouponCode });
       const CouponCount = await Cart.findOne({user: user._id})
+      console.log(CouponCount.products.length);
       if(CouponCount.couponcount === 1 && CouponCount.resetcoupon === false ){  
         res.redirect("/user/cart?msg=Already%20Applied");
         return; 
@@ -1383,7 +1392,9 @@ console.log(CouponCode,"kkkkkkkkkkkkkkkkkkkkkk");
         const cartupdate = await Cart.updateOne({user: user._id},{$set:{couponcount:1,couponcode:CouponCode}})
       }
 
-      const discountPrice = coupendiscount.discount;
+ 
+      let discountPrice = coupendiscount.discount;
+
       console.log("discountPrice",discountPrice);
       
 
@@ -1419,14 +1430,14 @@ console.log(CouponCode,"kkkkkkkkkkkkkkkkkkkkkk");
                         { $toDouble: '$productDetails.price' },
                     ],
                 },
-                'productDetails.couponDiscount': coupendiscount.discount,
+                // 'productDetails.couponDiscount': discountPrice,
             },
         },
     ];
     
 
     const cartItems = await Cart.aggregate(cartItemsPipeline);
-
+    console.log("23456788888888888",cartItems)
       const cartAmount = req.session.totalPrice;
       if (coupendiscount.Discount_price >= cartAmount[0].total) {
           res.redirect("/user/cart?msg=Not%20Available%20for%20This%20Order%20Amount");
@@ -1436,7 +1447,7 @@ console.log(CouponCode,"kkkkkkkkkkkkkkkkkkkkkk");
         console.log(coupendiscount.email,"EMAILLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL");
         res.redirect("/user/cart?msg=You%20Already%20Applied%20This%20Coupon");
         return; 
-      } else {
+      }else {
         const totalPricePipeline = [
           ...cartItemsPipeline,
           {
@@ -1445,7 +1456,7 @@ console.log(CouponCode,"kkkkkkkkkkkkkkkkkkkkkk");
               total: {
                 $sum: '$productDetails.totalPrice',
               },
-              CouponDiscount: { $sum: discountPrice },
+              CouponDiscount: { $first: discountPrice },
               subTotal: {
                 $sum: '$productDetails.totalPrice',
               }, 
@@ -1466,6 +1477,7 @@ console.log(CouponCode,"kkkkkkkkkkkkkkkkkkkkkk");
         ];
         
         const totalPrice = await Cart.aggregate(totalPricePipeline);
+        console.log("------------",totalPrice,"====================");
           req.session.coupendiscount = coupendiscount.discount;
           req.session.totalPrice = totalPrice;
 
@@ -1476,7 +1488,6 @@ console.log(CouponCode,"kkkkkkkkkkkkkkkkkkkkkk");
           );
           const loggedUser=await global.findLoggedUser(req.session.user)
           const cartNo = await global.cartNo(loggedUser[0]._id)
-          console.log(discountPrice);
           let success = true
           res.render('cart', { cartItems, totalPrice, discountPrice, cartNo, CouponCode,success });
           res.json({ success: success });
@@ -1579,7 +1590,6 @@ RemoveCoupon: async (req, res) => {
 
       const loggedUser = await global.findLoggedUser(req.session.user)
       const cartNo = await global.cartNo(loggedUser[0]._id)
-      console.log("-----------------");
       let success = true
       res.redirect("/user/cart?msg=coupon%20removed%20");
       // res.render('cart', { cartItems, totalPrice, cartNo, CouponCode });
@@ -1786,8 +1796,10 @@ viewAllflagship: async (req,res)=>{
     const phoneType = 'Flagship'
     const loggedUser=await global.findLoggedUser(req.session.user)
     const cartNo = await global.cartNo(loggedUser[0]._id)
+    let checkedBrands= [];
+    let  priceSort = "highToLow"
   
-    res.render('viewAll',{productData,categoryData,phoneType,cartNo})
+    res.render('viewAll',{productData,categoryData,phoneType,cartNo,checkedBrands,priceSort})
   } catch (error) {
     console.error("Error in View All Products:", error);
     res.status(500).render('500')
@@ -1807,8 +1819,11 @@ viewAllFlagkiller: async (req,res)=>{
     const phoneType = 'Flagship killer'
     const loggedUser=await global.findLoggedUser(req.session.user)
     const cartNo = await global.cartNo(loggedUser[0]._id)
+    let checkedBrands= [];
+    let  priceSort = "highToLow"
+
   
-    res.render('viewAll',{productData,categoryData,phoneType,cartNo})
+    res.render('viewAll',{productData,categoryData,phoneType,cartNo,checkedBrands,priceSort})
   } catch (error) {
     console.error("Error in View All Products:", error);
     res.status(500).render('500')
@@ -1830,7 +1845,10 @@ browsebybrand: async (req,res)=>{
     const cartNo = await global.cartNo(loggedUser[0]._id)
     
     const categoryData = await Categorie.find({});
-    res.render('viewAll',{productData,categoryData,phoneType,cartNo})
+    let  priceSort = "highToLow"
+    let checkedBrands =[];
+
+    res.render('viewAll',{productData,categoryData,phoneType,cartNo,checkedBrands,priceSort})
 
 
 
@@ -1850,29 +1868,44 @@ filter: async (req,res)=>{
     const phoneType = ' ';
     const loggedUser=await global.findLoggedUser(req.session.user)
     const cartNo = await global.cartNo(loggedUser[0]._id)
-  
+    const checkedBrands = brandNames; 
+    const priceSort = req.body.priceSort;
   
     if(req.body.priceSort == 'highToLow'){
       const productData = await Products.find({
         brand: { $in: brandNames },
         status: true,
       }).sort({ price: -1 });
-      res.render('viewAll',{productData,categoryData,phoneType,cartNo})
+      res.render('viewAll',{productData,categoryData,phoneType,cartNo,
+        checkedBrands: checkedBrands,
+        priceSort: priceSort })
     }else if(req.body.priceSort == 'lowToHigh'){
       const productData = await Products.find({
         brand: { $in: brandNames },
         status: true,
       }).sort({ price: 1 });
-      res.render('viewAll',{productData,categoryData,phoneType,cartNo})
+      res.render('viewAll',{productData,categoryData,phoneType,cartNo,
+        checkedBrands: checkedBrands,
+        priceSort: priceSort })
   
     }else{
       const productData = await Products.find({
         brand: { $in: brandNames },
         status: true,
       });
-  
-      res.render('viewAll',{productData,categoryData,phoneType,cartNo})
-  
+
+      const checkedBrands = brandNames; 
+      const priceSort = req.body.priceSort;
+      
+      res.render('viewAll', {
+          productData,
+          categoryData,
+          phoneType,
+          cartNo,
+          checkedBrands: checkedBrands,
+          priceSort: priceSort 
+      });
+        
     }
     
   } catch (error) {
@@ -1893,7 +1926,10 @@ usersechProduct: async(req,res)=>{
     const phoneType = data;
     const loggedUser=await global.findLoggedUser(req.session.user)
     const cartNo = await global.cartNo(loggedUser[0]._id)
-    res.render('viewAll',{productData,categoryData,phoneType,cartNo});
+    let  priceSort = "highToLow"
+    let checkedBrands =[]
+
+    res.render('viewAll',{productData,categoryData,phoneType,cartNo,checkedBrands: checkedBrands,priceSort});
     
   } catch (error) {
     console.error("Error in user serching time:", error);
@@ -1983,7 +2019,10 @@ UserShop : async (req,res)=>{
     const categoryData = await Categorie.find({});
     const loggedUser=await global.findLoggedUser(req.session.user)
     const cartNo = await global.cartNo(loggedUser[0]._id)
-    res.render('viewAll',{productData,categoryData,phoneType,cartNo})
+    let checkedBrands =[]
+    let  priceSort = "highToLow"
+
+    res.render('viewAll',{productData,categoryData,phoneType,cartNo,checkedBrands,priceSort})
 
 
 

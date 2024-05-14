@@ -39,36 +39,69 @@
     transform: translateX(0);
 }
 </style>
-    <div class="container-fluid mb-4 mt-4">
-        <button id="filterButton" class="mt-5" style="width: 101px; border: 0; border-radius: 5px;">Filter</button>
-        <div class="filter-div">
-            <h6 style="font-weight: 600;" class="mb-3">Select Brand</h6>
-                <% categoryData.forEach(data => { %>
-                    <form action="/user/productsfilter" method="post">
-                <div class="form-check">
-                    <input class="form-check-input" type="checkbox" value="<%=data._id%>" name="category">
-                    <label class="form-check-label" for="flexCheckDefault">
-                        <%=data.brand%>
-                    </label>
-                </div>
-                <% }) %>
-                <h6 class="mb-3 mt-3">Sort by Price:</h6>
-                <div class="form-check">
-                    <input class="form-check-input" type="checkbox" name="priceSort" id="priceHighToLow" value="highToLow">
-                    <label class="form-check-label" for="flexCheckDefault">
-                        Price High to Low
-                    </label>
-                </div>
-                <div class="form-check">
-                    <input class="form-check-input" type="checkbox" name="priceSort" id="priceLowToHigh" value="lowToHigh">
-                    <label class="form-check-label" for="flexCheckDefault">
-                        Price Low to High
-                    </label>
-                </div>
-                <button type="submit" class="btn btn-primary">apply </button>
-            </div>
-        </form>
+<div class="container-fluid mb-4 mt-4">
+    <button id="filterButton" class="mt-5" style="width: 101px; border: 0; border-radius: 5px;">Filter</button>
+    <div class="filter-div">
+        <h6 style="font-weight: 600;" class="mb-3">Select Brand</h6>
+        <% categoryData.forEach(data => { %>
+            <form action="/user/productsfilter" method="post">
+        <div class="form-check">
+            <input class="form-check-input" type="checkbox" value="<%=data._id%>" name="category" id="brand_<%=data._id%>" <% if (checkedBrands.includes(data._id)) { %> checked <% } %>>
+            <label class="form-check-label" for="brand_<%=data._id%>">
+                <%=data.brand%>
+            </label>
         </div>
+        <% }) %>
+        <h6 class="mb-3 mt-3">Sort by Price:</h6>
+        <div class="form-check">
+            <input class="form-check-input" type="checkbox" name="priceSort" id="priceHighToLow" value="highToLow" <% if (priceSort === 'highToLow') { %> checked <% } %>>
+            <label class="form-check-label" for="priceHighToLow">
+                Price High to Low
+            </label>
+        </div>
+        <div class="form-check">
+            <input class="form-check-input" type="checkbox" name="priceSort" id="priceLowToHigh" value="lowToHigh" <% if (priceSort === 'lowToHigh') { %> checked <% } %>>
+            <label class="form-check-label" for="priceLowToHigh">
+                Price Low to High
+            </label>
+        </div>
+        <button type="submit" class="btn btn-primary" onclick="saveFilters()">Apply</button>
+        </form>
+    </div>
+</div>
+
+<script>
+    // Initialize checkedBrands as an empty array
+    let checkedBrands = [];
+
+    function saveFilters() {
+        // Clear the array before adding new values
+        checkedBrands = [];
+        document.querySelectorAll('input[name="category"]:checked').forEach(checkbox => {
+            checkedBrands.push(checkbox.value);
+        });
+
+        const priceSort = document.querySelector('input[name="priceSort"]:checked').value;
+
+        localStorage.setItem('checkedBrands', JSON.stringify(checkedBrands));
+        localStorage.setItem('priceSort', priceSort);
+    }
+
+    window.onload = function() {
+        // Retrieve checkedBrands from local storage or use an empty array if it's not found
+        checkedBrands = JSON.parse(localStorage.getItem('checkedBrands')) || [];
+        const priceSort = localStorage.getItem('priceSort') || '';
+
+        checkedBrands.forEach(brand => {
+            document.getElementById(`brand_${brand}`).checked = true;
+        });
+
+        if (priceSort) {
+            document.getElementById(`price${priceSort}`).checked = true;
+        }
+    };
+</script>
+
        <% if (productData.length>0) { %>
         <div class="text-center mt-3">
             <h4>All <%- phoneType %> Phones</h4>

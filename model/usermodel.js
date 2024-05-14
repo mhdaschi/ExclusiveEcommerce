@@ -38,13 +38,7 @@ const usermodel = new mongoose.Schema({
         phone:{type:Number}
     }],
 
-    wallettotalAmount: { type: Number, default: 0 },
-wallet: [{
-    balanceamount: { type: String, default: '0' },
-    transactionType: { type: String},
-    Timestamp: { type: Date, default: Date.now },
-    description: { type: String }
-}],
+
 Phone:{
     type: String,
 

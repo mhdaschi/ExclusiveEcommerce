@@ -2,15 +2,10 @@ const mongoose = require('mongoose');
 require('dotenv').config();
 
 const OrderSchema = new mongoose.Schema({
-  nameuser: {
-    type: String,
+  userId: {
+    type: mongoose.Types.ObjectId
   },
-  phonenumber: {
-    type: Number,
-  },
-  email: {
-    type: String,
-  },
+
   orderTotalPrice: {
     type: String,
   },
@@ -26,17 +21,9 @@ const OrderSchema = new mongoose.Schema({
     default: "pending",
   },
   orderaddress: {
-    type: String,
+    type: mongoose.Types.ObjectId
   },
-  city: {
-    type: String,
-  },
-  state: {
-    type: String,
-  },
-  pincode: {
-    type: Number,
-  },
+
   orderAdded: {
     type: Date,
   },

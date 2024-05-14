@@ -6,8 +6,8 @@
     <!-- Container for the cart items -->
     <% if (!cartItems || cartItems.length === 0) { %>
         <h1 class="text-center  " style="margin-top: 250px;">You have no Cart Data <i class="fa fa-shopping-bag"></i></h1>
-        <div class="text-center"style=" margin-bottom:150px;">
-            <img src="/images/noorder.png" class="img-fluid"><br>
+        <div class="text-center"style=" margin-bottom:150px;"><br>
+            <br>
             <a href="/user-home" class="btn rounded-pill border-success text-center my-3 text-success w-25">Back To Shopping</a>
         </div>
     <% } else { %>
@@ -55,16 +55,16 @@
                         <!-- Column for Quantity with buttons to change quantity -->
                         <div class="col col-3 d-flex align-items-center" style="flex-basis: 25%;">
                             <!-- Button to decrease quantity -->
-                            <button class="btn btn-outline-dark me-3" onclick="quantity('<%- data.productDetails._id %>','-1')" <%= (data.quantity <= 1) ? 'disabled' : '' %>>-</button>
+                            <button class="btn btn-outline-dark me-3" id="negativeButton<%- data.productDetails._id %>" onclick="quantity('<%- data.productDetails._id %>','-1')" <%= (data.quantity <= 1) ? 'disabled' : '' %>>-</button>
                             <!-- Span to display quantity -->
                             <span class="btn btn-dark px-3" id="value-<%- data.productDetails._id %>"><%= data.quantity %></span>
                             <!-- Button to increase quantity -->
-                            <button class="btn btn-outline-dark ms-3" onclick="quantity('<%- data.productDetails._id %>','1')" <%= (data.quantity == data.productDetails.stock) ? 'disabled' : '' %>>+</button>
+                            <button class="btn btn-outline-dark ms-3" id="plusButton<%- data.productDetails._id %>" onclick="quantity('<%- data.productDetails._id %>','1')" <%= (data.quantity == data.productDetails.stock) ? 'disabled' : '' %>>+</button>
                         </div>
                         <!-- Column for Price -->
                         <div class="col col-4 d-flex align-items-center" data-label="Price" style="flex-basis: 25%;">
                             <!-- Display product total price -->
-                            <p class="text-muted">Price:<strong><%= data.productDetails.totalPrice %></strong></p>
+                            <p class="text-muted">Price:<strong id="price<%- data.productDetails._id %>"><%= data.productDetails.totalPrice %></strong></p>
                         </div>
                         <!-- Column for Remove button -->
                         <div class="col col-5 d-flex align-items-center" style="flex-basis: 10%">
@@ -116,13 +116,14 @@
                 <!-- Loop through totalPrice array and display total, shipping, and sub-total -->
                 <!-- Row for Sub total -->
                 <% totalPrice.forEach(element => { %>
+               
                 <div class="d-flex justify-content-between border-bottom">
                     <div>
                         <p>Sub total:</p>
                     </div>
                     <div>
                         <!-- Display sub total price -->
-                        <p class="total-price">₹<%= element.subTotal %>.00</p>
+                        <p class="total-price" id="total-price">₹<%= element.subTotal %>.00</p>
                     </div>
                 </div>
                 <!-- Row for Shipping -->
@@ -197,7 +198,53 @@
                 method: 'post',
                 dataType: 'json',
                 success: (response) => {
-                    window.location.reload();
+                    console.log(response);
+                    const elementId = 'value-' + productID;
+                    const priceId = 'price' + productID;
+                    const ProductID = productID
+
+                    if (response.quantity >= response.availableStock) {
+                        // Disable the minus button if quantity equals available stock
+                        const plusButton = document.getElementById('plusButton' + ProductID);
+                        if (plusButton) {
+                            console.log("++++++++++");
+                            plusButton.disabled = true;
+                            plusButton.style.display = 'none';
+
+                        }
+                    }else{
+                        const plusButton = document.getElementById('plusButton' + ProductID);
+                        if (plusButton) {
+                            plusButton.disabled = false;
+                            plusButton.style.display = 'inline-block';
+                        }
+                    
+                    }
+
+                    if(response.quantity == 1){
+                        const negativeButton = document.getElementById('negativeButton' + ProductID);
+                        if (negativeButton) {
+                            console.log("----------------");
+                            negativeButton.disabled = true;
+                            negativeButton.style.display = 'none';
+
+                        }
+                    }else{
+                        const negativeButton = document.getElementById('negativeButton' + ProductID);
+                        if (negativeButton) {
+                            negativeButton.disabled = false;
+                            negativeButton.style.display = 'inline-block';
+
+                        }
+
+
+                    }
+                    console.log("fsdfsdf",response.totalPrice,"-------------------------",response)
+                    document.getElementById(elementId).innerText = response.quantity;
+                    document.getElementById('total-price').innerText = "₹ "+ response.totalPrice+ ".00";
+                    document.getElementById(priceId).innerText = "₹ "+response.eachProductPrice*response.quantity+ ".00";
+                    document.getElementById('displayedTotalPrice').innerText = "₹ "+ (response.totalPrice-response.overAllPrice) + ".00";
+                   
                 },
                 error: (xhr, status, error) => {
                     console.error('AJAX error:', error);

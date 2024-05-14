@@ -21,7 +21,7 @@ const productmodel = new mongoose.Schema({
 
     },
     brand: {
-    type: String,
+    type:  mongoose.Types.ObjectId,
     required : true,
     
     

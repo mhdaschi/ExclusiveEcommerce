@@ -1,186 +1,222 @@
 <%- include('header-admin') %>
-<link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.min.css">
-<link rel="stylesheet" href="https://cdn.datatables.net/searchbuilder/1.6.0/css/searchBuilder.dataTables.min.css">
-<link rel="stylesheet" href="https://cdn.datatables.net/datetime/1.5.1/css/dataTables.dateTime.min.css">
-<script src="https://code.jquery.com/jquery-3.7.0.js"></script>
+  <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.min.css">
+  <link rel="stylesheet" href="https://cdn.datatables.net/searchbuilder/1.6.0/css/searchBuilder.dataTables.min.css">
+  <link rel="stylesheet" href="https://cdn.datatables.net/datetime/1.5.1/css/dataTables.dateTime.min.css">
+  <script src="https://code.jquery.com/jquery-3.7.0.js"></script>
 
-<script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
-<script src="https://cdn.datatables.net/searchbuilder/1.6.0/js/dataTables.searchBuilder.min.js"></script>
-<script src="https://cdn.datatables.net/datetime/1.5.1/js/dataTables.dateTime.min.js"></script>
+  <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
+  <script src="https://cdn.datatables.net/searchbuilder/1.6.0/js/dataTables.searchBuilder.min.js"></script>
+  <script src="https://cdn.datatables.net/datetime/1.5.1/js/dataTables.dateTime.min.js"></script>
 
-<main>
-  
-  <!-- Search form -->
-  <div class="option d-flex align-items-center justify-content-around mt-3">
-    <form action="/admin/product/search" method="post" name="name">
-      <div class="input-group">
-        <input type="search" class="form-control" name="search" placeholder="Search">
-        <button id="search-button" type="submit" class="btn btn-danger mx-2">Search</button>
-      </div>
-    </form>
-  </div>
+  <main>
 
-  <!-- Add new product button -->
-  <div class="d-flex justify-content-end mb-2 mx-5">
-    <form action="/admin/add/product" method="post">
-      <button type="submit" class="btn btn-danger btn-block gradient-custom-4 text-white">ADD NEW PRODUCT</button>
-    </form>
-  </div>
-  <% if(useProduct.length > 0){ %>
-  <div class="container-fluid mt-3">
-    <div class="row mx-5">
-      <div class="col-sm-12 col-md-12 col-lg-12 overflow-auto">
-        <table class="table table-bordered table-striped" id="product">
-          <thead class="table-dark">
-            <tr>
-              <th>No</th>
-              <th>Name</th>
-              <th>Photo</th>
-              <th>Brand</th>
-              <th>Price</th>
-              <th>Stock</th>
-              <th>Variant</th>
-              <th>Colour</th>
-              <th>Action</th>
-              <th>Edit</th>
-              <th>Delete</th>
-            </tr>
-          </thead>
-          <tbody>
-            <% useProduct.forEach((data, i) => { %>
-            <tr>
-              <td><%= i + 1 %></td>
-              <td><%= data.product_name %></td>
-              <td>
-                <img src="/<%=data.product_image[0]  %>" alt="" style="width: 50px; height: 50px;">
-              </td>
-              <td><%= data.brand %></td>
-              <td><%= data.price %></td>
-              <td><%= data.stock %></td>
-              <td><%= data.variant %></td>
-              <td><%= data.productColor %></td>
-              <td class="text-center">
-                <% if (data.status) { %>
-                <form action="/admin/category/disable/<%- data._id %>" method="POST">
-                  <button type="button" class="btn btn-danger"
-                    onclick="confirmDisable('<%= data.product_name %>', '/admin/category/disable/<%- data._id %>')">Disable</button>
-                </form>
-                <% } else { %>
-                <form action="/admin/category/enable/<%- data._id %>" method="POST">
-                  <button type="button" class="btn btn-success"
-                    onclick="confirmEnable('<%= data.product_name %>', '/admin/category/enable/<%- data._id %>')">Enable</button>
-                </form>
-                <% } %>
-              </td>
-              <td class="text-center">
-                <form action="/admin/category/edit/<%- data.id %>" method="get">
-                  <button type="submit" class="btn btn-warning">Edit</button>
-                </form>
-              </td>
-              <td class="text-center">
-                <form id="deleteProductsForm" action="/admin/category/delete/<%- data.id %>" method="POST">
-                  <button type="button" class="btn btn-danger"
-                    onclick="confirmDelete('<%= data.product_name %>', '/admin/category/delete/<%- data.id %>')">Delete</button>
-                </form>
-              </td>
-            </tr>
-            <% }) %>
-          </tbody>
-        </table>
-      </div>
+    <!-- Search form -->
+    <div class="option d-flex align-items-center justify-content-around mt-3">
+      <form action="/admin/product/search" method="post" name="name">
+        <div class="input-group">
+          <input type="search" class="form-control" name="search" placeholder="Search">
+          <button id="search-button" type="submit" class="btn btn-danger mx-2">Search</button>
+        </div>
+      </form>
     </div>
-  </div>
-  <% } else { %>
-  <div class="text-center">
-    <h6 class="text-warning fw-bolder"><em>Sorry! No matches found</em></h6>
-  </div>
-  <% } %>
+
+    <!-- Add new product button -->
+    <div class="d-flex justify-content-end mb-2 mx-5">
+      <form action="/admin/add/product" method="post">
+        <button type="submit" class="btn btn-danger btn-block gradient-custom-4 text-white">ADD NEW PRODUCT</button>
+      </form>
+    </div>
 
 
-  <!-- Display messages -->
-  <p class="text-center" id="msg" style="
+
+    <% if(useProduct.length> 0){ %>
+      <div class="container-fluid mt-3">
+        <div class="row mx-5">
+          <div class="col-sm-12 col-md-12 col-lg-12 overflow-auto">
+            <table class="table table-bordered table-striped" id="product">
+              <thead class="table-dark">
+                <tr>
+                  <th>No</th>
+                  <th>Name</th>
+                  <th>Photo</th>
+                  <th>Brand</th>
+                  <th>Price</th>
+                  <th>Stock</th>
+                  <th>Variant</th>
+                  <th>Colour</th>
+                  <th>Action</th>
+                  <th>Edit</th>
+                  <th>Delete</th>
+                </tr>
+              </thead>
+              <tbody>
+
+                <% useProduct.forEach((data, i)=> { %>
+
+
+                  <tr>
+                    <td>
+                      <%= i + 1 %>
+                    </td>
+                    <td>
+                      <%= data.product_name %>
+                    </td>
+                    <td>
+                      <img src="/<%=data.product_image[0]  %>" alt="" style="width: 50px; height: 50px;">
+                    </td>
+                    
+                    
+                    
+                    
+                    <td>
+                      <% for (let x of brandData) { %>
+                          <% if (x._id.toString() === data.brand.toString()) { %>
+                              <%= x.brand %>
+                              <% break; %>
+                          <% } %>
+                      <% } %>
+                  </td>
+                    <td>
+                      <%= data.price %>
+                    </td>
+                    <td>
+                      <%= data.stock %>
+                    </td>
+                    <td>
+                      <%= data.variant %>
+                    </td>
+                    <td>
+                      <%= data.productColor %>
+                    </td>
+                    <td class="text-center">
+                      <% if (data.status) { %>
+                        <form action="/admin/category/disable/<%- data._id %>" method="POST">
+                          <button type="button" class="btn btn-danger"
+                            onclick="confirmDisable('<%= data.product_name %>', '/admin/category/disable/<%- data._id %>')">Disable</button>
+                        </form>
+                        <% } else { %>
+                          <form action="/admin/category/enable/<%- data._id %>" method="POST">
+                            <button type="button" class="btn btn-success"
+                              onclick="confirmEnable('<%= data.product_name %>', '/admin/category/enable/<%- data._id %>')">Enable</button>
+                          </form>
+                          <% } %>
+                    </td>
+                    <td class="text-center">
+                      <form action="/admin/category/edit/<%- data.id %>" method="get">
+                        <button type="submit" class="btn btn-warning">Edit</button>
+                      </form>
+                    </td>
+                    <td class="text-center">
+                      <form id="deleteProductsForm" action="/admin/category/delete/<%- data.id %>" method="POST">
+                        <button type="button" class="btn btn-danger"
+                          onclick="confirmDelete('<%= data.product_name %>', '/admin/category/delete/<%- data.id %>')">Delete</button>
+                      </form>
+                    </td>
+
+
+
+                  </tr>
+                  <% }) %>
+
+
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      <% } else { %>
+        <div class="text-center">
+          <h6 class="text-warning fw-bolder"><em>Sorry! No matches found</em></h6>
+        </div>
+        <% } %>
+
+
+          <!-- Display messages -->
+          <p class="text-center" id="msg" style="
     font-family: Poppins;
     font-size: 16px;
     font-weight: 400;
     line-height: 24px;
     letter-spacing: 0em;
     color: #44db74;
-    "><%= locals.msg %></p>
-</main>
+    ">
+            <%= locals.msg %>
+          </p>
+  </main>
 
-<%- include('admin_footer')%>
+  <%- include('admin_footer')%>
 
-<!-- SweetAlert CSS -->
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.20/dist/sweetalert2.min.css">
+    <!-- SweetAlert CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.20/dist/sweetalert2.min.css">
 
-<!-- SweetAlert JS -->
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.20/dist/sweetalert2.all.min.js"></script>
+    <!-- SweetAlert JS -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.20/dist/sweetalert2.all.min.js"></script>
 
-<script>
-  $(document).ready(function () {
-    $('#product').DataTable();
-  });
-</script>
+    <script>
+      $(document).ready(function () {
+        $('#product').DataTable();
+      });
+    </script>
 
 
-<link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.min.css">
     <link rel="stylesheet" href="https://cdn.datatables.net/searchbuilder/1.6.0/css/searchBuilder.dataTables.min.css">
     <link rel="stylesheet" href="https://cdn.datatables.net/datetime/1.5.1/css/dataTables.dateTime.min.css">
 
 
-<script>
-  setTimeout(() => {
-    var errmsg = document.querySelector('#msg')
-    errmsg.innerHTML = "";
-  }, 4000);
+    <script>
+      setTimeout(() => {
+        var errmsg = document.querySelector('#msg')
+        errmsg.innerHTML = "";
+      }, 4000);
 
-  function confirmDisable(category, action) {
-    Swal.fire({
-      title: 'Are you sure?',
-      text: `You want to disable ${category}?`,
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonColor: '#d33',
-      cancelButtonColor: '#3085d6',
-      confirmButtonText: 'Yes, disable it!'
-    }).then((result) => {
-      if (result.isConfirmed) {
-        document.querySelector('form[action="' + action + '"]').submit();
+      function confirmDisable(category, action) {
+        Swal.fire({
+          title: 'Are you sure?',
+          text: `You want to disable ${category}?`,
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonColor: '#d33',
+          cancelButtonColor: '#3085d6',
+          confirmButtonText: 'Yes, disable it!'
+        }).then((result) => {
+          if (result.isConfirmed) {
+            document.querySelector('form[action="' + action + '"]').submit();
+          }
+        });
       }
-    });
-  }
 
-  function confirmEnable(category, action) {
-    Swal.fire({
-      title: 'Are you sure?',
-      text: `You want to enable ${category}?`,
-      icon: 'info',
-      showCancelButton: true,
-      confirmButtonColor: '#44db74',
-      cancelButtonColor: '#3085d6',
-      confirmButtonText: 'Yes, enable it!'
-    }).then((result) => {
-      if (result.isConfirmed) {
-        document.querySelector('form[action="' + action + '"]').submit();
+      function confirmEnable(category, action) {
+        Swal.fire({
+          title: 'Are you sure?',
+          text: `You want to enable ${category}?`,
+          icon: 'info',
+          showCancelButton: true,
+          confirmButtonColor: '#44db74',
+          cancelButtonColor: '#3085d6',
+          confirmButtonText: 'Yes, enable it!'
+        }).then((result) => {
+          if (result.isConfirmed) {
+            document.querySelector('form[action="' + action + '"]').submit();
+          }
+        });
       }
-    });
-  }
 
-  function confirmDelete(category, action) {
-    Swal.fire({
-      title: 'Are you sure?',
-      text: `You want to delete ${category}?`,
-      icon: 'error',
-      showCancelButton: true,
-      confirmButtonColor: '#d33',
-      cancelButtonColor: '#3085d6',
-      confirmButtonText: 'Yes, delete it!'
-    }).then((result) => {
-      if (result.isConfirmed) {
-        document.querySelector('form[action="' + action + '"]').submit();
+      function confirmDelete(category, action) {
+        Swal.fire({
+          title: 'Are you sure?',
+          text: `You want to delete ${category}?`,
+          icon: 'error',
+          showCancelButton: true,
+          confirmButtonColor: '#d33',
+          cancelButtonColor: '#3085d6',
+          confirmButtonText: 'Yes, delete it!'
+        }).then((result) => {
+          if (result.isConfirmed) {
+            document.querySelector('form[action="' + action + '"]').submit();
+          }
+        });
       }
-    });
-  }
-</script>
+    </script>
 
-</html>
+    </html>

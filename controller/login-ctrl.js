@@ -3,6 +3,8 @@ const bcrypt = require("bcrypt");
 const Products = require('../model/productmodel')
 const Categorie = require('../model/brandmodel')
 const Cart = require("../model/cartmodel")
+const Wallet = require("../model/walletmodel")
+
 const global = require('../global/globalfunction')
 
 const admin = {
@@ -59,6 +61,10 @@ const loginController = {
     
                     if (isMatch) {
                         req.session.user = user.email;
+                        req.session.userId = user._id;
+
+                        await Wallet.create({userId:user._id})
+
                         req.session.userLoggedin = true;
                         res.redirect('/user-home');
                     } else {
