@@ -23,7 +23,6 @@ const OrderSchema = new mongoose.Schema({
   orderaddress: {
     type: mongoose.Types.ObjectId
   },
-
   orderAdded: {
     type: Date,
   },
@@ -35,6 +34,13 @@ const OrderSchema = new mongoose.Schema({
   },
   paymentStatus: {
     type: String,
+  },
+  Returnreason: { 
+    type: String,
+    default:"Not Returned" 
+  },
+  ReturnRejectReason: { 
+    type: String
   }
 
 });

@@ -1,4 +1,4 @@
-<%- include('header-admin') %> <!-- Include the admin header -->
+<%- include('header-admin') %> 
 
 <main>
     <div class="container mt-5 mb-5">
@@ -260,24 +260,22 @@
 // Sales Chart Data
 const salesData = JSON.parse('<%- JSON.stringify(salesData) %>');
 
-// Debug statement
-console.log("Sales Data:", salesData);
 
 // Sales Chart
 const salesCtx = document.getElementById('salesChartCanvas').getContext('2d');
-let salesChart; // Declare chart variable
+let salesChart; 
 
 function updateChart(period) {
   console.log("Updating chart for period:", period);
   const data = salesData[period];
-  if (!data) return; // Handle invalid period
+  if (!data) return; 
   if (salesChart) {
-      salesChart.destroy(); // Destroy existing chart if exists
+      salesChart.destroy(); 
   }
 
   let labels = [];
   if (period === 'monthly') {
-      labels = ['January', 'February', 'March', 'April','May']; // Example labels for monthly data
+      labels = ['January', 'February', 'March', 'April','May']; 
   } else if (period === 'weekly') {
       labels = ['Week 1', 'Week 2', 'Week 3', 'Week 4',]; // Example labels for weekly data
   } else if (period === 'yearly') {
@@ -313,8 +311,42 @@ new Chart(inventoryCtx, {
   type: 'line',
   data: inventoryData,
   options: {
-      // Your options for the inventory chart
+    scales: {
+      x: {
+        ticks: {
+          // Rotate labels
+          callback: function(value, index, ticks) {
+            return this.getLabelForValue(value).length > 15 ? this.getLabelForValue(value).substring(0, 15) + '...' : this.getLabelForValue(value);
+          }
+        },
+        title: {
+          display: true,
+          text: 'Product Names',
+          padding: {
+            top: 10
+          }
+        }
+      },
+      y: {
+        beginAtZero: true,
+        title: {
+          display: true,
+          text: 'Quantity'
+        }
+      }
+    },
+    plugins: {
+      tooltip: {
+        callbacks: {
+          title: function(tooltipItems) {
+            // Display full label in tooltip
+            return tooltipItems[0].label;
+          }
+        }
+      }
+    }
   }
 });
+
 </script>
 <%- include('admin_footer') %> <!-- Include the admin footer -->

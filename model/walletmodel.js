@@ -11,7 +11,9 @@ const walletmodel = new mongoose.Schema({
         balanceamount: { type: String, default: '0' },
         transactionType: { type: String },
         Timestamp: { type: Date, default: Date.now },
+        reason: { type: String },
         description: { type: String }
+
     }]
 });
 

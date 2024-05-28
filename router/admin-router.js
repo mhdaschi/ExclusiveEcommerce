@@ -75,6 +75,11 @@ router.post('/admin/editproduct/:id',adminverify,upload.array('productImage',4),
 // Order-related routes 
 router.get('/admin/Orders',adminverify,adminController.GetOrder)
 router.post('/admin/order/status/:id',adminverify,adminController.OrderStatus)
+router.get('/admin/return/allRequest',adminverify,adminController.allReturnReq)
+router.post('/admin/return/Approve/:id',adminverify,adminController.returnApprove)
+router.post('/admin/return/Reject/:id',adminverify,adminController.returnReject)
+router.get('/admin/return/acceptedList',adminverify,adminController.allAcceptedReq)
+router.get('/admin/return/rejectedList',adminverify,adminController.allRejectedReq)
 // Coupon related routes
 router.get("/admin/Coupons",adminverify,adminController.Coupon)
 router.get('/admin/Delete-coupon/:id',adminverify,adminController.DeleteCoupen)

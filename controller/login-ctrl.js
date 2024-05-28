@@ -25,16 +25,285 @@ const loginController = {
 
     UserHome: async(req, res) => {
         if (req.session.userLoggedin) {
-            const useProduct = await Products.find().limit(10);
-            const use2Product = await Products.find().skip(10)
-            const useBrand = await Categorie.find({status:true}).limit(3);
+            const useProduct = await Products.aggregate([
+                {
+                    $lookup: {
+                        from: 'brands', 
+                        localField: 'brand',
+                        foreignField: '_id',
+                        as: 'brandDetails'
+                    }
+                },
+                {
+                    $unwind: '$brandDetails'
+                },
+                {
+                    $match: {
+                        'status': true,
+                        'brandDetails.status': true
+                    }
+                },
+                {
+                    $project: {
+                        product_name: 1,
+                        created_at: 1,
+                        last_updated: 1,
+                        stock: 1,
+                        brand: 1,
+                        price: 1,
+                        variant: 1,
+                        description: 1,
+                        phone_type: 1,
+                        productColor: 1,
+                        status: 1,
+                        product_image: 1,
+                        'brandDetails.brand': 1,
+                        'brandDetails.image': 1,
+                        'brandDetails.status': 1
+                    }
+                }
+            ]);
+            const use2Product = await Products.aggregate([
+                {
+                    $lookup: {
+                        from: 'brands', 
+                        localField: 'brand',
+                        foreignField: '_id',
+                        as: 'brandDetails'
+                    }
+                },
+                {
+                    $unwind: '$brandDetails'
+                },
+                {
+                    $match: {
+                        'status': true,
+                        'brandDetails.status': true
+                    }
+                },
+                {
+                    $project: {
+                        product_name: 1,
+                        created_at: 1,
+                        last_updated: 1,
+                        stock: 1,
+                        brand: 1,
+                        price: 1,
+                        variant: 1,
+                        description: 1,
+                        phone_type: 1,
+                        productColor: 1,
+                        status: 1,
+                        product_image: 1,
+                        'brandDetails.brand': 1,
+                        'brandDetails.image': 1,
+                        'brandDetails.status': 1
+                    }
+                }
+            ]);
+            const useBrand = await Categorie.find({status:true}).limit(4);
             const loggedUser=await global.findLoggedUser(req.session.user)
   
-            const useflagship = await Products.find({ phone_type:"Flagship phones",status:true})
-            const useCameraphones = await Products.find({phone_type:"Camera phones"})
-            const useBatterylife = await Products.find({phone_type:"Battery life champions"})
-            const useflagshipkiller = await Products.find({phone_type:"Flagship killers"})
-            const useGaming = await Products.find({phone_type:"Gaming phones"})
+            const useflagship = await Products.aggregate([
+                {
+                    $lookup: {
+                        from: 'brands', 
+                        localField: 'brand',
+                        foreignField: '_id',
+                        as: 'brandDetails'
+                    }
+                },
+                {
+                    $unwind: '$brandDetails'
+                },
+                {
+                    $match: {
+                        'phone_type': 'Flagship phones',
+                        'status': true,
+                        'brandDetails.status': true
+                    }
+                },
+                {
+                    $project: {
+                        product_name: 1,
+                        created_at: 1,
+                        last_updated: 1,
+                        stock: 1,
+                        brand: 1,
+                        price: 1,
+                        variant: 1,
+                        description: 1,
+                        phone_type: 1,
+                        productColor: 1,
+                        status: 1,
+                        product_image: 1,
+                        'brandDetails.brand': 1,
+                        'brandDetails.image': 1,
+                        'brandDetails.status': 1
+                    }
+                }
+            ]);
+          const useCameraphones =  await Products.aggregate([
+                            {
+                                $lookup: {
+                                    from: 'brands', // The collection name in MongoDB (usually the model name in lowercase and pluralized)
+                                    localField: 'brand',
+                                    foreignField: '_id',
+                                    as: 'brandDetails'
+                                }
+                            },
+                            {
+                                $unwind: '$brandDetails'
+                            },
+                            {
+                                $match: {
+                                    'phone_type': 'Camera phones',
+                                    'status': true,
+                                    'brandDetails.status': true
+                                }
+                            },
+                            {
+                                $project: {
+                                    product_name: 1,
+                                    created_at: 1,
+                                    last_updated: 1,
+                                    stock: 1,
+                                    brand: 1,
+                                    price: 1,
+                                    variant: 1,
+                                    description: 1,
+                                    phone_type: 1,
+                                    productColor: 1,
+                                    status: 1,
+                                    product_image: 1,
+                                    'brandDetails.brand': 1,
+                                    'brandDetails.image': 1,
+                                    'brandDetails.status': 1
+                                }
+                            }
+                        ]);
+            
+            const useBatterylife = await Products.aggregate([
+                {
+                    $lookup: {
+                        from: 'brands', // The collection name in MongoDB (usually the model name in lowercase and pluralized)
+                        localField: 'brand',
+                        foreignField: '_id',
+                        as: 'brandDetails'
+                    }
+                },
+                {
+                    $unwind: '$brandDetails'
+                },
+                {
+                    $match: {
+                        'phone_type': 'Battery life champions',
+                        'status': true,
+                        'brandDetails.status': true
+                    }
+                },
+                {
+                    $project: {
+                        product_name: 1,
+                        created_at: 1,
+                        last_updated: 1,
+                        stock: 1,
+                        brand: 1,
+                        price: 1,
+                        variant: 1,
+                        description: 1,
+                        phone_type: 1,
+                        productColor: 1,
+                        status: 1,
+                        product_image: 1,
+                        'brandDetails.brand': 1,
+                        'brandDetails.image': 1,
+                        'brandDetails.status': 1
+                    }
+                }
+            ]);
+
+            const useflagshipkiller = await Products.aggregate([
+                {
+                    $lookup: {
+                        from: 'brands', // The collection name in MongoDB (usually the model name in lowercase and pluralized)
+                        localField: 'brand',
+                        foreignField: '_id',
+                        as: 'brandDetails'
+                    }
+                },
+                {
+                    $unwind: '$brandDetails'
+                },
+                {
+                    $match: {
+                        'phone_type': 'Flagship killers',
+                        'status': true,
+                        'brandDetails.status': true
+                    }
+                },
+                {
+                    $project: {
+                        product_name: 1,
+                        created_at: 1,
+                        last_updated: 1,
+                        stock: 1,
+                        brand: 1,
+                        price: 1,
+                        variant: 1,
+                        description: 1,
+                        phone_type: 1,
+                        productColor: 1,
+                        status: 1,
+                        product_image: 1,
+                        'brandDetails.brand': 1,
+                        'brandDetails.image': 1,
+                        'brandDetails.status': 1
+                    }
+                }
+            ]);
+
+            const useGaming = await Products.find({phone_type:"Gaming phones",status:true})
+            await Products.aggregate([
+                {
+                    $lookup: {
+                        from: 'brands', // The collection name in MongoDB (usually the model name in lowercase and pluralized)
+                        localField: 'brand',
+                        foreignField: '_id',
+                        as: 'brandDetails'
+                    }
+                },
+                {
+                    $unwind: '$brandDetails'
+                },
+                {
+                    $match: {
+                        'phone_type': 'Gaming phones',
+                        'status': true,
+                        'brandDetails.status': true
+                    }
+                },
+                {
+                    $project: {
+                        product_name: 1,
+                        created_at: 1,
+                        last_updated: 1,
+                        stock: 1,
+                        brand: 1,
+                        price: 1,
+                        variant: 1,
+                        description: 1,
+                        phone_type: 1,
+                        productColor: 1,
+                        status: 1,
+                        product_image: 1,
+                        'brandDetails.brand': 1,
+                        'brandDetails.image': 1,
+                        'brandDetails.status': 1
+                    }
+                }
+            ]);
+
             const cartNo = await global.cartNo(loggedUser[0]._id)
       
              res.render('user-dashboard',{useBrand,use2Product,useflagship,useCameraphones,useBatterylife,useflagshipkiller,useGaming,useProduct,cartNo});

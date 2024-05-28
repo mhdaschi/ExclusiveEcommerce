@@ -69,13 +69,17 @@
                     
                     
                     <td>
-                      <% for (let x of brandData) { %>
-                          <% if (x._id.toString() === data.brand.toString()) { %>
-                              <%= x.brand %>
-                              <% break; %>
+                      <% if (brandData) { %>
+                        <% for (let x of brandData) { %>
+                          <% console.log("Current x:", x); %>
+                          <% if (x && x._id && x._id.toString() === data.brand.toString()) { %>
+                            <%= x.brand %>
+                            <% break; %>
                           <% } %>
+                        <% } %>
                       <% } %>
-                  </td>
+                    </td>
+                    
                     <td>
                       <%= data.price %>
                     </td>

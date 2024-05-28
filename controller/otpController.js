@@ -1,6 +1,6 @@
 // controller/otpController.js
 const OTP = require('../model/otpmodel');
-const sendEmail = require('../utils/node_mailer'); // Change the import name here
+const sendEmail = require('../utils/node_mailer'); 
 const generateOTP = require('../utils/otpgenerator');
 
 const { AUTH_MAIL } = process.env;
@@ -14,6 +14,10 @@ const deleteExpiredOTP = async () => {
   }
 };
 
+if (OTP.length >= 1 ) {
+  console.log(OTP.length );
+  
+}
 setInterval(deleteExpiredOTP, 0.5 * 60 * 1000);
 
 const sendOTP = async (email) => {

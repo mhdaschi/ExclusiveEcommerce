@@ -1,14 +1,75 @@
 <%- include('header-admin')%>
-<link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.min.css">
-<link rel="stylesheet" href="https://cdn.datatables.net/searchbuilder/1.6.0/css/searchBuilder.dataTables.min.css">
-<link rel="stylesheet" href="https://cdn.datatables.net/datetime/1.5.1/css/dataTables.dateTime.min.css">
-<script src="https://code.jquery.com/jquery-3.7.0.js"></script>
+  <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.min.css">
+  <link rel="stylesheet" href="https://cdn.datatables.net/searchbuilder/1.6.0/css/searchBuilder.dataTables.min.css">
+  <link rel="stylesheet" href="https://cdn.datatables.net/datetime/1.5.1/css/dataTables.dateTime.min.css">
+  <script src="https://code.jquery.com/jquery-3.7.0.js"></script>
 
-<script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
-<script src="https://cdn.datatables.net/searchbuilder/1.6.0/js/dataTables.searchBuilder.min.js"></script>
-<script src="https://cdn.datatables.net/datetime/1.5.1/js/dataTables.dateTime.min.js"></script>
+  <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
+  <script src="https://cdn.datatables.net/searchbuilder/1.6.0/js/dataTables.searchBuilder.min.js"></script>
+  <script src="https://cdn.datatables.net/datetime/1.5.1/js/dataTables.dateTime.min.js"></script>
 
-<main>
+  <main>
+
+
+    <div class="shadow container p-3 mt-5 mb-5 bg-white rounded d-flex flex-wrap justify-content-around">
+      <!-- Cards Section -->
+      <div class="col-lg-4 col-md-6 col-sm-12">
+        <div class="container d-flex">
+          <div>
+            <i class="fas fa-check fa-2xl" style="color: #010906;"></i>
+          </div>
+          <div>
+            <p class="font-weight-normal font-size-14 text-muted"> Accepted Request</p>
+            <span class="font-weight-bold font-size-32 text-dark"><strong><%= approveReqCount %> Items</strong></span>
+            <a href="/admin/return/acceptedList">
+            <div class="d-flex">
+              <i class="fas fa-eye me-1" style="color: #020b07;"></i>
+              <p class="font-weight-bold font-size-12 text-dark"> View All</p>
+            </div>
+          </a>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-lg-4 col-md-6 col-sm-12">
+        <div class="container d-flex">
+          <div>
+            <i class="fas fa-undo fa-2xl" style="color: #010906;"></i>
+          </div>
+          <div>
+            <p class="font-weight-normal font-size-14 text-muted"> Total Return Request</p>
+            <span class="font-weight-bold font-size-32 text-dark"><strong><%= returnReqCount %> New Request</strong></span>
+
+         <a href="/admin/return/allRequest">
+          <div class="d-flex">
+            <i class="fas fa-eye me-1" style="color: #020b07;"></i
+            <p class="font-weight-bold font-size-12 text-dark"><span class="text-dark"> View All</span> </p>
+          </div>
+          </a>
+
+
+          </div>
+        </div>
+      </div>
+
+      <div class="col-lg-4 col-md-12">
+        <div class="container d-flex">
+          <div>
+            <i class="fas fa-times fa-2xl" style="color: #010906;"></i>
+          </div>
+          <div>
+            <p class="font-weight-normal font-size-14 text-muted"> Rejected Request</p>
+            <span class="font-weight-bold font-size-32 text-dark"><strong><%= rejectReqCount %> Items</strong></span>
+            <a href="/admin/return/rejectedList">
+            <div class="d-flex">
+              <i class="fas fa-eye me-1" style="color: #020b07;"></i>
+              <p class="font-weight-bold font-size-12 text-dark"> View All</p>
+            </div>
+          </a>
+          </div>
+        </div>
+      </div>
+    </div>
 
     <!-- Search form -->
     <div class="option d-flex align-items-center justify-content-around mt-3">
@@ -19,125 +80,157 @@
         </div>
       </form>
     </div>
-  <% if (orderData.length > 0) { %>
-    <!-- Matched search results -->
-    <div class="container-fluid mt-3">
-      <div class="row">
-        <div class="col-12 overflow-auto">
-          <table class="table table-bordered table-hover" id="order">
-            <thead class="table-dark">
-              <tr>
-                <th class="text-center">No</th>
-                <th class="text-center">Customer Name</th>
-                <th class="text-center">Order Date</th>
-                <th class="text-center">Order Status</th>
-                <th class="text-center">Payment Method</th>
-                <th class="text-center">Product</th>
-                <th class="text-center">Total Order Value</th>
-                <th class="text-center">Address</th>
-                <th class="text-center">Change Order Status</th>
-              </tr>
-            </thead>
-            <tbody>
-              <% orderData.forEach((data, i) => { %>
+    <% if (orderData.length> 0) { %>
+      <!-- Matched search results -->
+      <div class="container-fluid mt-3">
+        <div class="row">
+          <div class="col-12 overflow-auto">
+            <table class="table table-bordered table-hover" id="order">
+              <thead class="table-dark">
                 <tr>
-                  <td class="text-center"><%= i + 1 %></td>
-                  <td>
-                    <% for (let x of orderUserData) { %>
-                        <% if (x._id && data.userId && x._id.toString() === data.userId.toString()) { %>
-                            <%= x.username %>
-                            <% break; %>
-                        <% } %>
-                    <% } %>
-                </td>
-                               
-                 <td class="text-center"><%= data.orderAdded.toLocaleString() %></td>
-                  <td class="text-center">
-                    <span class="badge <%= data.orderStatus === 'Pending' ? 'bg-warning' : (data.orderStatus === 'Shipped' ? 'bg-info' : 'bg-success') %>">
-                      <%= data.orderStatus %>
-                    </span>
-                  </td>
-                  <td class="text-center"><%= data.PaymenMethod %></td>
-                  <td class="text-center">
-                    <% data.orderedproducts.forEach((element, i) => { %>
-                      <p class="mb-1"><strong>Product <%= i + 1 %>:</strong> <%= element.orderedItem %></p>
-                      <p class="mb-1"><strong>Colour:</strong> <%= element.colour %></p>
-                      <p class="mb-1"><strong>Quantity:</strong> <%= element.quantity %></p>
-                    <% }) %>
-                  </td>
-                  <td class="text-center"><%= data.orderTotalPrice %>.Rs</td>
-   
-                 
-                  <td>
-                    <% for (let x of orderUserData) { %>
-                        <% if (x._id && data.userId && x._id.toString() === data.userId.toString()) { %>
-                          <p class="mb-1"><strong>Name:</strong> <%= x.address[0].name %></p>
-                          <p class="mb-1"><strong>Address:</strong> <%= x.address[0].address %></p>
-                          <p class="mb-1"><strong>City:</strong> <%= x.address[0].city %></p>
-                          <p class="mb-1"><strong>State:</strong> <%= x.address[0].state %></p>
-                          <p class="mb-1"><strong>Pincode:</strong> <%= x.address[0].pincode %></p>
-                          <p class="mb-1"><strong>Phone:</strong> <%= x.address[0].phone %></p>
-                            <% break; %>
-                        <% } %>
-                    <% } %>
-                </td>
-                  <td class="text-center">
-                    <form action="/admin/order/status/<%- data._id %>" method="POST">
-                      <select class="form-select" name="orderStatus">
-                        <option value="Pending" <%= data.orderStatus === 'Pending' ? 'selected' : '' %>>Pending</option>
-                        <option value="Processing" <%= data.orderStatus === 'Processing' ? 'selected' : '' %>>Processing</option>
-
-                        <option value="Shipped" <%= data.orderStatus === 'Shipped' ? 'selected' : '' %>>Shipped</option>Processing
-                        <option value="Delivered" <%= data.orderStatus === 'Delivered' ? 'selected' : '' %>>Delivered</option>
-                      </select>
-                      <button type="submit" class="btn btn-danger mt-2">Change</button>
-                    </form>
-                  </td>
+                  <th class="text-center">No</th>
+                  <th class="text-center">Customer Name</th>
+                  <th class="text-center">Order Date</th>
+                  <th class="text-center">Order Status</th>
+                  <th class="text-center">Payment Method</th>
+                  <th class="text-center">Product</th>
+                  <th class="text-center">Total Order Value</th>
+                  <th class="text-center">Address</th>
+                  <th class="text-center">Change Order Status</th>
                 </tr>
-              <% }) %>
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                <% orderData.forEach((data, i)=> { %>
+                  <tr>
+                    <td class="text-center">
+                      <%= i + 1 %>
+                    </td>
+                    <td>
+                      <% for (let x of orderUserData) { %>
+                        <% if (x._id && data.userId && x._id.toString()===data.userId.toString()) { %>
+                          <%= x.username %>
+                            <% break; %>
+                              <% } %>
+                                <% } %>
+                    </td>
+
+                    <td class="text-center">
+                      <%= data.orderAdded.toLocaleString() %>
+                    </td>
+                    <td class="text-center">
+                      <span
+                        class="badge <%= data.orderStatus === 'Pending' ? 'bg-warning' : (data.orderStatus === 'Shipped' ? 'bg-info' : 'bg-success') %>">
+                        <%= data.orderStatus %>
+                      </span>
+                    </td>
+                    <td class="text-center">
+                      <%= data.PaymenMethod %>
+                    </td>
+                    <td class="text-center">
+                      <% data.orderedproducts.forEach((element, i)=> { %>
+                        <p class="mb-1"><strong>Product <%= i + 1 %>:</strong>
+                          <%= element.orderedItem %>
+                        </p>
+                        <p class="mb-1"><strong>Colour:</strong>
+                          <%= element.colour %>
+                        </p>
+                        <p class="mb-1"><strong>Quantity:</strong>
+                          <%= element.quantity %>
+                        </p>
+                        <% }) %>
+                    </td>
+                    <td class="text-center">
+                      <%= data.orderTotalPrice %>.Rs
+                    </td>
+
+
+                    <td>
+                      <% for (let x of orderUserData) { %>
+                        <% if (x._id && data.userId && x._id.toString()===data.userId.toString()) { %>
+                          <p class="mb-1"><strong>Name:</strong>
+                            <%= x.address[0].name %>
+                          </p>
+                          <p class="mb-1"><strong>Address:</strong>
+                            <%= x.address[0].address %>
+                          </p>
+                          <p class="mb-1"><strong>City:</strong>
+                            <%= x.address[0].city %>
+                          </p>
+                          <p class="mb-1"><strong>State:</strong>
+                            <%= x.address[0].state %>
+                          </p>
+                          <p class="mb-1"><strong>Pincode:</strong>
+                            <%= x.address[0].pincode %>
+                          </p>
+                          <p class="mb-1"><strong>Phone:</strong>
+                            <%= x.address[0].phone %>
+                          </p>
+                          <% break; %>
+                            <% } %>
+                              <% } %>
+                    </td>
+                    <td class="text-center">
+                      <form action="/admin/order/status/<%- data._id %>" method="POST">
+                        <select class="form-select" name="orderStatus">
+                          <option value="Pending" <%=data.orderStatus==='Pending' ? 'selected' : '' %>>Pending</option>
+                          <option value="Processing" <%=data.orderStatus==='Processing' ? 'selected' : '' %>>Processing
+                          </option>
+
+                          <option value="Shipped" <%=data.orderStatus==='Shipped' ? 'selected' : '' %>>Shipped</option>
+                          Processing
+                          <option value="Delivered" <%=data.orderStatus==='Delivered' ? 'selected' : '' %>>Delivered
+                          </option>
+                        </select>
+                        <button type="submit" class="btn btn-danger mt-2">Change</button>
+                      </form>
+                    </td>
+                  </tr>
+                  <% }) %>
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
-    </div>
-  <% } else { %>
-    <!-- Unmatched search results -->
-    <div class="text-center">
-      <h6 class="text-warning fw-bolder"><em>Sorry! No matches found</em></h6>
-    </div>
-  <% } %>
+      <% } else { %>
+        <!-- Unmatched search results -->
+        <div class="text-center">
+          <h6 class="text-warning fw-bolder"><em>Sorry! No matches found</em></h6>
+        </div>
+        <% } %>
 
 
 
-  <!-- Add new product button -->
-  <!-- <div class="d-flex justify-content-end mb-2 mx-5">
+          <!-- Add new product button -->
+          <!-- <div class="d-flex justify-content-end mb-2 mx-5">
     <form action="/admin/add/product" method="post">
       <button type="submit" class="btn btn-danger btn-block gradient-custom-4 text-white">ADD NEW PRODUCT</button>
     </form>
   </div> -->
 
-  <!-- Display messages -->
-  <p class="text-center" id="msg" style="
+          <!-- Display messages -->
+          <p class="text-center" id="msg" style="
     font-family: Poppins;
     font-size: 16px;
     font-weight: 400;
     line-height: 24px;
     letter-spacing: 0em;
     color: #44db74;
-    "><%=  %></p>
-</main>
+    ">
+            <%= %>
+          </p>
+  </main>
 
-<script>
-  $(document).ready(function () {
-    $('#order').DataTable();
-  });
-</script>
+  <script>
+    $(document).ready(function () {
+      $('#order').DataTable();
+    });
+  </script>
 
 
-<link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.min.css">
-    <link rel="stylesheet" href="https://cdn.datatables.net/searchbuilder/1.6.0/css/searchBuilder.dataTables.min.css">
-    <link rel="stylesheet" href="https://cdn.datatables.net/datetime/1.5.1/css/dataTables.dateTime.min.css">
+  <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.min.css">
+  <link rel="stylesheet" href="https://cdn.datatables.net/searchbuilder/1.6.0/css/searchBuilder.dataTables.min.css">
+  <link rel="stylesheet" href="https://cdn.datatables.net/datetime/1.5.1/css/dataTables.dateTime.min.css">
 
-  
 
-<%- include('admin_footer')%>
+
+  <%- include('admin_footer')%>

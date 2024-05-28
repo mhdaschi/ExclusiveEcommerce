@@ -202,4 +202,19 @@ router.get('/download/invoice/:id',userMiddleware,userController.downloadPdf)
 
 //User shop
 router.get('/user/shop',userMiddleware,userController.UserShop)
+
+//User About
+router.get('/user/about',userMiddleware,userController.About)
+
+//index About
+router.get('/about',existingadmin,userController.gtAbout)
+
+//index Contact
+router.get('/contact',existingadmin,userController.contact)
+
+//index Contact
+router.get('/user/contact',userMiddleware,userController.userContact)
+
+
+
 module.exports = router;

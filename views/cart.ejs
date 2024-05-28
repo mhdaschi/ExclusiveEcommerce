@@ -13,15 +13,15 @@
     <% } else { %>
     <div class="container p-5">
         <!-- Unordered list for the cart items -->
-        <ul class="responsive-table" style="list-style: none; padding: 0; margin: 0;">
+        <ul class="list-unstyled responsive-table" style="list-style: none; padding: 0; margin: 0;">
             <!-- List header for the cart items -->
-            <li class="table-header" style="background-color: #ffffff; box-shadow: 0px 0px 9px 0px rgba(0, 0, 0, 0.1); border-radius: 3px; padding: 25px 30px; display: flex; justify-content: space-between; margin-bottom: 25px;">
+            <li class="d-flex justify-content-between align-items-center bg-white shadow-sm rounded py-3 px-4 mb-4">
                 <!-- Column for Product -->
                 <div class="col col-1" style="flex-basis: 10%;">Product</div>
                 <!-- Column for Product Name -->
-                <div class="col col-2" style="flex-basis: 30%;">Product Name</div>
+                <div class="col col-2" style="flex-basis: 38%;">Product Name</div>
                 <!-- Column for Quantity -->
-                <div class="col col-3" style="flex-basis: 25%;">Quantity</div>
+                <div class="col col-3" style="flex-basis: 17%;">Quantity</div>
                 <!-- Column for Price -->
                 <div class="col col-4" style="flex-basis: 33%;">Price</div>
                 <!-- Empty Column -->
@@ -33,9 +33,9 @@
 
                 <% if (data.productDetails) { %>
                     <!-- List item for a cart item -->
-                    <li class="table-row" style="background-color: #ffffff; box-shadow: 0px 0px 9px 0px rgba(0, 0, 0, 0.1); border-radius: 3px; padding: 25px 30px; display: flex; justify-content: space-between; margin-bottom: 25px;">
+                    <li class="d-flex flex-wrap justify-content-between align-items-center bg-white shadow-sm rounded py-3 px-4 mb-4" style="background-color: #ffffff; box-shadow: 0px 0px 9px 0px rgba(0, 0, 0, 0.1); border-radius: 3px; padding: 25px 30px; display: flex; justify-content: space-between; margin-bottom: 25px;">
                         <!-- Column for Product Image -->
-                        <div class="col col-1" data-label="Job Id" style="flex-basis: 10%;">
+                        <div class="col-12 col-md-2 text-center mb-3 mb-md-0" data-label="Job Id" style="flex-basis: 10%;">
                             <!-- Link to the product details page -->
                             <a href="/user/product/details/<%- data.productDetails._id %>">
                                 <!-- Product image -->
@@ -53,21 +53,21 @@
                             </a>
                         </div>
                         <!-- Column for Quantity with buttons to change quantity -->
-                        <div class="col col-3 d-flex align-items-center" style="flex-basis: 25%;">
+                        <div class="col-12 col-md-2 d-flex justify-content-center align-items-center mb-3 mb-md-0" style="flex-basis: 25%;">
                             <!-- Button to decrease quantity -->
-                            <button class="btn btn-outline-dark me-3" id="negativeButton<%- data.productDetails._id %>" onclick="quantity('<%- data.productDetails._id %>','-1')" <%= (data.quantity <= 1) ? 'disabled' : '' %>>-</button>
+                            <button class="btn btn-outline-dark me-2" id="negativeButton<%- data.productDetails._id %>" onclick="quantity('<%- data.productDetails._id %>','-1')" <%= (data.quantity <= 1) ? 'disabled' : '' %>>-</button>
                             <!-- Span to display quantity -->
                             <span class="btn btn-dark px-3" id="value-<%- data.productDetails._id %>"><%= data.quantity %></span>
                             <!-- Button to increase quantity -->
-                            <button class="btn btn-outline-dark ms-3" id="plusButton<%- data.productDetails._id %>" onclick="quantity('<%- data.productDetails._id %>','1')" <%= (data.quantity == data.productDetails.stock) ? 'disabled' : '' %>>+</button>
+                            <button class="btn btn-outline-dark ms-2" id="plusButton<%- data.productDetails._id %>" onclick="quantity('<%- data.productDetails._id %>','1')" <%= (data.quantity == data.productDetails.stock) ? 'disabled' : '' %>>+</button>
                         </div>
                         <!-- Column for Price -->
-                        <div class="col col-4 d-flex align-items-center" data-label="Price" style="flex-basis: 25%;">
+                        <div class="col-12 col-md-2 text-center text-md-start mb-3 mb-md-0" data-label="Price" style="flex-basis: 25%;">
                             <!-- Display product total price -->
                             <p class="text-muted">Price:<strong id="price<%- data.productDetails._id %>"><%= data.productDetails.totalPrice %></strong></p>
                         </div>
                         <!-- Column for Remove button -->
-                        <div class="col col-5 d-flex align-items-center" style="flex-basis: 10%">
+                        <div class="col-12 col-md-2 text-center text-md-start" style="flex-basis: 10%">
                             <!-- Form to submit a request to remove the item from the cart -->
                             <form id="deleteFormCategories" action="/user/cartItems/remove/<%- data.productDetails._id %>" method="POST">
                                 <!-- Remove button -->

@@ -287,7 +287,7 @@ h2 {
               <div class="row">
                 <div class="col-md-4 d-flex justify-content-center justify-content-md-start mb-3 mb-md-0">
                   
-                    <a href="#" class="ms-md-2" style="font-family: 'Inter', sans-serif; font-weight:bold; font-size: 24px; text-decoration: none; color: #000000;">Exclusive</a>
+                    <a href="/user-home" class="ms-md-2" style="font-family: 'Inter', sans-serif; font-weight:bold; font-size: 24px; text-decoration: none; color: #000000;">Exclusive</a>
                   
                 </div>
           
@@ -329,30 +329,32 @@ h2 {
                     </div>
                   </div>
                 </div>
-                <nav class=" navbar navbar-expand-lg navbar-light bg-white ">
-                <div class="container justify-content-md-between ">
-                  <ul class="navbar-nav flex-row">
-                    <li class="nav-item me-2 me-lg-0">
-                      <a href="#" class="nav-link" role="button" data-bs-toggle="offcanvas" data-bs-target="#sidenav-1" aria-controls="sidenav-1" aria-haspopup="true">
-                        <i class="fas fa-bars me-1"></i>
-                        <span></span>
-                      </a>
-                    </li>
-                    <li class="nav-item me-2 me-lg-0 d-none d-md-inline-block">
-                      <a class="nav-link" href="/user-home">Home</a>
-                    </li>
-                    <li class="nav-item me-2 me-lg-0 d-none d-md-inline-block">
-                      <a class="nav-link" href="/user/shop">Shop</a>
-                    </li>
-                    <li class="nav-item me-2 me-lg-0 d-none d-md-inline-block">
-                      <a class="nav-link" href="#">About</a>
-                    </li>
-                   
-                  </ul>
-        
-                </div>
-              </nav>
+                <nav class="navbar navbar-expand-lg navbar-white bg-white">
+                  <div class="container-fluid">
+                    <a class="navbar-brand" href="#"></a>
+                    <button class="navbar-toggler" type="button" id="toggleButton" aria-controls="navbarNav"
+                      aria-expanded="false" aria-label="Toggle navigation">
+                      <span class="navbar-toggler-icon"></span>
+                    </button>
+                    <div class="collapse navbar-collapse" id="navbarNav">
+                      <ul class="navbar-nav">
+                        <li class="nav-item">
+                          <a class="nav-link" href="/user-home">Home</a>
+                        </li>
+                        <li class="nav-item">
+                          <a class="nav-link" href="/user/shop">Shop</a>
+                        </li>
+                        <li class="nav-item">
+                          <a class="nav-link" href="/user/about">About</a>
+                        </li>
+                        <li class="nav-item">
+                          <a class="nav-link" href="/user/contact">Contact</a>
+                        </li>
 
+                      </ul>
+                    </div>
+                  </div>
+                </nav> 
 
               </div>
             </div>
@@ -375,7 +377,20 @@ h2 {
     
   
     
-    
+      <script>
+        $(document).ready(function(){
+          $('#toggleButton').click(function(){
+            // Check if the menu is currently shown
+            var isMenuShown = $('.navbar-collapse').hasClass('show');
+            // Toggle the menu based on its current state
+            if(isMenuShown) {
+              $('.navbar-collapse').removeClass('show');
+            } else {
+              $('.navbar-collapse').addClass('show');
+            }
+          });
+        });
+      </script>
       
       
 </header>

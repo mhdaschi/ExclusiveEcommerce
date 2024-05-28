@@ -2,7 +2,8 @@ const user = require("../model/usermodel");
 const Categorie = require("../model/brandmodel");
 const Products = require("../model/productmodel");
 const Order = require("../model/ordermodel")
-const Coupon = require("../model/couponmodel")
+const Coupon = require("../model/couponmodel");
+const Wallet = require("../model/walletmodel");
 const moment = require('moment');
 const uploadDirectory = 'uploads';
 const fs = require('fs');
@@ -143,7 +144,7 @@ const topSellingBrand = await Order.aggregate([
     $lookup: {
       from: "brands",
       localField: "_id",
-      foreignField: "brand",
+      foreignField: "_id",
       as: "brand"
     }
   },
@@ -153,17 +154,12 @@ const topSellingBrand = await Order.aggregate([
       _id: 1,
       totalQuantity: 1,
       Revenue: 1,
-      brandImage: "$brand.image" // Rename brandImage to the actual image field from the brand model
+      brandImage: "$brand.image" 
     }
   },
   { $sort: { totalQuantity: -1 } },
   { $limit: 10 }
 ]);
-
-
-
-
-
 
       res.render("admin-dash",{TotalOrder,TotalUser,TotalProduct,inventoryData,salesData,totalRevenue,topSellingProducts,topSellingBrand});
       
@@ -179,77 +175,101 @@ const topSellingBrand = await Order.aggregate([
 
   // sales Report download 
   SalesReportDownload: async (req, res) => {
+  
     const { startDate, endDate } = req.body;
     console.log('Received request for sales report with startDate:', startDate, 'and endDate:', endDate);
 
     try {
-        // Query orders between the specified dates
-        const orders = await Order.find({
-            orderAdded: {
-                $gte: new Date(startDate),
-                $lte: new Date(endDate)
-            }
-        });
-
-        // Initialize PDF document
-        const document = new jsPDF();
-
-        // Set document properties
-        document.setProperties({
-            title: 'Sales Report',
-            subject: `Sales data between ${startDate} and ${endDate}`,
-            author: 'Your Company Name',
-            keywords: 'sales, report, data',
-            creator: 'Your Company Name'
-        });
-
-        // Set document header
-        document.setFontSize(18);
-        document.text('Sales Report', 14, 22);
-
-        // Generate sales report table
-        const salesData = orders.map(order => {
-          const orderedItems = [];
-      
-          order.orderedproducts.forEach(product => {
-              orderedItems.push(product.orderedItem);
-          });
-      
-          return [
-              order._id.toString(),
-              order.nameuser.toString(),
-              orderedItems.join(', '), // Join orderedItems array into a string
-              order.orderTotalPrice.toString(),
-              moment(order.orderAdded).format('YYYY-MM-DD')
-          ];
+      // Query orders between the specified dates
+      const orders = await Order.find({
+          orderAdded: {
+              $gte: new Date(startDate),
+              $lte: new Date(endDate)
+          }
       });
+
+      // Query all users
+      const users = await user.find();
       
+      // Create a map from userId to userName
+      const userIdToNameMap = new Map();
+      users.forEach(user => {
+          userIdToNameMap.set(user._id.toString(), user.username); 
+      });
 
-        // Set table headers
-        const headers = [['Order ID', 'name user', 'Products', 'Total Price', 'Date']];
-        const tableData = headers.concat(salesData);
+      // Initialize PDF document
+      const document = new jsPDF();
 
-        // Add table to PDF using autotable plugin
-        document.autoTable({
-            head: tableData.slice(0, 1),
-            body: tableData.slice(1)
-        });
+      // Set document properties
+      document.setProperties({
+          title: 'Sales Report',
+          subject: `Sales data between ${startDate} and ${endDate}`,
+          author: 'Your Company Name',
+          keywords: 'sales, report, data',
+          creator: 'Your Company Name'
+      });
 
-        const pdfFilename = 'sales-report.pdf'; // Assuming the PDF is generated in the current directory
+      // Set document header
+      document.setFontSize(18);
+      document.text('Sales Report', 14, 22);
 
-        // Save the PDF file
+      // Generate sales report table
+      const salesData = orders.map(order => {
+          try {
+              const orderedItems = [];
 
-        const downloadsPath = path.join(os.homedir(), 'Downloads');
-        const absolutePath = path.join(downloadsPath, pdfFilename);
+              order.orderedproducts.forEach(product => {
+                  if (product && product.orderedItem) {
+                      orderedItems.push(product.orderedItem);
+                  }
+              });
 
-        document.save(absolutePath);
+              return [
+                  order._id ? order._id.toString() : 'N/A',
+                  order.userId ? userIdToNameMap.get(order.userId.toString()) || 'N/A' : 'N/A',
+                  orderedItems.join(', '), // Join orderedItems array into a string
+                  order.orderTotalPrice ? order.orderTotalPrice.toString() : 'N/A',
+                  order.orderAdded ? moment(order.orderAdded).format('YYYY-MM-DD') : 'N/A'
+              ];
+          } catch (error) {
+              console.error('Error processing order:', order, error);
+              return ['N/A', 'N/A', 'N/A', 'N/A', 'N/A'];
+          }
+      });
 
-        // Send the PDF file as response
-        res.sendFile(absolutePath);
-    } catch (error) {
-        console.error('Error downloading sales report:', error);
-        res.status(500).json({ error: 'Internal server error' });
-    }
+      // Set table headers
+      const headers = [['Order ID', 'User Name', 'Products', 'Total Price', 'Date']];
+      const tableData = headers.concat(salesData);
+
+      // Add table to PDF using autotable plugin
+      document.autoTable({
+          head: tableData.slice(0, 1),
+          body: tableData.slice(1)
+      });
+
+      // Define PDF file name and path
+      const pdfFilename = 'sales-report.pdf';
+      const downloadsPath = path.join(os.homedir(), 'Downloads');
+      const absolutePath = path.join(downloadsPath, pdfFilename);
+
+      // Save the PDF file
+      document.save(absolutePath);
+
+      // Send the PDF file as response
+      res.sendFile(absolutePath, err => {
+          if (err) {
+              console.error('Error sending file:', err);
+              res.status(500).json({ error: 'Failed to send file' });
+          } else {
+              console.log('Sales report sent successfully.');
+          }
+      });
+  } catch (error) {
+      console.error('Error downloading sales report:', error);
+      res.status(500).json({ error: 'Internal server error' });
+  }
+
+
 },
 // Dashusers route
 Dashusers: async (req, res) => {
@@ -257,9 +277,7 @@ Dashusers: async (req, res) => {
     const useData = await user.find().sort({ username: 1, email: 1, status: 1 });
     const msg = req.query.err; 
     var i = 0;
-    req.session.adminLoggedin = true
-
-  
+    req.session.adminLoggedin = true  
     res.render("user-list", { useData, i, msg });
     
   } catch (error) {
@@ -348,7 +366,18 @@ Serchuser: async (req, res) => {
       const { Brand } = req.body;
   
       const productImage = req.file ? req.file.filename : "";
-      const existCategories = await Categorie.find({ brand: Brand });
+      const existCategories = await Categorie.find({},{_id:0,brand:1});
+      const firstLetterLowerCaseStr1 = Brand.toLowerCase();
+
+      for (let index = 0; index < existCategories.length; index++) {
+          const existingBrand = existCategories[index].brand.toLowerCase();
+          
+          if (firstLetterLowerCaseStr1 === existingBrand) {
+              return res.redirect("/admin/Categories?message=Category already exists");
+          }
+      }
+      
+      
   
       if (existCategories.length > 0) {
         res.redirect("/admin/Categories?message=already exists entered category");
@@ -358,7 +387,6 @@ Serchuser: async (req, res) => {
           image: productImage,
         });
   
-        console.log(newBrand);
         res.redirect("/admin/Categories?err= Brand Added");
       }
   
@@ -471,7 +499,6 @@ Serchuser: async (req, res) => {
       // Fetch brand data for each product
       const brandDataPromises = useProduct.map(product => Categorie.findById(product.brand));
       const brandData = await Promise.all(brandDataPromises);
-      console.log("brandData",brandData);
 
 
 
@@ -719,9 +746,13 @@ Serchuser: async (req, res) => {
       let i = 0
       const orderData = await Order.find()
       const orderUserData = await user.find()
+      const returnReqCount = await Order.find({orderStatus:"Processing"}).count()
+      const approveReqCount = await Order.find({orderStatus:"Returned"}).count()
+      const rejectReqCount = await Order.find({orderStatus:"Returned Rejected"}).count()
+
 
       
-      res.render('adminOrder',{orderData,i,orderUserData})
+      res.render('adminOrder',{orderData,i,orderUserData,returnReqCount,approveReqCount,rejectReqCount})
       
     } catch (error) {
       console.error(error);
@@ -741,6 +772,111 @@ Serchuser: async (req, res) => {
       
     }
   },
+  allReturnReq: async (req,res)=>{
+    try {
+      let i = 0
+      const returnReq = await Order.find({ orderStatus: "Processing" });
+      const orderUserData = await user.find()
+
+
+      res.render('adminReturnReq',{returnReq,orderUserData,i})
+    } catch (error) {
+      console.error(error);
+      res.status(500).render('500')
+      
+    }
+  },
+  returnApprove:async(req,res)=>{
+    try {
+      const id = req.params.id;
+      const orderDeteals = await Order.find({_id:id})
+      const total = orderDeteals[0].orderTotalPrice;
+      const currentDate = new Date();
+      const formattedDate = currentDate.toISOString();
+      const userId = orderDeteals[0].userId
+      const status = "Returned"
+  
+      const walletdata = await Wallet.updateMany(
+          { userId: userId },
+          {
+              $push: {
+                  "wallet": {
+                      balanceamount: total,
+                      transactionType: 'credit',
+                      Timestamp: formattedDate,
+                      reason:"Return Amount Refund",
+                      description: `${total}Rs Amount credited To Wallet`
+                  }
+              },
+              $inc: {
+                  "wallettotalAmount": parseInt(total)
+              }
+          }
+      );
+  
+      const product = await Order.findOne({ _id: id }, { orderedproducts: 1 });
+  
+      for (const item of product.orderedproducts) {
+        await Products.updateOne({ product_name: item.orderedItem }, { $inc: { stock: item.quantity } });
+      }
+      await Order.updateOne({_id:id},{$set:{orderStatus:status}})
+      res.json({ success: true});
+      
+    } catch (error) {
+      console.error(error);
+      res.status(500).render('500');
+    }
+
+  },
+
+  returnReject: async (req,res)=>{
+    try {
+      const orderId = req.params.id;
+      console.log("orderId",orderId);
+      const rejectReason = req.body.rejectReason;
+
+      const status = "Returned Rejected"
+      await Order.updateOne({_id:orderId},{$set:{orderStatus:status,ReturnRejectReason:rejectReason}})
+      res.json({ success: true});
+    
+    } catch (error) {
+      console.error(error);
+      res.status(500).render('500');
+    }
+
+  },
+
+  allAcceptedReq: async (req,res)=>{
+    try {
+      const orderData = await Order.find()
+      const orderUserData = await user.find()
+      const approveAllReq = await Order.find({orderStatus:"Returned"})
+      res.render('adminReturnAccept',{orderData,orderUserData,approveAllReq})
+
+
+    } catch (error) {
+      console.error(error);
+      res.status(500).render('500');
+    }
+
+  },
+
+  allRejectedReq: async (req,res)=>{
+    try {
+      const orderData = await Order.find()
+      const orderUserData = await user.find()
+      const rejectedReq = await Order.find({orderStatus:"Returned Rejected"})
+      res.render('adminReturnReject',{orderData,orderUserData,rejectedReq})
+
+
+    } catch (error) {
+      console.error(error);
+      res.status(500).render('500');
+    }
+  },
+  
+
+
   Coupon: async (req,res)=>{
     try {
       const couponData =  await Coupon.find()

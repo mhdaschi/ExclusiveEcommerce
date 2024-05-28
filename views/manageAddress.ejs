@@ -5,7 +5,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Your Page Title</title>
+    <title>Exclusive</title>
     <!-- Add your CSS links and styles here -->
 
     <!-- Bootstrap CSS link -->
@@ -23,7 +23,7 @@
 
 <body>
 
-    <header style="margin-bottom: 240px;">
+    <header style="margin-bottom: 200px;" >
         <div class="fixed-top p-3 text-center bg-white border-bottom ">
             <div class="container">
                 <div class="row">
@@ -32,22 +32,19 @@
                     </div>
 
                     <div class="col-md-4">
-                        <form class="d-flex input-group w-auto my-auto mb-3 mb-md-0">
-                            <input autocomplete="off" type="search" class="form-control rounded" placeholder="Search" />
-                            <span class="input-group-text border-0 d-none d-lg-flex"><i class="fas fa-search"></i></span>
+                        <form class="d-flex input-group w-auto my-auto mb-3 mb-md-0" action="/user/product/serch" method="post">
+                          <input autocomplete="off" name="serchuser" id="serchuser" type="search" class="form-control rounded" placeholder="Search" />
+                          <span class="input-group-text border-0 d-none d-lg-flex"><i class="fas fa-search"></i></span>
                         </form>
-                    </div>
+                      </div>
 
                     <div class="col-md-4 d-flex justify-content-center justify-content-md-end align-items-center">
                         <div class="d-flex">
                             <a class="text-reset me-3" href="/user/cart">
                                 <span><i class="fas fa-shopping-cart"></i></span>
-                                <span class="badge rounded-pill bg-danger">1</span>
+                                <span class="badge rounded-pill bg-danger"><%- cartNo %></span>
                             </a>
 
-                            <a class="text-reset me-3" href="#">
-                                <span><i class="fa-regular fa-heart" style="color: #00060f;"></i></span>
-                            </a>
                         </div>
 
                         <!-- User Dropdown -->
@@ -58,37 +55,65 @@
                             <!-- Dropdown menu for user profile -->
                             <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdownMenuLink">
                                 <li><a class="dropdown-item" href="/user/profile">My profile</a></li>
-                                <li><a class="dropdown-item" href="#">Settings</a></li>
                                 <li><a class="dropdown-item" href="/logout">Logout</a></li>
                             </ul>
                         </div>
                     </div>
 
                     <!-- Navbar -->
-                    <nav class="navbar navbar-expand-lg navbar-light bg-white">
-                        <div class="container justify-content-md-between">
-                            <ul class="navbar-nav flex-row">
-                                <li class="nav-item me-2 me-lg-0">
-                                    <a href="#" class="nav-link" role="button" data-bs-toggle="offcanvas" data-bs-target="#sidenav-1" aria-controls="sidenav-1" aria-haspopup="true">
-                                        <i class="fas fa-bars me-1"></i>
-                                        <span></span>
-                                    </a>
-                                </li>
-                                <li class="nav-item me-2 me-lg-0 d-none d-md-inline-block">
-                                    <a class="nav-link" href="/user-home">Home</a>
-                                </li>
-                                <li class="nav-item me-2 me-lg-0 d-none d-md-inline-block">
-                                    <a class="nav-link" href="#">Contact</a>
-                                </li>
-                                <li class="nav-item me-2 me-lg-0 d-none d-md-inline-block">
-                                    <a class="nav-link" href="#">About</a>
-                                </li>
+                    <nav class="navbar navbar-expand-lg navbar-white bg-white">
+                        <div class="container-fluid">
+                          <a class="navbar-brand" href="#"></a>
+                          <button class="navbar-toggler" type="button" id="toggleButton" aria-controls="navbarNav"
+                            aria-expanded="false" aria-label="Toggle navigation">
+                            <span class="navbar-toggler-icon"></span>
+                          </button>
+                          <div class="collapse navbar-collapse" id="navbarNav">
+                            <ul class="navbar-nav">
+                              <li class="nav-item">
+                                <a class="nav-link" href="/user-home">Home</a>
+                              </li>
+                              <li class="nav-item">
+                                <a class="nav-link" href="/user/shop">Shop</a>
+                              </li>
+                              <li class="nav-item">
+                                <a class="nav-link" href="/user/about">About</a>
+                              </li>
+                              <li class="nav-item">
+                                <a class="nav-link" href="/user/contact">Contact</a>
+                              </li>
+      
                             </ul>
+                          </div>
                         </div>
-                    </nav>
+                      </nav> 
                 </div>
             </div>
         </div>
+          <!-- Navbar -->
+    <nav class=" navbar navbar-expand-lg navbar-light bg-white ">
+        <!-- Container wrapper -->
+        <div class="container justify-content-center justify-content-md-between">
+          <!-- Left links -->
+                  </div>
+      </nav>
+    
+  
+    
+      <script>
+        $(document).ready(function(){
+          $('#toggleButton').click(function(){
+            // Check if the menu is currently shown
+            var isMenuShown = $('.navbar-collapse').hasClass('show');
+            // Toggle the menu based on its current state
+            if(isMenuShown) {
+              $('.navbar-collapse').removeClass('show');
+            } else {
+              $('.navbar-collapse').addClass('show');
+            }
+          });
+        });
+      </script>
     </header>
 
     <section class="bg-white my-5" >
@@ -191,65 +216,58 @@
                       <div class="d-flex justify-content-between">
                       </div>
                       <div class="mt-3">
-                        <a href="#" class="btn btn-danger w-100 shadow-0 mb-2" data-toggle="modal" data-target="#exampleModal"
-                          data-whatever="@fat">Add Address</a>
-                        <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-                          aria-hidden="true">
-                          <div class="modal-dialog" role="document">
-                            <div class="modal-content">
-                              <div class="modal-header">
-                                <h5 class="modal-title" id="exampleModalLabel">New message</h5>
-                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                  <span aria-hidden="true">&times;</span>
-                                </button>
-                              </div>
-                              <div class="modal-body">
-                                <form action="/user/addAddress" method="post">
-                                  <div class="form-group">
-                                    <label for="recipient-name" class="col-form-label">Name:</label>
-                                    <input type="text" name="name" class="form-control" id="recipient-name" >
-                                    <div id="name-validation-message" class="text-danger"></div>
-
-                                  </div>
-                                  <div class="form-group">
-                                    <label for="recipient-address" class="col-form-label">Address:</label>
-                                    <input type="text" name="address" class="form-control" id="recipient-address" >
-                                    <div id="address-validation-message" class="text-danger"></div>
-
-                                  </div>
-                                  <div class="form-group">
-                                    <label for="recipient-city" class="col-form-label">City:</label>
-                                    <input type="text" name="city" class="form-control" id="recipient-city" >
-                                    <div id="city-validation-message" class="text-danger"></div>
-
-                                  </div>
-                                  <div class="form-group">
-                                    <label for="recipient-pincode" class="col-form-label">Pincode:</label>
-                                    <input type="text" name="pincode" class="form-control" id="recipient-pincode"
-                                      oninput="this.value = this.value.replace(/[^0-9]/g, '');" pattern="[0-9]*" maxlength="6"
-                                      >
-                                      <div id="pincode-validation-message" class="text-danger"></div>
+                        <a href="#" class="btn btn-danger w-100 shadow-0 mb-2" onclick="return addAddress('<%= userData.address.length %>')">Add Address</a>
+                        <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                            <div class="modal-dialog" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="exampleModalLabel">New Address</h5>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
                                     </div>
-                                  <div class="form-group">
-                                    <label for="recipient-state" class="col-form-label">State:</label>
-                                    <input type="text" name="state" class="form-control" id="recipient-state" >
-                                    <div id="state-validation-message" class="text-danger"></div>
-
-                                  </div>
-                                  <div class="form-group">
-                                    <label for="recipient-number" class="col-form-label">Mobile Number:</label>
-                                    <input type="number" name="number" class="form-control" id="recipient-number" >
-                                    <div id="number-validation-message" class="text-danger"></div>
-                                  </div>
-                              </div>
-                              <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                <button type="submit" id="submit-button" class="btn btn-danger" onclick="return validateForm()">Add</button>
-                              </div>
-                              </form>
+                                    <div class="modal-body">
+                                        <form action="/user/addAddress" method="post" onsubmit="return validateForm()">
+                                            <div class="form-group">
+                                                <label for="recipient-name" class="col-form-label">Name:</label>
+                                                <input type="text" name="name" class="form-control" id="recipient-name">
+                                                <div id="name-validation-message" class="text-danger"></div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="recipient-address" class="col-form-label">Address:</label>
+                                                <input type="text" name="address" class="form-control" id="recipient-address">
+                                                <div id="address-validation-message" class="text-danger"></div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="recipient-city" class="col-form-label">City:</label>
+                                                <input type="text" name="city" class="form-control" id="recipient-city">
+                                                <div id="city-validation-message" class="text-danger"></div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="recipient-pincode" class="col-form-label">Pincode:</label>
+                                                <input type="text" name="pincode" class="form-control" id="recipient-pincode" oninput="this.value = this.value.replace(/[^0-9]/g, '');" pattern="[0-9]*" maxlength="6">
+                                                <div id="pincode-validation-message" class="text-danger"></div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="recipient-state" class="col-form-label">State:</label>
+                                                <input type="text" name="state" class="form-control" id="recipient-state">
+                                                <div id="state-validation-message" class="text-danger"></div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="recipient-number" class="col-form-label">Mobile Number:</label>
+                                                <input type="tel" name="number" class="form-control" id="recipient-number" pattern="[0-9]{10}" maxlength="10">
+                                                <div id="number-validation-message" class="text-danger"></div>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                                <button type="submit" id="submit-button" class="btn btn-danger">Add</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
                             </div>
-                          </div>
                         </div>
+                        
                         <a href="/user/profile" class="btn btn-light w-100 border mt-2">Back To Home</a>
                       </div>
                     </div>
@@ -263,27 +281,63 @@
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script>
+       function addAddress(length) {
+    if (length >= 3) {
+        Swal.fire({
+            icon: 'warning',
+            title: 'Warning',
+            text: 'You already have the maximum allowed number of addresses.',
+            confirmButtonColor: '#3085d6',
+            confirmButtonText: 'OK'
+        });
+        return false; // Prevent the modal from showing
+    } else {
+        $('#exampleModal').modal('show');
+    }
+    return false; // Prevent the default link action
+}
+
+    </script>
+    
     <script>
         function deleteAddress(addressId) {
-            if (confirm('Are you sure you want to delete this address?')) {
-                fetch(`/user/deleteAddress/${addressId}`, {
-                    method: 'POST',
-                })
-                .then((response) => response.json())
-                .then((data) => {
-                    console.log(data);
-                    if (data.message === 'Address deleted successfully') {
-                        console.log('Reloading page...');
-                        location.reload();
-                    } else {
-                        console.error('Error deleting address:', data.message);
-                    }
-                })
-                .catch((error) => {
-                    console.error('Error deleting address:', error);
+            Swal.fire({
+        title: 'Are you sure?',
+        text: 'Are you sure you want to delete this address?',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, delete it!'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            fetch(`/user/deleteAddress/${addressId}`, {
+                method: 'POST',
+            })
+            .then(() => {
+
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Success',
+                    text: 'Address deleted successfully',
+                }).then(() => {
+                    window.location.reload();
                 });
-            }
+            })
+            .catch((error) => {
+                console.error('Error deleting address:', error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: 'Error deleting address: ' + error.message,
+                });
+            });
         }
+    });
+}
     
         function openEditAddressModal(addressId) {
             $('#editAddressModal' + addressId).modal('show');
@@ -304,24 +358,24 @@
       var isValid = true;
 
       // Name Validation
-      if (name.length === 0) {
-          document.getElementById('name-validation-message' + editId).innerText = 'Name is required.';
+      if (name.length === 0 || !/^[a-zA-Z\s]+$/.test(name)) {
+          document.getElementById('name-validation-message' + editId).innerText = 'Invalid name.';
           isValid = false;
       } else {
           document.getElementById('name-validation-message' + editId).innerText = '';
       }
 
       // Address Validation
-      if (address.length === 0) {
-          document.getElementById('address-validation-message' + editId).innerText = 'Address is required.';
+      if (address.length === 0 ) {
+          document.getElementById('address-validation-message' + editId).innerText = 'Invalid Address.';
           isValid = false;
       } else {
           document.getElementById('address-validation-message' + editId).innerText = '';
       }
 
       // City Validation
-      if (city.length === 0) {
-          document.getElementById('city-validation-message' + editId).innerText = 'City is required.';
+      if (city.length === 0 || !/^[a-zA-Z\s]+$/.test(city)) {
+          document.getElementById('city-validation-message' + editId).innerText = 'Invalid City .';
           isValid = false;
       } else {
           document.getElementById('city-validation-message' + editId).innerText = '';
@@ -335,21 +389,26 @@
           document.getElementById('pincode-validation-message' + editId).innerText = '';
       }
 
-      // State Validation
-      if (state.length === 0) {
-          document.getElementById('state-validation-message' + editId).innerText = 'State is required.';
-          isValid = false;
-      } else {
-          document.getElementById('state-validation-message' + editId).innerText = '';
-      }
+        // State Validation
+        if (state.length === 0 || !/^[a-zA-Z\s]+$/.test(state)) {
+            document.getElementById('state-validation-message' + editId).innerText = 'Invalid State.';
+            isValid = false;
+        } else {
+            document.getElementById('state-validation-message' + editId).innerText = '';
+        }
 
-      // Number Validation
-      if (number.length === 0) {
-          document.getElementById('number-validation-message' + editId).innerText = 'Number is required.';
-          isValid = false;
-      } else {
-          document.getElementById('number-validation-message' + editId).innerText = '';
-      }
+
+            // Number Validation
+            if (number.length === 0) {
+                document.getElementById('number-validation-message' + editId).innerText = 'Number is required.';
+                isValid = false;
+            } else if (number.length < 9) {
+                document.getElementById('number-validation-message' + editId).innerText = 'Number should be at least 10 digits long.';
+                isValid = false;
+            } else {
+                document.getElementById('number-validation-message' + editId).innerText = '';
+            }
+
 
       return isValid;
   }
@@ -368,8 +427,8 @@
           var isValid = true;
 
           // Name Validation
-          if (name.length === 0) {
-              document.getElementById('name-validation-message').innerText = 'Name is required.';
+          if (name.length === 0 || !/^[a-zA-Z\s]+$/.test(name)) {
+              document.getElementById('name-validation-message').innerText = 'Invalid Name.';
               isValid = false;
           } else {
               document.getElementById('name-validation-message').innerText = '';
@@ -377,15 +436,15 @@
 
           // Address Validation
           if (address.length === 0) {
-              document.getElementById('address-validation-message').innerText = 'Address is required.';
+              document.getElementById('address-validation-message').innerText = 'Invalid Address.';
               isValid = false;
           } else {
               document.getElementById('address-validation-message').innerText = '';
           }
 
           // City Validation
-          if (city.length === 0) {
-              document.getElementById('city-validation-message').innerText = 'City is required.';
+          if (city.length === 0 || !/^[a-zA-Z\s]+$/.test(city) ) {
+              document.getElementById('city-validation-message').innerText = 'Invalid City.';
               isValid = false;
           } else {
               document.getElementById('city-validation-message').innerText = '';
@@ -400,20 +459,24 @@
           }
 
           // State Validation
-          if (state.length === 0) {
-              document.getElementById('state-validation-message').innerText = 'State is required.';
+          if (state.length === 0 || !/^[a-zA-Z\s]+$/.test(state)) {
+              document.getElementById('state-validation-message').innerText = 'Invalid State.';
               isValid = false;
           } else {
               document.getElementById('state-validation-message').innerText = '';
           }
 
           // Number Validation
-          if (number.length === 0) {
-              document.getElementById('number-validation-message').innerText = 'Number is required.';
-              isValid = false;
-          } else {
-              document.getElementById('number-validation-message').innerText = '';
-          }
+            if (number.length === 0) {
+                document.getElementById('number-validation-message').innerText = 'Number is requred.';
+                isValid = false;
+            } else if (number.length < 9) {
+                document.getElementById('number-validation-message').innerText = 'Number should be at least 10 digits long.';
+                isValid = false;
+            } else {
+                document.getElementById('number-validation-message').innerText = '';
+            }
+
 
           return isValid;
       }
@@ -421,8 +484,7 @@
 
 
 
-    
-    
+
 
     <!-- Include your footer partial -->
     <%- include('footer') %>

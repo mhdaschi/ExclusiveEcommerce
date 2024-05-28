@@ -34,7 +34,7 @@ const userController = {
     try {
       const useProduct = await Products.find().limit(10);
       const use2Product = await Products.find().skip(10)
-      const useBrand = await Categorie.find({status:true}).limit(3);
+      const useBrand = await Categorie.find({status:true}).limit(4);
 
       const useflagship = await Products.find({ phone_type:"Flagship phones",status:true})
       const useCameraphones = await Products.find({phone_type:"Camera phones"})
@@ -117,7 +117,7 @@ const userController = {
         res.redirect("/user/otp-home");
       }
     } else {
-      res.redirect("/sign-up"); // Redirect to sign-up if session variables are not set
+      res.redirect("/sign-up"); 
     }
   },
   resendOtp: async (req, res) => {
@@ -251,18 +251,14 @@ const userController = {
     try {
       const id = req.params.id;
       const item = await Products.findOne({ _id: id });
-      
-      
+      const brand = await Categorie.findById(item.brand);
 
       if (!item) {
         return res.status(404).send("page not found");
       }
       const loggedUser=await global.findLoggedUser(req.session.user)
       const cartNo = await global.cartNo(loggedUser[0]._id)
-
-
-
-      res.render("product-deteals", { item ,cartNo});
+      res.render("product-deteals", { item ,cartNo,brand});
     } catch (error) {
       console.log(error);
       res.status(500).render('500')
@@ -309,7 +305,6 @@ GetCart: async (req, res) => {
                   { $toDouble: '$productDetails.price' },
               ],
           },
-          // 'productDetails.couponDiscount': discountPrice,
       },
       },
     ];
@@ -353,7 +348,6 @@ GetCart: async (req, res) => {
     const cartNo = await global.cartNo(loggedUser[0]._id)
 
     let success = false
-    console.log(totalPrice,'------------------------------------');
     res.render('cart', { cartItems, totalPrice, discountPrice ,cartNo,CouponCode,success});
   } catch (error) {
     console.error('Error in GetCart:', error);
@@ -979,6 +973,7 @@ res.json({
                     balanceamount: orderedprice,
                     transactionType: 'Debit',
                     Timestamp: formattedDate,
+                    reason:"Product Purchased",
                     description: `${orderedprice}Rs Amount Debited To Wallet`
                   }
                 },
@@ -1215,6 +1210,7 @@ CancelOrder: async (req, res) => {
               balanceamount: balance,
               transactionType: 'credit',
               Timestamp: formattedDate,
+              reason:"Cancelled Amount Refunded",
               description: `${balance}Rs Amount credited To Wallet`
             }
           },
@@ -1235,7 +1231,7 @@ CancelOrder: async (req, res) => {
       }
 
       res.json({ success: true, order });
-    } else if (order.PaymenMethod === 'Wallet Payment') {
+    } else if (order.PaymenMethod == 'Wallet Payment') {
       const currentDate = new Date();
       const formattedDate = currentDate.toISOString();
 
@@ -1247,6 +1243,8 @@ CancelOrder: async (req, res) => {
               balanceamount: balance,
               transactionType: 'credit',
               Timestamp: formattedDate,
+              reason:"Cancelled Amount Refunded",
+
               description: `${balance}Rs Amount credited To Wallet`
             }
           },
@@ -1286,50 +1284,13 @@ CancelOrder: async (req, res) => {
 returnOrder: async (req, res) => {
   try {
     const ID = req.params.id;
-      const data = "Returned";
-      const email = req.session.user;
-      const userId = req.session.userId;
-
+      const data = "Processing";
       const order = await Order.findOne({ _id: ID });
-      const total = order.orderTotalPrice;    
-         
-      if (order.PaymenMethod == 'Razorpay' || order.PaymenMethod == 'COD' || order.PaymenMethod == 'Wallet Payment' ) {
-          console.log("Found Order:", order);
-
-          const currentDate = new Date();
-          const formattedDate = currentDate.toISOString();
-
-          const walletdata = await Wallet.updateMany(
-              { userId: userId },
-              {
-                  $push: {
-                      "wallet": {
-                          balanceamount: total,
-                          transactionType: 'credit',
-                          Timestamp: formattedDate,
-                          description: `${total}Rs Amount credited To Wallet`
-                      }
-                  },
-                  $inc: {
-                      "wallettotalAmount": parseInt(total)
-                  }
-              }
-          );
-
-          const cancel = await Order.updateOne({ _id: ID }, { $set: { orderStatus: data } });
-
-         
-          const product = await Order.findOne({ _id: ID }, { orderedproducts: 1 });
-
-          for (const item of product.orderedproducts) {
-            await Products.updateOne({ product_name: item.orderedItem }, { $inc: { stock: item.quantity } });
-          }
-
-
-         
+      let returnReason = req.body.returnReason  
+      await Order.updateOne({ _id: ID }, { $set: { orderStatus: data,Returnreason: returnReason} });
 
           res.json({ success: true, order });
-      }
+      
   } catch (error) {
       console.error("Error cancel order:", error);
       res.status(500).render('500')
@@ -1395,7 +1356,6 @@ ApplyCoupon: async (req, res) => {
  
       let discountPrice = coupendiscount.discount;
 
-      console.log("discountPrice",discountPrice);
       
 
       const cartItemsPipeline = [
@@ -1430,14 +1390,12 @@ ApplyCoupon: async (req, res) => {
                         { $toDouble: '$productDetails.price' },
                     ],
                 },
-                // 'productDetails.couponDiscount': discountPrice,
             },
         },
     ];
     
 
     const cartItems = await Cart.aggregate(cartItemsPipeline);
-    console.log("23456788888888888",cartItems)
       const cartAmount = req.session.totalPrice;
       if (coupendiscount.Discount_price >= cartAmount[0].total) {
           res.redirect("/user/cart?msg=Not%20Available%20for%20This%20Order%20Amount");
@@ -1477,7 +1435,6 @@ ApplyCoupon: async (req, res) => {
         ];
         
         const totalPrice = await Cart.aggregate(totalPricePipeline);
-        console.log("------------",totalPrice,"====================");
           req.session.coupendiscount = coupendiscount.discount;
           req.session.totalPrice = totalPrice;
 
@@ -1835,9 +1792,9 @@ viewAllFlagkiller: async (req,res)=>{
 browsebybrand: async (req,res)=>{
   try {
     const Id = req.params.id
-    const category = await Categorie.findOne({_id:Id},{brand:1,_id:0});
+    const category = await Categorie.findOne({_id:Id},{brand:1,_id:1});
     const productData = await Products.find({
-      brand: category.brand,
+      brand: Id,
       status: true,
     });
     const phoneType = category.brand;
@@ -1862,18 +1819,25 @@ browsebybrand: async (req,res)=>{
 filter: async (req,res)=>{
   try {
     const categoryIds = req.body.category;
+    console.log("categoryIds",categoryIds);
     const brands = await Categorie.find({ _id: { $in: categoryIds } }, { brand: 1, _id: 0 });
+
     const brandNames = brands.map(category => category.brand);
-    const categoryData = await Categorie.find({});
+
+   
+
+    
+    const categoryData = await Categorie.find();
     const phoneType = ' ';
     const loggedUser=await global.findLoggedUser(req.session.user)
     const cartNo = await global.cartNo(loggedUser[0]._id)
     const checkedBrands = brandNames; 
     const priceSort = req.body.priceSort;
+    
   
     if(req.body.priceSort == 'highToLow'){
       const productData = await Products.find({
-        brand: { $in: brandNames },
+        brand: { $in: categoryIds },
         status: true,
       }).sort({ price: -1 });
       res.render('viewAll',{productData,categoryData,phoneType,cartNo,
@@ -1881,7 +1845,7 @@ filter: async (req,res)=>{
         priceSort: priceSort })
     }else if(req.body.priceSort == 'lowToHigh'){
       const productData = await Products.find({
-        brand: { $in: brandNames },
+        brand: { $in: categoryIds },
         status: true,
       }).sort({ price: 1 });
       res.render('viewAll',{productData,categoryData,phoneType,cartNo,
@@ -1890,12 +1854,10 @@ filter: async (req,res)=>{
   
     }else{
       const productData = await Products.find({
-        brand: { $in: brandNames },
+        brand: { $in: categoryIds },
         status: true,
       });
 
-      const checkedBrands = brandNames; 
-      const priceSort = req.body.priceSort;
       
       res.render('viewAll', {
           productData,
@@ -1903,7 +1865,7 @@ filter: async (req,res)=>{
           phoneType,
           cartNo,
           checkedBrands: checkedBrands,
-          priceSort: priceSort 
+          priceSort:'lowToHigh' 
       });
         
     }
@@ -2033,6 +1995,55 @@ UserShop : async (req,res)=>{
   }
 },
 
+About : async (req,res)=>{
+  try {
+    const loggedUser=await global.findLoggedUser(req.session.user)
+    const cartNo = await global.cartNo(loggedUser[0]._id)
+    res.render('userAboutPage',{cartNo})
+    
+  } catch (error) {
+    console.error("Error in about page:", error);
+    res.status(500).render('500')
+
+    
+  }
+ 
+},
+
+gtAbout : async (req,res)=>{
+  try {
+    res.render('indexAbout')
+
+  } catch (error) {
+    console.error("Error in gt about page:", error);
+    res.status(500).render('500')
+  }
+
+},
+
+contact : async (req,res)=>{
+  try {
+    res.render('contact')
+
+  } catch (error) {
+    console.error("Error in contact page:", error);
+    res.status(500).render('500')
+  }
+
+},
+
+userContact : async (req,res)=>{
+  try {
+    const loggedUser=await global.findLoggedUser(req.session.user)
+    const cartNo = await global.cartNo(loggedUser[0]._id)
+    res.render('userContact',{cartNo})
+
+  } catch (error) {
+    console.error("Error in contact page:", error);
+    res.status(500).render('500')
+  }
+
+},
 
 };
 

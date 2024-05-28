@@ -1,0 +1,109 @@
+<%- include('header-admin') %>
+
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.min.css">
+<link rel="stylesheet" href="https://cdn.datatables.net/searchbuilder/1.6.0/css/searchBuilder.dataTables.min.css">
+<link rel="stylesheet" href="https://cdn.datatables.net/datetime/1.5.1/css/dataTables.dateTime.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+
+<script src="https://code.jquery.com/jquery-3.7.0.js"></script>
+<script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/searchbuilder/1.6.0/js/dataTables.searchBuilder.min.js"></script>
+<script src="https://cdn.datatables.net/datetime/1.5.1/js/dataTables.dateTime.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<% if (rejectedReq.length > 0) { %>
+  <!-- Matched search results -->
+  <div class="text-dark text-center mt-4 d-flex justify-content-center">
+    <h4>Rejected Return Request </h4>
+</div>
+  <div class="container-fluid mt-3">
+    <div class="row">
+      <div class="col-12 overflow-auto">
+        <table class="table table-bordered table-hover" id="order">
+          <thead class="table-dark">
+            <tr>
+              <th class="text-center">No</th>
+              <th class="text-center">Customer Name</th>
+              <th class="text-center">Order Date</th>
+              <th class="text-center">Order Status</th>
+              <th class="text-center">Payment Method</th>
+              <th class="text-center">Product</th>
+              <th class="text-center">Total Order Value</th>
+              <th class="text-center">Address</th>
+              <th class="text-center">Reason</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% rejectedReq.forEach((data, i) => { %>
+              <tr>
+                <td class="text-center"><%= i + 1 %></td>
+                <td class="text-center">
+                  <% for (let x of orderUserData) { %>
+                    <% if (x._id && data.userId && x._id.toString() === data.userId.toString()) { %>
+                      <%= x.username %>
+                      <% break; %>
+                    <% } %>
+                  <% } %>
+                </td>
+                <td class="text-center"><%= data.orderAdded.toLocaleString() %></td>
+                <td class="text-center">
+                  <span class="badge <%= data.orderStatus === 'Returned' ? 'bg-warning' : (data.orderStatus === 'Returned Rejected' ? 'bg-danger' : 'bg-success') %>">
+                    <%= data.orderStatus %>
+                  </span>
+                </td>
+                <td class="text-center"><%= data.PaymenMethod %></td>
+                <td class="text-center">
+                  <% data.orderedproducts.forEach((element, i) => { %>
+                    <p class="mb-1"><strong>Product <%= i + 1 %>:</strong> <%= element.orderedItem %></p>
+                    <p class="mb-1"><strong>Colour:</strong> <%= element.colour %></p>
+                    <p class="mb-1"><strong>Quantity:</strong> <%= element.quantity %></p>
+                  <% }) %>
+                </td>
+                <td class="text-center"><%= data.orderTotalPrice %>.Rs</td>
+                <td class="text-center">
+                  <% for (let x of orderUserData) { %>
+                    <% if (x._id && data.userId && x._id.toString() === data.userId.toString()) { %>
+                      <p class="mb-1"><strong>Name:</strong> <%= x.address[0].name %></p>
+                      <p class="mb-1"><strong>Address:</strong> <%= x.address[0].address %></p>
+                      <p class="mb-1"><strong>City:</strong> <%= x.address[0].city %></p>
+                      <p class="mb-1"><strong>State:</strong> <%= x.address[0].state %></p>
+                      <p class="mb-1"><strong>Pincode:</strong> <%= x.address[0].pincode %></p>
+                      <p class="mb-1"><strong>Phone:</strong> <%= x.address[0].phone %></p>
+                      <% break; %>
+                    <% } %>
+                  <% } %>
+                </td>
+                <td class="text-center"><%= data.Returnreason %></td>
+              </tr>
+            <% }) %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+<% } else { %>
+  <!-- Unmatched search results -->
+  <div class="text-center">
+    <h6 class="text-warning fw-bolder"><em>No Request Are Found</em></h6>
+  </div>
+<% } %>
+
+<!-- Display messages -->
+<p class="text-center" id="msg" style="
+  font-family: Poppins;
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 24px;
+  letter-spacing: 0em;
+  color: #44db74;
+">
+  <%= %>
+</p>
+
+<script>
+  $(document).ready(function() {
+    $('#order').DataTable();
+  });
+</script>
+
+<%- include('admin_footer') %>

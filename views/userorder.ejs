@@ -85,13 +85,13 @@
                         <div class="progress-bar 
                             <% if (order.orderStatus === 'Delivered') { %>bg-success<% } 
                             else if (order.orderStatus === 'Shipped') { %>bg-info<% } 
-                            else if (order.orderStatus === 'Returned' || order.orderStatus === 'Cancelled') { %>bg-danger<% } 
+                            else if (order.orderStatus === 'Returned' || order.orderStatus === 'Return Request Submitted') { %>bg-warning<% } 
+                            else if (order.orderStatus === 'Cancelled'|| order.orderStatus === 'Returned Rejected') { %>bg-danger<% } 
                             else { %>bg-warning<% } %>"
                             role="progressbar" 
-                            style="width: 
-                                <% if (order.orderStatus === 'Delivered') { %>100<% } 
-                                else if (order.orderStatus === 'Shipped') { %>75<% } 
-                                else if (order.orderStatus === 'Returned' || order.orderStatus === 'Cancelled') { %>100<% } 
+                            style="width: <% if (order.orderStatus === 'Delivered') { %>100<% } 
+                                else if (order.orderStatus === 'Shipped' || order.orderStatus === 'Return Request Submitted') { %>75<% } 
+                                else if (order.orderStatus === 'Returned' || order.orderStatus === 'Cancelled' || order.orderStatus === 'Returned Rejected') { %>100<% } 
                                 else { %>50<% } %>%; 
                                 height: 100%;">
                             <% if (order.orderStatus === 'Delivered') { %>
@@ -107,6 +107,12 @@
                                 <span class="visually-hidden">100% Complete (danger)</span>
                                 <i class="fas fa-times-circle" style="position: absolute; top: 50%; left: 100%; transform: translate(-50%, -50%); color: red;"></i>
                             <% } 
+                            else if (order.orderStatus === 'Return Request Submitted' ) { %>
+                                <span class="visually-hidden">100% Complete (warning)</span>
+                                <i class="fas fa-times-circle" style="position: absolute; top: 50%; left: 100%; transform: translate(-50%, -50%); color: rgb(223, 239, 5);"></i>
+
+                                <% } 
+
                             else { %>
                                 <span class="visually-hidden">50% Complete</span>
                             <% } %>
@@ -130,7 +136,7 @@
                                 <i class="fas fa-shipping-fast"></i>
                             <% } else if(order.orderStatus === 'Cancelled') { %>
                                 <i class="fas fa-times-circle text-danger"></i>
-                            <% } else if(order.orderStatus === 'Returned') { %>
+                            <% } else if(order.orderStatus === 'Returned'|| order.orderStatus === 'Return Request Submitted') { %>
                                 <i class="fas fa-undo"></i>
                             <% } %>
                         </p>
@@ -145,7 +151,7 @@
                                         alt="Product Image"
                                         class="order-image ms-3 img-fluid <%= order.orderStatus == 'Cancelled'? 'red-strikethrough' : '' %>">
                                     <div class="text-center "style="    margin-right: 213px; ">
-                                        <p class="order-details "><strong><%= product.orderedItem %></strong></p>
+                                        <p class="order-details "><strong class="<%= order.orderStatus === 'Cancelled' ? 'text-decoration-line-through text-danger' : '' %>"><%= product.orderedItem %></strong></p>
                                     </div>
                                     <br>
                                     <% if (order.orderStatus ===  'Delivered') { %>
@@ -161,17 +167,17 @@
                                 <div class="col-md-8">
                                     <div class="row">
                                         <div class="col-md-6">
-                                            <p class="order-details">Qty: <strong
-                                                    class="<%= order.orderStatus === 'Cancelled' ? '' : 'strike-red' %>">
-                                                    <%= product.quantity %>
-                                                </strong></p>
+                                            <p class="order-details">Qty: <strong 
+                                                class="<%= order.orderStatus === 'Cancelled' ? 'text-decoration-line-through text-danger' : '' %>">
+                                                <%= product.quantity %>
+                                                </strong>
+                                            </p>
                                         </div>
                                         <div class="col-md-6">
-                                            <p class="order-details">Amount: <strong
-                                                    class="<%= order.orderStatus === 'Cancelled' ? '' : 'strike-red' %>">₹
-                                                    <%= product.price %>
+                                            <p class="order-details">Amount: <strong 
+                                                class="<%= order.orderStatus === 'Cancelled' ? 'text-decoration-line-through text-danger' : '' %>">₹<%= product.price %>
                                                 </strong></p>
-                                                <p class="order-details">Item: <strong class="<% if (order.orderStatus === 'Cancelled') { %> strike-red <% } else { %> alternative-class <% } %>">
+                                                <p class="order-details">Item: <strong  class="<%= order.orderStatus === 'Cancelled' ? 'text-decoration-line-through text-danger' : '' %>">
                                                     <%= product.orderedItem %>
                                                 </strong></p>
                                                 
@@ -179,19 +185,15 @@
                                                 
                                         </div>
                                     </div>
-                                    <div class="text-center">
-                                        <% if (order.orderStatus !== 'Delivered' && order.orderStatus !== 'Cancelled') { %>
 
-                                        <% } %>
-                                    </div>
                                     <hr>
                                 </div>
                             </div>
                         </div>
                     <% }) %>
 
-                    <div class="">
-                        <p class="order-details float-end">Total Price:<strong> ₹<%= order.orderTotalPrice %></strong></p>
+                    <div class=""  style="margin-bottom :10px">
+                        <p class="order-details float-end">Total Price:<strong class="<%= order.orderStatus === 'Cancelled' ? 'text-decoration-line-through text-danger' : '' %>"> ₹<%= order.orderTotalPrice %></strong></p>
                     </div>
 
 
@@ -199,21 +201,48 @@
                     <div class="text-end">
                         <% if (order.orderStatus === 'Delivered' || order.orderStatus === 'Shipped') { %>
                             <% order.orderedproducts.forEach(product => { %>
-                                <button style="    margin-right: -141px;
-                                margin-top: 18px;" class="btn btn-warning return-order" data-order-id="<%= order._id %>"
-                                    data-order-price="<%= order.totalPrice %>">
-                                    <i class="fas fa-undo-alt"></i> Return Order
-                                </button>
+                            <div class="margin-top: 10px;">
+                                <button id="show-input-btn" style="margin-right: -141px; margin-top: 18px;" class="btn btn-warning"><i class="fas fa-undo-alt"></i> Return Order</button>
+                                <div id="input-container" style=" display:none; margin-top: 10px;">
+                                    <input type="text" id="input-field" style="margin-right: 485px; padding: 8px; border: 1px solid #ccc; border-radius: 4px; margin-bottom: 15px; box-sizing: border-box;" placeholder=" Return order reason">
+                                    <div class="d-flex justify-content-center">
+                                    <button style="margin-right: 5px; padding: 8px; background-color: #d51a20; color: #fff; border: none; border-radius: 4px; cursor: pointer; transition: background-color 0.3s ease;" id="submit-btn" class="return-order" data-order-id="<%= order._id %>">Submit</button>
+                                    <button style="padding: 8px; background-color: #d51a20; color: #fff; border: none; border-radius: 4px; cursor: pointer; transition: background-color 0.3s ease;" id="close-btn">Close</button>
+                                    </div>
+                                </div>
+                            </div>
+                                <script>
+                                document.getElementById('show-input-btn').addEventListener('click', function() {
+                                    document.getElementById('input-container').style.display = 'block';
+                                });
+
+                                document.getElementById('close-btn').addEventListener('click', function() {
+                                    document.getElementById('input-container').style.display = 'none';
+                                });
+
+                                </script>
                             <% }); %>
                         <% } else if (order.orderStatus === 'Cancelled') { %>
+                            <div style="margin-left: 135px;" class="d-flex justify-content-center">
                             <p class="text-danger fw-bold">You have cancelled this order</p>
+                            </div>
                         <% } else if (order.orderStatus === 'Returned') { %>
+                            <div style="margin-left: 135px;" class="d-flex justify-content-center">
                             <p class="text-danger fw-bold">You have Returned this order</p>
+                            </div>
+
+                        <% } else if (order.orderStatus === 'Processing') { %>
+                            <div style="margin-left: 135px;" class="d-flex justify-content-center">
+                                <p class="text-danger fw-bold">Your Return request under processing...</p>
+                            </div>
+                        <% } else if (order.orderStatus === 'Returned Rejected') { %>
+                            <div style="margin-left: 135px;" class="d-flex justify-content-center">
+                                <p class="text-danger fw-bold"><%= order.ReturnRejectReason %></p>
+                            </div>
+
                         <% } else { %>
-                            <button style="    margin-right: -141px;
-                            margin-top: 18px;" class="btn btn-danger cancel-order" data-order-id="<%= order._id %>" <% if (order.orderStatus === 'Cancelled' || order.orderStatus === 'Returned') { %>hidden<% } %>
-                            >
-                                <i class="fas fa-times-circle"></i> Cancel Order
+                            <button style="margin-right: -141px; margin-top: 18px;" class="btn btn-danger cancel-order" data-order-id="<%= order._id %>" <% if (order.orderStatus === 'Cancelled' || order.orderStatus === 'Returned') { %>hidden<% } %>>
+                                <i class="fas fa-times-circle" ></i> Cancel Order
                             </button>
                         <% } %>
                     </div>
@@ -253,7 +282,7 @@
                     },
                     success: (response) => {
                         if (response) {
-                            location.reload();
+                            window.location.reload();
                         }
 
                         Swal.fire({
@@ -303,7 +332,7 @@
                     },
                     success: (response) => {
                         if (response) {
-                            location.reload();
+                            window.location.reload();
                         }
 
                         Swal.fire({
@@ -342,8 +371,19 @@
     $(document).on('click', '.return-order', function () {
         const orderId = $(this).data('order-id');
         const orderPrice = $(this).data('order-price');
+        const inputField = document.getElementById('input-field');
+           if (inputField.value.trim() === '') {
+            Swal.fire({
+              icon: 'error',
+              title: 'Error!',
+              text: 'Please enter the return order reason..',
+              showConfirmButton: false,
+              timer: 1500
+              });
 
-        Swal.fire({
+             }else{
+
+           Swal.fire({
             title: 'Are you sure?',
             text: 'Do you want to return the order?',
             icon: 'question',
@@ -358,20 +398,20 @@
                     url: '/user/order/return/' + orderId,
                     data: {
                         orderId: orderId,
-                        orderPrice: orderPrice
+                        orderPrice: orderPrice,
+                        returnReason: inputField.value
                     },
                     success: (response) => {
-                        if (response.updateStatus) {
-                            location.reload();   
-                        }
+                         window.location.reload();   
 
                         Swal.fire({
                             icon: 'success',
                             title: 'Success!',
-                            text: 'Order Returned successfully.',
+                            text: 'Order Return Request Sending successfully.',
                             showConfirmButton: false,
                             timer: 1500
                         });
+                        
                     },
                     error: function (xhr, status, error) {
                         console.error('Error:', error);
@@ -387,5 +427,9 @@
                 });
             }
         });
+                
+     }
+
+
     });
 </script>
