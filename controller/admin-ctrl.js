@@ -154,7 +154,8 @@ const topSellingBrand = await Order.aggregate([
       _id: 1,
       totalQuantity: 1,
       Revenue: 1,
-      brandImage: "$brand.image" 
+      brandImage: "$brand.image",
+      brandName: "$brand.brand"
     }
   },
   { $sort: { totalQuantity: -1 } },
