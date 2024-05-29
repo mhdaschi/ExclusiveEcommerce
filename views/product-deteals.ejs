@@ -13,8 +13,8 @@
                                 </div>
                             <% }) %>
                         </div>
-                        <div class="col-10">
-                            <div class="col-12 d-flex justify-content-center image" id="image">
+                        <div class="col-10 overflow-hidden">
+                            <div class="col-12 d-flex justify-content-center image overflow-hidden" id="image">
                                 <img class="selected-image img-fluid" src="/<%= item.product_image[0] %>"
                                     style="width: auto; height: 450px; -o-object-fit: cover; object-fit: cover; transform: scale(var(--zoom, 1)); transform-origin: var(--x) var(--y); transition: transform 0.3s ease;" alt="">
                             </div>
@@ -48,7 +48,7 @@
                     
 
                     
-                    <div>
+                    <div >
                         <% if (item.stock > 0) { %>
                             <a href="/user/addToCart/<%- item._id %>" class="btn btn-outline-dark me-3">Add to Cart</a>
                         <% } else { %>
