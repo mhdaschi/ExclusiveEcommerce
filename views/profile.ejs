@@ -273,7 +273,9 @@ async function usernameValidation() {
 if (nameInput === "") {
     errorMessages.push("Username must be filled out");
 }
-
+if (PhoneNumber === "") {
+    errorMessages.push("Phone Number must be filled out");
+}
 if (errorMessages.length > 0) {
     // Show toast notification for the error message
     Toastify({

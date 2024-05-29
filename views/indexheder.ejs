@@ -167,14 +167,22 @@ background: var(--thumb);
 @media (min-width: 500px) {
 .card {
 flex-basis: calc(50% - 10px);
+
 }
+
 
 .card:not(:last-child) {
 margin-right: 20px;
 }
 }
 
-@media (min-width: 700px) {
+@media (min-width: 310px) {
+.card {
+  flex: 0 0 310px;
+}
+}
+
+@media (min-width: 800px) {
 .card {
 flex-basis: calc(calc(100% / 3) - 20px);
 }

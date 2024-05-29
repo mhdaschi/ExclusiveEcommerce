@@ -6,14 +6,14 @@
             <div class="row d-flex justify-content-center">
                 <div class="col-md-6 py-5 my-5">
                     <div class="row">
-                        <div class="col-2">
+                        <div class="col-12 col-md-2">
                             <% item.product_image.forEach((image, index) => { %>
                                 <div class="col-12 my-1 thumbnail-image-container" data-index="<%= index + 1 %>">
                                     <img class="thumbnail-image" src="/<%= image %>" style="width: 100px; height: 100px;" alt="">
                                 </div>
                             <% }) %>
                         </div>
-                        <div class="col-10 overflow-hidden">
+                        <div class="col-12 col-md-10 overflow-hidden">
                             <div class="col-12 d-flex justify-content-center image overflow-hidden" id="image">
                                 <img class="selected-image img-fluid" src="/<%= item.product_image[0] %>"
                                     style="width: auto; height: 450px; -o-object-fit: cover; object-fit: cover; transform: scale(var(--zoom, 1)); transform-origin: var(--x) var(--y); transition: transform 0.3s ease;" alt="">
